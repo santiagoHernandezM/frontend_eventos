@@ -177,7 +177,7 @@ export default {
         {text: "Nombre", value: "nombre"},
         {text: "Regional", value: "regional.nombre"},
         {text: "Municipio", value: "municipio"},
-        {text: "Acciones", value: "acciones"},
+        {text: "Acciones", value: "actions"},
       ],
 
       loading: false,

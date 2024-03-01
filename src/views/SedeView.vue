@@ -42,6 +42,7 @@
                     prepend-icon="map"
                     v-model="paquete.centro"
                     :rules="camposRules"
+                    @change="cargarDpto()"
                   ></v-select>
                 </v-col>
 
@@ -62,9 +63,10 @@
                     :items="departamentos"
                     item-text="departamento"
                     item-value="departamento"
-                    label="Seleccione departamento"
+                    label="Departamento"
                     prepend-icon="mdi-map"
                     :rules="camposRules"
+                    readonly
                   ></v-select>
                 </v-col>
 
@@ -93,7 +95,9 @@
 
       </v-card>
     </v-row>
-
+<!-- 
+  const santiago = true
+ -->
     <!-- Tabla -->
     <Tabla
     :items="sedes"
@@ -167,7 +171,7 @@ export default {
         {text: "Lugar_funcionamiento", value: "lugar_funcionamiento"},
         {text: "Departamento", value: "departamento"},
         {text: "Municipio", value: "municipio"},
-        {text: "Acciones", value: "acciones"},
+        {text: "Acciones", value: "actions"},
       ],
       centros: null, //Aquí se cargan todos los centros que están en la bd
       departamentos: colombia,
@@ -199,6 +203,17 @@ export default {
       }
     },
 
+    async cargarDpto(){
+      try {
+        const centro  = await axios.get(`${this.api}/centro/${this.paquete.centro}`);
+        console.log(centro)
+        this.paquete.departamento = centro.data.regional.departamento
+        
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
     async guardar() {
       if (this.$refs.form.validate()){
         this.loading = true;
@@ -219,8 +234,10 @@ export default {
     },
 
     editarRegistro(item){
-      item.id = item._id
-      delete item._id
+      if (item._id){
+        item.id = item._id
+        delete item._id
+      }
       delete item.__v
       
       this.paquete = {...item, centro: item.centro._id}

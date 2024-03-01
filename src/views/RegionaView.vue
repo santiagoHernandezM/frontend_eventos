@@ -81,8 +81,9 @@
     :cabecera="cabeceraTabla"
     :metodoEditar="editarRegistro"
     :metodoEliminar="eliminarRegistro"
-    />
     
+    />
+
     <!-- Cargando... -->
     <v-overlay :value="loading">
       <v-progress-circular indeterminate color="primary"></v-progress-circular>
@@ -156,7 +157,7 @@ export default {
         { text: "Nombre", value: "nombre" },
         { text: "Municipio", value: "municipio" },
         { text: "Departamento", value: "departamento" },
-        { text: "Acciones", value: "acciones" },
+        { text: "Acciones", value: "actions"},
       ],
       regionales: [],
       departamentos: colombia,
@@ -207,8 +208,10 @@ export default {
     },
 
     editarRegistro(item) {
-      item.id = item._id
-      delete item._id
+      if (item._id){
+        item.id = item._id
+        delete item._id
+      }
       delete item.__v
       this.paquete = { ...item };
       this.modoEdicion = true;
