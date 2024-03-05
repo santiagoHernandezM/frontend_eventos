@@ -5,73 +5,82 @@
         <!-- Encabezado -->
         <v-app-bar flat color="rgb(52,188,52)">
           <v-toolbar-title class="text-h6 white--text pl-0">
-            CREAR PROGRAMA
+            {{ modoEdicion ? 'EDITAR PROGRAMA' : 'CREAR PROGRAMA' }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
         </v-app-bar>
 
+        <!-- Formulario -->
         <v-card-text class="carta">
           <v-form ref="form">
-            <v-container>
+            <v-container style="padding-bottom: 0;">
               <v-row>
-                <v-col cols="6">
+                <v-col cols="4">
                   <v-text-field
                     label="Codigo"
-                    prepend-icon="mdi-key"
+                    append-icon="mdi-key-variant"
                     v-model="paquete.codigo"
                     :rules="camposRules"
+                    outlined
+                  ></v-text-field>
+                </v-col>    
+                
+                <v-col cols="8">
+                  <v-text-field
+                    label="Nombre"
+                    append-icon="mdi mdi-pencil"
+                    v-model="paquete.nombre"
+                    :rules="camposRules"
+                    outlined
                   ></v-text-field>
                 </v-col>
-                <v-col cols="6">
-                      <v-text-field
-                        label="Nombre"
-                        prepend-icon="mdi-key"
-                        v-model="paquete.nombre"
-                        :rules="camposRules"
-                      ></v-text-field>
-                    </v-col>
               </v-row>
 
               <v-row>
-                <v-col cols="6">
+                <v-col cols="7">
                   <v-select
                     :items="niveles"
                     item-text="paquete.nivel"
-                    label="Selecciones nivel de formacion"
-                    prepend-icon="map"
+                    label="Seleccione nivel de formacion"
+                    append-icon="mdi mdi-account-school"
                     v-model="paquete.nivel"
                     :rules="camposRules"
+                    outlined
                   ></v-select>
                 </v-col>
-                <v-col cols="6">
+
+                <v-col cols="5">
                   <v-text-field
                     label="Version"
-                    prepend-icon="mdi-key"
+                    append-icon="mdi mdi-numeric"
                     v-model="paquete.version"
                     type="number"
                     :rules="camposRules"
+                    outlined
                   ></v-text-field>
-                </v-col>
+                </v-col>              
               </v-row>
 
               <v-row>
                 <v-col cols="6">
                   <v-text-field
                     label="Duracion"
-                    prepend-icon="mdi-key"
+                    append-icon="mdi mdi-clock-time-eight-outline"
                     v-model="paquete.duracion"
                     type="number"
                     :rules="camposRules"
+                    outlined
                   ></v-text-field>
                 </v-col>
                 <v-col cols="6">
                   <v-select
                   :items="inthoraria"
                   label="Intensidad horaria"
-                  prepend-icon="map"
+                  append-icon="mdi mdi-calendar-clock"
                   v-model="paquete.intensidad_horaria"
                   :rules="camposRules"
+                  outlined
                   ></v-select>
                 </v-col>
               </v-row>
@@ -79,10 +88,20 @@
           </v-form>
         </v-card-text>
 
-        <!-- Acciones: Crear / Editar -->
-        <v-card-actions>
-          <v-btn class="ma-2" outlined color="indigo" @click="modoEdicion ? guardarEdicion() : guardar()">
+        <!-- Acciones: Limpiar / Editar - Cancelar -->
+        <v-card-actions style="max-width: 95%; margin: auto;">
+          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
+          </v-btn>
+
+          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
             {{ modoEdicion ? 'Editar' : 'Crear' }}
+          </v-btn>
+
+          <v-spacer></v-spacer>
+
+          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+            Cancelar
           </v-btn>
         </v-card-actions>
 
@@ -91,10 +110,10 @@
 
     <!-- Tabla -->
     <Tabla
-    :items="programas"
-    :cabecera="cabeceraTabla"
-    :metodoEliminar="eliminarRegistro"
-    :metodoEditar="editarRegistro"
+      :items="programas"
+      :cabecera="cabeceraTabla"
+      :metodoEliminar="eliminarRegistro"
+      :metodoEditar="editarRegistro"
     />
 
     <!-- Cargando... -->
@@ -104,37 +123,36 @@
 
     <!-- Dialogo de creación -->
     <Dialogo
-    :show="dialogoProgramaCreado"
-    title="Registro creado con éxito"
-    text="Programa creado"
-    @close-dialog="dialogoProgramaCreado = $event"/>
+      :show="dialogoProgramaCreado"
+      title="Registro creado con éxito"
+      text="Programa creado"
+      @close-dialog="dialogoProgramaCreado = $event"
+    />
 
     <!-- Dialogo de actualización -->
     <Dialogo
-    :show="dialogoProgramaActualizado"
-    title="Registro actualizado con éxito"
-    text="Programa actualizado"
-    @close-dialog="dialogoProgramaActualizado = $event"/>
+      :show="dialogoProgramaActualizado"
+      title="Registro actualizado con éxito"
+      text="Programa actualizado"
+      @close-dialog="dialogoProgramaActualizado = $event"
+    />
 
     <!-- Dialogos de eliminación -->
-    <v-dialog v-model="dialogo1EliminarPrograma" max-width="600">
-      <v-card>
-        <v-card-title class="headline">¿Estás seguro que quieres eliminar este programa?</v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="dialogo1EliminarPrograma = false">Cancelar</v-btn>
-          <v-btn color="green darken-1" text @click="confirmarEliminacion">Aceptar</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <Dialog_confirm_delete
+      :show="dialogo1EliminarPrograma"
+      title="Estás seguro que quieres eliminar este programa?"
+      :confirmDeleteMethod="confirmarEliminacion"
+      @close-dialog="dialogo1EliminarPrograma = $event"
+    />
 
     <Dialogo
-    :show="dialogo2EliminarPrograma"
-    title="Registro eliminado con éxito"
-    text="Programa eliminado"
-    @close-dialog="dialogo2EliminarPrograma = $event"/>
+      :show="dialogo2EliminarPrograma"
+      title="Registro eliminado con éxito"
+      text="Programa eliminado"
+      @close-dialog="dialogo2EliminarPrograma = $event"
+    />
 
-    <pre>{{ $data }}</pre>
+    <!-- <pre>{{ $data }}</pre> -->
     <!-- <mensaje :mensaje="mensaje" :color="color" :show="show"> </mensaje> -->
   </v-container>
 </template>
@@ -142,7 +160,9 @@
 <script>
 import axios from "axios";
 import Tabla from "../../components/Tabla.vue"
-import Dialogo from "../../components/Dialogo.vue"
+import Dialogo from "../../components/Dialog.vue"
+import Dialog_confirm_delete from "../../components/Dialog-confirm-delete.vue"
+
 // import mensaje from "../../components/MensajesView.vue";
 export default {
   props: {
@@ -151,7 +171,8 @@ export default {
   },
   components: {
     Tabla,
-    Dialogo
+    Dialogo,
+    Dialog_confirm_delete
     // mensaje,
   },
 
@@ -175,7 +196,7 @@ export default {
         {text: "Version", value: "version"},
         {text: "Duración", value: "duracion"},
         {text: "Intensidad horaria", value: "intensidad_horaria"},
-        {text: "Acciones", value: "acciones"},
+        {text: "Acciones", value: "actions"},
       ],
       modoEdicion: false,
       loading: false,
@@ -211,45 +232,51 @@ export default {
     },
 
     async guardar() {
-      this.loading = true;
+      if (this.$refs.form.validate()){
+        this.loading = true;
+  
+        try {
+          await axios.post(`${this.api}/programas/crear`, this.paquete);
+  
+          this.loading = false;
+          this.cargarProgramas()
+          this.limpiarFormulario();
+          this.dialogoProgramaCreado = true
 
-      try {
-        await axios.post(`${this.api}/programas/crear`, this.paquete);
-
-      } catch (error) {
-        console.error(error);
-        
-      } finally {
-        this.loading = false;
-        this.cargarProgramas()
-        this.dialogoProgramaCreado = true
-        this.limpiarFormulario();
+        } catch (error) {
+          console.error(error) 
+        }
       }
     },
 
-    // editarRegistro(item){
-    //   item.id = item._id
-    //   delete item._id
-    //   delete item.__v
-      
-    //   this.paquete = {...item}
-    //   this.modoEdicion = true
-    // },
+    editarRegistro(item){
+      if (item._id){
+        item.id = item._id
+        delete item._id
+      }
+      delete item.__v
+      window.scrollTo(0, 0)
+      this.paquete = {...item}
+      this.modoEdicion = true
+    },
 
     async guardarEdicion(){
-      this.loading = true
-      console.log(this.paquete)
-      try {
-        await axios.put(`${this.api}/programas/actualizar`, this.paquete)
+      if (this.$refs.form.validate()){
 
-        this.loading = false
-        this.dialogoProgramaActualizado = true
-        this.modoEdicion = false
-        this.cargarProgramas()
-        this.limpiarFormulario()
-
-      } catch (error) {
-        console.error(error)
+        this.loading = true
+        console.log(this.paquete)
+        try {
+          await axios.put(`${this.api}/programas/actualizar`, this.paquete)
+  
+          this.loading = false
+          this.modoEdicion = false
+          this.cargarProgramas()
+          this.limpiarFormulario()
+          this.dialogoProgramaActualizado = true
+  
+        } catch (error) {
+          console.error(error)
+        }
       }
     },
 
@@ -266,6 +293,7 @@ export default {
         await axios.delete(`${this.api}/programas/eliminar/${this.itemEliminar._id}`)
 
         this.loading = false
+        this.itemEliminar = null
         this.cargarProgramas()
         this.dialogo1EliminarPrograma = false
         this.dialogo2EliminarPrograma = true
@@ -276,6 +304,7 @@ export default {
     },
 
     limpiarFormulario(){
+      this.$refs.form.resetValidation()
       this.paquete = {
         codigo: null,
         nombre: null,
@@ -289,8 +318,6 @@ export default {
 
   async mounted() {
     this.cargarProgramas()
-    const response = await axios.get("http://10.187.145.190:3000/regional");
-    this.regionales = response.data;
   },
 };
 </script>

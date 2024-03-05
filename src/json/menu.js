@@ -20,16 +20,16 @@ let menu = [
         {
           href: "/dashboard/sede",
           title: "Sede",
-          icon: "mdi mdi-home-variant",
+          icon: "mdi mdi-home-city",
         },
         {
           title: "Infra-estructura",
           icon: "fa fa-cogs",
-    
+          
           child: [
             {
               href: "/dashboard/bloque",
-              title: "Bloque"
+              title: "Bloque",
             },
             {
               href: "/dashboard/tipoAmbiente",
@@ -42,33 +42,18 @@ let menu = [
           ],
         },
         {
+          href: "/dashboard/crearprograma",
           title: "Programa",
-          icon: "fa fa-life-ring",
-    
-          child: [
-            {
-              href: "/dashboard/crearprograma",
-              title: "Crear",
-            },
-            {
-              title: " * Ficha",
-    
-              child: [
-                {
-                  href: "/dashboard/crearficha",
-                  title: "Crear Ficha",
-                },
-                {
-                  href: "/dashboard/listarfichas",
-                  title: "Listar",
-                },
-              ],
-            },
-          ],
+          icon: "mdi mdi-school",
+        },
+        {
+          href: "/dashboard/crearficha",
+          title: "Ficha",
+          icon: "mdi mdi-newspaper-variant-multiple-outline",
         },
         {
           title: "Competencia",
-          icon: "mdi mdi-home-variant",
+          icon: "mdi mdi-notebook-edit",
     
           child: [
             {
@@ -92,7 +77,7 @@ let menu = [
         
         {
           title: "Usuario",
-          icon: "fa fa-user-secret ",
+          icon: "mdi mdi-account-tie",
     
           child: [
             {

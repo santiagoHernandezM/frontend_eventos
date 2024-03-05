@@ -4,31 +4,26 @@
       <v-card width="600">
         <!-- Encabezado -->
         <v-app-bar flat color="rgb(52,188,52)">
-          <v-app-bar-nav-icon color="white"></v-app-bar-nav-icon>
-
           <v-toolbar-title class="text-h6 white--text pl-0">
-            CREAR SEDE
+            {{ modoEdicion ? 'EDITAR SEDE' : 'CREAR SEDE' }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
-
-          <v-btn color="white" icon>
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
         </v-app-bar>
 
         <!-- Formulario -->
         <v-card-text>
           <v-form ref="form">
-            <v-container>
+            <v-container style="padding-bottom: 0;">
               <v-row>
                 <v-col cols="12">
                   <v-text-field
+                    append-icon="mdi mdi-pencil"
                     label="Nombre de la sede"
                     v-model="paquete.nombre"
                     :rules="camposRules"
-                  >
-                  </v-text-field>
+                    outlined
+                  ></v-text-field>
                 </v-col>
               </v-row>
 
@@ -39,35 +34,35 @@
                     item-text="nombre"
                     item-value="_id"
                     label="Seleccione centro"
-                    prepend-icon="map"
+                    append-icon="mdi mdi-bank"
                     v-model="paquete.centro"
                     :rules="camposRules"
+                    outlined
                     @change="cargarDpto()"
                   ></v-select>
                 </v-col>
 
                 <v-col cols="6">
                   <v-text-field
+                    append-icon="mdi mdi-map-marker-outline"
                     label="Lugar de funcionamiento"
                     v-model="paquete.lugar_funcionamiento"
                     :rules="camposRules"
-                  >
-                  </v-text-field>
+                    outlined
+                  ></v-text-field>
                 </v-col>
               </v-row>
 
               <v-row>
                 <v-col cols="6">
-                  <v-select
-                    v-model="paquete.departamento"
-                    :items="departamentos"
-                    item-text="departamento"
-                    item-value="departamento"
+                  <v-text-field
+                    append-icon="mdi mdi-map-search"
                     label="Departamento"
-                    prepend-icon="mdi-map"
+                    v-model="paquete.departamento"
                     :rules="camposRules"
+                    outlined
                     readonly
-                  ></v-select>
+                  ></v-text-field>
                 </v-col>
 
                 <v-col cols="6">
@@ -78,7 +73,8 @@
                     :rules="camposRules"
                     color="black"
                     item-color="black"
-                    prepend-icon="map"
+                    append-icon="mdi mdi-map-marker-radius"
+                    outlined
                   ></v-select>
                 </v-col>
               </v-row>
@@ -86,24 +82,32 @@
           </v-form>
         </v-card-text>
 
-        <!-- Acciones: Crear / Editar -->
-        <v-card-actions>
-          <v-btn class="ma-2" outlined color="indigo" @click="modoEdicion ? guardarEdicion() : guardar()">
+        <!-- Acciones: Limpiar / Editar - Cancelar -->
+        <v-card-actions style="max-width: 95%; margin: auto;">
+          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
+          </v-btn>
+
+          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
             {{ modoEdicion ? 'Editar' : 'Crear' }}
+          </v-btn>
+
+          <v-spacer></v-spacer>
+
+          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+            Cancelar
           </v-btn>
         </v-card-actions>
 
       </v-card>
     </v-row>
-<!-- 
-  const santiago = true
- -->
+
     <!-- Tabla -->
     <Tabla
-    :items="sedes"
-    :cabecera="cabeceraTabla"
-    :metodoEditar="editarRegistro"
-    :metodoEliminar="eliminarRegistro"
+      :items="sedes"
+      :cabecera="cabeceraTabla"
+      :metodoEditar="editarRegistro"
+      :metodoEliminar="eliminarRegistro"
     />
     
     <!-- Cargando... -->
@@ -112,48 +116,49 @@
     </v-overlay>
 
     <!-- Dialogo de creación -->
-    <Dialogo
-    :show="dialogoSedeCreada"
-    title="Registro creado con éxito"
-    text="Sede creada"
-    @close-dialog="dialogoSedeCreada = $event"/>
+    <Dialog
+      :show="dialogoSedeCreada"
+      title="Registro creado con éxito"
+      text="Sede creada"
+      @close-dialog="dialogoSedeCreada = $event"
+    />
 
     <!-- Dialogo de actualización -->
-    <Dialogo
-    :show="dialogoSedeActualizada"
-    title="Registro actualizado con éxito"
-    text="Sede actualizada"
-    @close-dialog="dialogoSedeActualizada = $event"/>
+    <Dialog
+      :show="dialogoSedeActualizada"
+      title="Registro actualizado con éxito"
+      text="Sede actualizada"
+      @close-dialog="dialogoSedeActualizada = $event"
+    />
 
     <!-- Dialogos de eliminación -->
-    <v-dialog v-model="dialogo1EliminarSede" max-width="600">
-      <v-card>
-        <v-card-title class="headline">¿Estás seguro que quieres eliminar esta sede?</v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="dialogo1EliminarSede = false">Cancelar</v-btn>
-          <v-btn color="green darken-1" text @click="confirmarEliminacion">Aceptar</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <Dialog_confirm_delete
+      :show="dialogo1EliminarSede"
+      title="Estás seguro que quieres eliminar esta sede?"
+      text="También se eliminarán los bloques y ambientes asociados"
+      :confirmDeleteMethod="confirmarEliminacion"
+      @close-dialog="dialogo1EliminarSede = $event"
+    />
 
-    <Dialogo
-    :show="dialogo2EliminarSede"
-    title="Registro eliminado con éxito"
-    text="Sede eliminada"
-    @close-dialog="dialogo2EliminarSede = $event"/>
+    <Dialog
+      :show="dialogo2EliminarSede"
+      title="Registro eliminado con éxito"
+      text="Sede eliminada"
+      @close-dialog="dialogo2EliminarSede = $event"
+    />
     
     <pre>{{ $data }}</pre>
   </v-container>
 </template>
 <script>
 import axios from "axios";
-import Dialogo from "../components/Dialogo.vue"
+import Dialog from "../components/Dialog.vue"
+import Dialog_confirm_delete from "../components/Dialog-confirm-delete.vue"
 import Tabla from "../components/Tabla.vue"
 const colombia = require("../json/ciudades");
 
 export default {
-  components: { Tabla, Dialogo },
+  components: { Tabla, Dialog, Dialog_confirm_delete },
   data() {
     return {
       api : `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
@@ -220,16 +225,15 @@ export default {
   
         try {
           await axios.post(`${this.api}/sedes/crear`, this.paquete);
-  
-        } catch (error) {
-          console.error(error);
           
-        } finally {
           this.loading = false;
           this.cargarSedes()
-          this.dialogoSedeCreada = true
           this.limpiarFormulario();
-        }
+          this.dialogoSedeCreada = true
+
+        } catch (error) {
+          console.error(error);
+        } 
       }
     },
 
@@ -239,7 +243,7 @@ export default {
         delete item._id
       }
       delete item.__v
-      
+      window.scrollTo(0, 0)
       this.paquete = {...item, centro: item.centro._id}
       console.log(this.paquete)
       this.modoEdicion = true
@@ -253,10 +257,10 @@ export default {
           await axios.put(`${this.api}/sedes/actualizar`, this.paquete)
   
           this.loading = false
-          this.dialogoSedeActualizada = true
           this.modoEdicion = false
           this.cargarSedes()
           this.limpiarFormulario()
+          this.dialogoSedeActualizada = true
   
         } catch (error) {
           console.error(error)
@@ -277,6 +281,7 @@ export default {
         await axios.delete(`${this.api}/sedes/${this.itemEliminar._id}`)
 
         this.loading = false
+        this.itemEliminar = null
         this.cargarSedes()
         this.dialogo1EliminarSede = false
         this.dialogo2EliminarSede = true
@@ -287,6 +292,7 @@ export default {
     },
 
     limpiarFormulario(){
+      this.$refs.form.resetValidation()
       this.paquete = {
         nombre: null,
         centro: null,
@@ -321,6 +327,7 @@ export default {
   },
 };
 </script>
+
 <style>
 .fondo {
   background: linear-gradient(

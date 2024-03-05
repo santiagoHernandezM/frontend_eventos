@@ -1,12 +1,13 @@
 <template>
-    <v-dialog v-model="show" max-width="400">
+    <v-dialog v-model="show" persistent max-width="400">
       <v-card>
         <v-card-title class="headline">{{ title }}</v-card-title>
         <v-card-text>
           {{ text }}
         </v-card-text>
         <v-card-actions>
-          <v-btn color="green darken-1" text @click="toggleShow">Aceptar</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="closeDialog">Aceptar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -16,7 +17,7 @@
 export default {
     props: ['show', 'title', 'text'],
     methods: {
-        toggleShow(){
+      closeDialog(){
           this.$emit('close-dialog', false)
           this.$emit('campos-rules', [(v) => !!v || "Campo es requerido"])
         }

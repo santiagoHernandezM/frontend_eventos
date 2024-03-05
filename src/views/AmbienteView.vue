@@ -5,36 +5,39 @@
         <!-- Encabezado -->
         <v-app-bar flat color="rgb(52,188,52)">
           <v-toolbar-title class="text-h6 white--text pl-0">
-            CREAR AMBIENTE
+            {{ modoEdicion ? 'EDITAR AMBIENTE' : 'CREAR AMBIENTE' }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
         </v-app-bar>
 
+        <!-- Formulario -->
         <v-card-text class="carta">
-          <v-form>
-            <v-container>
+          <v-form ref="form">
+            <v-container style="padding-bottom: 0;">
               <v-row>
                 <v-col>
                   <v-text-field
                     label="Codigo"
-                    prepend-icon="mdi-key"
+                    append-icon="mdi-key-variant"
                     v-model="paquete.codigo"
                     :rules="camposRules"
+                    outlined
                     ></v-text-field>
                 </v-col>
                 <v-col cols="6">
                   <v-select
                     :items="sedes"
-                    label="Selecciones una sede"
+                    item-value="_id"
+                    label="Seleccione una sede"
                     v-model="paquete.sede"
                     :rules="camposRules"
-                    @change="cargabloque()"
+                    @change="cargarBloques()"
                     item-text="nombre"
-                    item-value="_id"
                     color="black"
                     item-color="black"
-                    prepend-icon="map"
+                    append-icon="mdi mdi-home-city"
+                    outlined
                   ></v-select>
                 </v-col>
               </v-row>
@@ -43,14 +46,15 @@
                 <v-col>
                   <v-select
                     :items="bloques"
-                    label="Selecciones un bloque"
+                    label="Seleccione un bloque"
                     v-model="paquete.bloque"
                     :rules="camposRules"
                     item-value="_id"
                     item-text="nombre"
                     color="black"
                     item-color="black"
-                    prepend-icon="map"
+                    append-icon="mdi mdi-home-outline"
+                    outlined
                   ></v-select>  
                 </v-col>
                 <v-col>
@@ -63,7 +67,8 @@
                     item-text="nombre"
                     item-value="_id"
                     item-color="black"
-                    prepend-icon="map"
+                    append-icon="mdi mdi-format-list-bulleted"
+                    outlined
                   ></v-select>
                 </v-col>
               </v-row> 
@@ -71,10 +76,20 @@
           </v-form>
         </v-card-text>
 
-        <!-- Acciones: Crear / Editar -->
-        <v-card-actions>
-          <v-btn class="ma-2" outlined color="indigo" @click="modoEdicion ? guardarEdicion() : guardar()">
+        <!-- Acciones: Limpiar / Editar - Cancelar -->
+        <v-card-actions style="max-width: 95%; margin: auto;">
+          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
+          </v-btn>
+
+          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
             {{ modoEdicion ? 'Editar' : 'Crear' }}
+          </v-btn>
+
+          <v-spacer></v-spacer>
+
+          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+            Cancelar
           </v-btn>
         </v-card-actions>
 
@@ -82,24 +97,62 @@
     </v-row>
 
     <Tabla
-    :items="ambientes"
-    :cabecera="cabeceraTabla"
-    :metodoEditar="editarRegistro"
-    :metodoEliminar="eliminarRegistro"
+      :items="ambientes"
+      :cabecera="cabeceraTabla"
+      :metodoEditar="editarRegistro"
+      :metodoEliminar="eliminarRegistro"
     />
     
-    <pre>{{ $data }}</pre>
+    <!-- Cargando... -->
+    <v-overlay :value="loading">
+      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+    </v-overlay>
+
+    <!-- Dialogo de creación -->
+    <Dialog
+      :show="dialogoAmbienteCreado"
+      title="Registro creado con éxito"
+      text="Ambiente creado"
+      @close-dialog="dialogoAmbienteCreado = $event"
+    />
+
+    <!-- Dialogo de actualización -->
+    <Dialog
+      :show="dialogoAmbienteActualizado"
+      title="Registro actualizado con éxito"
+      text="Ambiente actualizado"
+      @close-dialog="dialogoAmbienteActualizado = $event"
+    />
+
+    <!-- Dialogos de eliminación -->
+    <Dialog_confirm_delete
+      :show="dialogo1EliminarAmbiente"
+      title="Estás seguro que quieres eliminar este ambiente?"
+      :confirmDeleteMethod="confirmarEliminacion"
+      @close-dialog="dialogo1EliminarAmbiente = $event"
+    />
+
+    <Dialog
+      :show="dialogo2EliminarAmbiente"
+      title="Registro eliminado con éxito"
+      text="Ambiente eliminado"
+      @close-dialog="dialogo2EliminarAmbiente = $event"
+    />
+
+    <!-- <pre>{{ $data }}</pre> -->
   </v-container>
 </template>
 
 <script>
 import axios from "axios";
 import Tabla from "../components/Tabla"
+import Dialog from "../components/Dialog.vue"
+import Dialog_confirm_delete from "../components/Dialog-confirm-delete.vue"
 //const tipoAmbiente = require("../json/tipoAmbiente");
 // const sedes = require("../json/pruebaSedes");
 
 export default {
-  components: { Tabla },
+  components: { Tabla, Dialog, Dialog_confirm_delete },
   data() {
     return {
       api : `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
@@ -110,16 +163,24 @@ export default {
         sede: null,
       },
       ambientes: [],
+      sedes: [],
+      bloques : [],
+      tiposDeAmbiente: [],
       cabeceraTabla: [
         {text: "Codigo", value: "codigo"},
         {text: "Sede", value: "sede.nombre"},
         {text: "bloque", value: "bloque.nombre"},
         {text: "Tipo", value: "tipo.nombre"},
-        {text: "Acciones", value: "acciones"}
+        {text: "Acciones", value: "actions"}
       ],
-      bloques : null,
-      tiposDeAmbiente: null,
-      sedes: null,
+      dialogoAmbienteCreado: false,
+      dialogoAmbienteActualizado: false,
+      dialogo1EliminarAmbiente: false,
+      dialogo2EliminarAmbiente: false,
+
+      loading: false,
+      modoEdicion: false,
+      itemEliminar: null,
 
       camposRules: [(v) => !!v || "Campo es requerido"],
     };
@@ -127,10 +188,9 @@ export default {
 
  
   methods: {
-    async cargarbloques(){
+    async cargarBloques(){
       const response = await axios.get(`${this.api}/bloque/sede/${this.paquete.sede}`);
       this.bloques = response.data
-      console.log(`data : ${response.data}`)
     },
 
     async cargarAmbientes(){
@@ -144,43 +204,102 @@ export default {
     },
 
     async guardar() {
-      this.loading = true;
-
-      try {
-        await axios.post(`${this.api}/sedes/crear`, this.paquete);
-
-      } catch (error) {
-        console.error(error);
-        
-      } finally {
-        this.loading = false;
-        this.cargarSedes()
-        this.dialogoSedeCreada = true
-        this.limpiarFormulario();
+      if (this.$refs.form.validate()){
+        this.loading = true;
+  
+        try {
+          await axios.post(`${this.api}/ambiente/crear`, this.paquete);
+  
+          this.loading = false;
+          this.cargarAmbientes()
+          this.limpiarFormulario();
+          this.dialogoAmbienteCreado = true
+  
+        } catch (error) {
+          console.error(error); 
+        }
       }
     },
 
-    // async guardar() {
-    //     await axios
-    //     .post(`${this.api}/ambiente/crear`, this.paquete)
-    //     .then(function (response) {
-    //       console.log(response);
-    //     })
-    //     .catch(function (error) {
-    //       // handle error
-    //       console.log(error);
-    //     })
-    //     .finally(function () {
-    //       // always executed
-    //     });
-    // },
+    editarRegistro(item){
+      window.scrollTo(0, 0)
+      this.paquete = {
+        id: item._id,
+        codigo: item.codigo,
+        bloque: item.bloque._id,
+        tipo: item.tipo._id,
+        sede: item.sede._id,
+      }
+      this.cargarBloques()
+      
+      this.modoEdicion = true
+    },
+
+    async guardarEdicion(){
+      if (this.$refs.form.validate()){
+        this.loading = true
+  
+        try {
+          await axios.put(`${this.api}/ambiente/editar`, this.paquete)
+  
+          this.loading = false
+          this.modoEdicion = false
+          this.cargarAmbientes()
+          this.limpiarFormulario()
+          this.dialogoAmbienteActualizado = true
+  
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    },
+
+    eliminarRegistro(item){
+      this.itemEliminar = item
+      this.dialogo1EliminarAmbiente = true
+    },
+
+    async confirmarEliminacion(){
+      this.loading = true
+
+      try {
+        await axios.delete(`${this.api}/ambiente/${this.itemEliminar._id}`)
+
+        this.loading = false
+        this.itemEliminar = null
+        this.cargarAmbientes()
+        this.dialogo1EliminarAmbiente = false
+        this.dialogo2EliminarAmbiente = true
+
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
+    limpiarFormulario(){
+      this.$refs.form.resetValidation()
+      this.paquete = {
+        codigo: null,
+        bloque: null,
+        tipo: null,
+        sede: null,
+      }
+    }
   },
 
   async mounted() {
 
+    await this.cargarAmbientes()
+
+    const responseSedes = await axios.get(`${this.api}/sedes`);
+    this.sedes = responseSedes.data
+
+    const resTiposAmbientes = await axios.get(`${this.api}/tipo-ambiente`);
+    this.tiposDeAmbiente = resTiposAmbientes.data
+    
+    // const responseBloques = await axios.get(`${this.api}/bloque/sede/${this.paquete.sede}`);
+    // this.bloques = responseBloques.data
     // try {
-      const responseBloques = await axios.get(`${this.api}/bloque/sede/${this.paquete.sede}`);
-      this.bloques = responseBloques.data
     
     // } catch (error) {
       
@@ -195,30 +314,10 @@ export default {
     //   this.sedes = response.data;
     //   this.tipoambiente = tipambiente.data
      
-    },
-
-  // async mounted() {
-  //   const response = await axios.get("http://10.187.145.190:3000/regional");
-  //   this.regionales = response.data;
-  // },
-
-  computed: {
-
-    combineText(item) {
-      alert(JSON.stringify(item))
-      return `${item.nombre}`;
-    },
-
-    ambient() {
-      var tipoAmb = null;
-      for (let pos in this.typeAmbiente) {
-        if (this.typeAmbiente[pos] == this.paquete.tipo) {
-          tipoAmb = this.typeAmbiente[pos].tipoAmb;
-        }
-      }
-      return tipoAmb;
-    },
   },
+
+
+  computed: {},
 };
 </script>
 

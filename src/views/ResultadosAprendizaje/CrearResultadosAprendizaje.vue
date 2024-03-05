@@ -4,13 +4,12 @@
         <v-card width="600">
           
           <!-- Encabezado -->
-          <v-app-bar flat color="rgba(156, 216, 175, 256)" >
-  
-            <v-toolbar-title class=" text-h6 white--text pl-0">
-              CREAR RESULTADO APRENDIZAJE
+          <v-app-bar flat color="rgb(52,188,52)">
+            <v-toolbar-title class="text-h6 white--text pl-0">
+              {{ modoEdicion ? 'EDITAR RESULTADO DE APRENDIZAJE' : 'CREAR RESULTADO DE APRENDIZAJE' }}
             </v-toolbar-title>
-  
-            <v-spacer></v-spacer> 
+
+            <v-spacer></v-spacer>
           </v-app-bar>
 
           <!-- Formulario -->
@@ -20,44 +19,56 @@
                 <v-row>
                   <v-col cols="6">
                     <v-text-field
-                    label="Orden del Resultado"
-                    prepend-icon="mdi-key"
-                    v-model="paquete.orden"
-                    type="number"
-                    :rules="camposRules"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="6">
+                      label="Orden del Resultado"
+                      append-icon="mdi mdi-sort-numeric-ascending"
+                      v-model="paquete.orden"
+                      type="number"
+                      :rules="camposRules"
+                      outlined
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-text-field
+                      label="Duracion del Resultado"
+                      append-icon="mdi mdi-clock-time-eight-outline"
+                      v-model="paquete.duracion"
+                      type="number"
+                      :rules="camposRules"
+                      outlined
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  
+                  <v-row>
+                    <v-col cols="12">
                     <v-text-field
-                    label="Duracion de Resultado"
-                    prepend-icon="mdi-key"
-                    v-model="paquete.duracion"
-                    type="number"
-                    :rules="camposRules"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-
-                <v-row>
-                  <v-col cols="12">
-                    <v-text-field
-                    label="Descripcion de Resultado"
-                    prepend-icon="mdi-key"
+                    label="Descripcion del Resultado"
+                    append-icon="mdi mdi-text-box-edit-outline"
                     v-model="paquete.descripcion"
                     :rules="camposRules"
+                    outlined
                     ></v-text-field>
                   </v-col>
                 </v-row>
 
               </v-container>
             </v-form>
-
           </v-card-text>
 
-          <!-- Acciones: Crear / Editar -->
-          <v-card-actions>
-            <v-btn class="ma-2" outlined color="indigo" @click="modoEdicion ? guardarEdicion() : guardar()">
+          <!-- Acciones: Limpiar / Editar - Cancelar -->
+          <v-card-actions style="max-width: 95%; margin: auto;">
+            <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
+              Limpiar
+            </v-btn>
+
+            <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
               {{ modoEdicion ? 'Editar' : 'Crear' }}
+            </v-btn>
+
+            <v-spacer></v-spacer>
+
+            <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+              Cancelar
             </v-btn>
           </v-card-actions>
           
@@ -114,9 +125,7 @@
         mensaje : '',
         color : '',
         show : false,
-        camposRules: [
-          v => !!v || 'Campo es requerido'
-        ]
+        camposRules: [(v) => !!v || 'Campo es requerido']
       }
     },
   

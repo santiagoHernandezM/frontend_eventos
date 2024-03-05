@@ -5,7 +5,7 @@
         <!-- Encabezado -->
         <v-app-bar flat color="rgb(52,188,52)">
           <v-toolbar-title class="text-h6 white--text pl-0">
-            CREAR BLOQUE
+            {{ modoEdicion ? 'EDITAR BLOQUE' : 'CREAR BLOQUE' }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
@@ -13,28 +13,30 @@
 
         <!-- Formulario -->
         <v-card-text class="carta">
-          <v-form>
-            <v-container>
+          <v-form ref="form">
+            <v-container style="padding-bottom: 0;">
               <v-row>
                 <v-col cols="6">
                   <v-text-field
                     label="Nombre"
-                    prepend-icon="mdi-key"
+                    append-icon="mdi mdi-pencil"
                     v-model="paquete.nombre"
                     :rules="camposRules"
+                    outlined
                   ></v-text-field>
                 </v-col>
                 <v-col cols="6">
                   <v-text-field
                     label="Nomenclatura"
-                    prepend-icon="mdi-key"
+                    append-icon="mdi mdi-draw-pen"
                     v-model="paquete.nomenclatura"
                     :rules="camposRules"
+                    outlined
                   ></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="6">
+                <v-col cols="12">
                   <v-select
                   :items="sedes"
                   label="Seleccione una sede"
@@ -44,7 +46,8 @@
                   :rules="camposRules"
                   color="black"
                   item-color="black"
-                  prepend-icon="map"
+                  append-icon="mdi mdi-home-city"
+                  outlined
                 ></v-select>
                 </v-col>
               </v-row>
@@ -52,10 +55,20 @@
           </v-form>
         </v-card-text>
 
-        <!-- Acciones: Crear / Editar -->
-        <v-card-actions>
-          <v-btn class="ma-2" outlined color="indigo" @click="modoEdicion ? guardarEdicion() : guardar()">
+        <!-- Acciones: Limpiar / Editar - Cancelar -->
+        <v-card-actions style="max-width: 95%; margin: auto;">
+          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
+          </v-btn>
+
+          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
             {{ modoEdicion ? 'Editar' : 'Crear' }}
+          </v-btn>
+
+          <v-spacer></v-spacer>
+
+          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+            Cancelar
           </v-btn>
         </v-card-actions>
 
@@ -63,10 +76,10 @@
     </v-row>
 
     <Tabla
-    :items="bloques"
-    :cabecera="cabeceraTabla"
-    :metodoEditar="editarRegistro"
-    :metodoEliminar="eliminarRegistro"
+      :items="bloques"
+      :cabecera="cabeceraTabla"
+      :metodoEditar="editarRegistro"
+      :metodoEliminar="eliminarRegistro"
     />
 
     <!-- Cargando... -->
@@ -75,51 +88,48 @@
     </v-overlay>
 
     <!-- Dialogo de creación -->
-    <Dialogo
-    :show="dialogoBloqueCreado"
-    title="Registro creado con éxito"
-    text="Bloque creado"
-    @close-dialog="dialogoBloqueCreado = $event"
+    <Dialog
+      :show="dialogoBloqueCreado"
+      title="Registro creado con éxito"
+      text="Bloque creado"
+      @close-dialog="dialogoBloqueCreado = $event"
     />
 
     <!-- Dialogo de actualización -->
-    <Dialogo
-    :show="dialogoBloqueActualizado"
-    title="Registro actualizado con éxito"
-    text="Bloque actualizado"
-    @close-dialog="dialogoBloqueActualizado = $event"
+    <Dialog
+      :show="dialogoBloqueActualizado"
+      title="Registro actualizado con éxito"
+      text="Bloque actualizado"
+      @close-dialog="dialogoBloqueActualizado = $event"
     />
 
     <!-- Dialogos de eliminación -->
-    <v-dialog v-model="dialogo1EliminarBloque" max-width="600">
-      <v-card>
-        <v-card-title class="headline">¿Estás seguro que quieres eliminar este bloque?</v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="dialogo1EliminarBloque = false">Cancelar</v-btn>
-          <v-btn color="green darken-1" text @click="confirmarEliminacion">Aceptar</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <Dialogo
-    :show="dialogo2EliminarBloque"
-    title="Registro eliminado con éxito"
-    text="Registro eliminado"
-    @close-dialog="dialogo2EliminarBloque = $event"
+    <Dialog_confirm_delete
+      :show="dialogo1EliminarBloque"
+      title="Estás seguro que quieres eliminar este bloque?"
+      :confirmDeleteMethod="confirmarEliminacion"
+      @close-dialog="dialogo1EliminarBloque = $event"
     />
 
-    <pre>{{ $data }}</pre>
+    <Dialog
+      :show="dialogo2EliminarBloque"
+      title="Registro eliminado con éxito"
+      text="Bloque eliminado"
+      @close-dialog="dialogo2EliminarBloque = $event"
+    />
+
+    <!-- <pre>{{ $data }}</pre> -->
   </v-container>
 </template>
 
 <script>
 import axios from "axios";
 import Tabla from "../components/Tabla.vue"
-import Dialogo from "../components/Dialogo.vue"
+import Dialog from "../components/Dialog.vue"
+import Dialog_confirm_delete from "../components/Dialog-confirm-delete.vue"
 
 export default {
-  components: { Tabla, Dialogo },
+  components: { Tabla, Dialog, Dialog_confirm_delete },
 
   data() {
     return {
@@ -135,7 +145,7 @@ export default {
         {text: "Nombre", value: "nombre"},
         {text: "Nomenclatura", value: "nomenclatura"},
         {text: "Sede", value: "sede.nombre"},
-        {text: "Acciones", value: "acciones"}
+        {text: "Acciones", value: "actions"}
       ],
       modoEdicion: false,
       loading: false,
@@ -161,44 +171,50 @@ export default {
     },
 
     async guardar() {
-      this.loading = true
+      if (this.$refs.form.validate()){
+        this.loading = true
+  
+        try {
+          await axios.post(`${this.api}/bloque/crear`, this.paquete)
+          
+          this.loading = false
+          this.cargarBloques()
+          this.limpiarFormulario()
+          this.dialogoBloqueCreado = true
 
-      try {
-        await axios.post(`${this.api}/bloque/crear`, this.paquete)
-        
-      } catch (error) {
-        console.error(error)
-
-      } finally {
-        this.loading = false
-        this.cargarBloques()
-        this.dialogoBloqueCreado = true
-        this.limpiarFormulario()
-      }
-        
+        } catch (error) {
+          console.error(error)
+        }
+      }   
     },
 
     editarRegistro(item){
-      item.id = item._id
-      delete item._id
+      if (item._id){
+        item.id = item._id
+        delete item._id
+      }
       delete item.__v
-      this.paquete = { ...item }
+      window.scrollTo(0, 0)
+      this.paquete = { ...item, sede: item.sede._id }
       this.modoEdicion = true
     },
 
     async guardarEdicion(){
-      this.loading = true
-
-      try {
-        await axios.put(`${this.api}/bloque/actualizar`, this.paquete)
-
-        this.loading = false
-        this.dialogoBloqueActualizado = true
-        this.cargarBloques()
-        this.limpiarFormulario()
-
-      } catch (error) {
-        console.error(error)
+      if (this.$refs.form.validate()){
+        this.loading = true
+  
+        try {
+          await axios.put(`${this.api}/bloque/actualizar`, this.paquete)
+  
+          this.loading = false
+          this.modoEdicion = false
+          this.cargarBloques()
+          this.limpiarFormulario()
+          this.dialogoBloqueActualizado = true
+  
+        } catch (error) {
+          console.error(error)
+        }
       }
     },
 
@@ -214,6 +230,7 @@ export default {
         await axios.delete(`${this.api}/bloque/eliminar/${this.itemEliminar._id}`)
 
         this.loading = false
+        this.itemEliminar = null
         this.cargarBloques()
         this.dialogo1EliminarBloque = false
         this.dialogo2EliminarBloque = true
@@ -224,6 +241,7 @@ export default {
     },
 
     limpiarFormulario(){
+      this.$refs.form.resetValidation()
       this.paquete = {
         nombre: null,
         nomenclatura: null,

@@ -5,7 +5,7 @@
         <!-- Encabezado -->
         <v-app-bar flat color="rgb(52,188,52)">
           <v-toolbar-title class="text-h6 white--text pl-0">
-            CREAR TIPO AMBIENTE
+            {{ modoEdicion ? 'EDITAR TIPO DE AMBIENTE' : 'CREAR TIPO DE AMBIENTE' }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
@@ -13,23 +13,25 @@
 
         <!-- Formulario -->
         <v-card-text class="carta">
-          <v-form>
-            <v-container>
+          <v-form ref="form">
+            <v-container style="padding-bottom: 0;">
               <v-row>
                 <v-col cols="6">
                   <v-text-field
                     label="Codigo"
-                    prepend-icon="mdi-key"
+                    append-icon="mdi-key-variant"
                     v-model="paquete.codigo"
                     :rules="camposRules"
+                    outlined
                   ></v-text-field>
                 </v-col>
                 <v-col cols="6">
                   <v-text-field
                     label="Nombre"
-                    prepend-icon="mdi-key"
+                    append-icon="mdi mdi-pencil"
                     v-model="paquete.nombre"
                     :rules="camposRules"
+                    outlined
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -37,10 +39,20 @@
           </v-form>
         </v-card-text>
 
-        <!-- Acciones: Crear / Editar -->
-        <v-card-actions>
-          <v-btn class="ma-2" outlined color="indigo" @click="modoEdicion ? guardarEdicion() : guardar()">
+        <!-- Acciones: Limpiar / Editar - Cancelar -->
+        <v-card-actions style="max-width: 95%; margin: auto;">
+          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
+          </v-btn>
+
+          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
             {{ modoEdicion ? 'Editar' : 'Crear' }}
+          </v-btn>
+
+          <v-spacer></v-spacer>
+
+          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+            Cancelar
           </v-btn>
         </v-card-actions>
 
@@ -48,13 +60,11 @@
     </v-row>
 
     <Tabla
-    :items="tiposDeAmbientes"
-    :cabecera="cabeceraTabla"
-    />
-    <!-- 
+      :items="tiposDeAmbientes"
+      :cabecera="cabeceraTabla"
       :metodoEditar="editarRegistro"
       :metodoEliminar="eliminarRegistro"
-     -->
+    />
 
     <!-- Cargando... -->
     <v-overlay :value="loading">
@@ -62,32 +72,49 @@
     </v-overlay>
 
     <!-- Dialogo de creación -->
-    <Dialogo
-    :show="dialogoTipoAmbienteCreado"
-    title="Registro creado con éxito"
-    text="Tipo de ambiente creado"
-    @close-dialog="dialogoTipoAmbienteCreado = $event"
+    <Dialog
+      :show="dialogoTipoAmbienteCreado"
+      title="Registro creado con éxito"
+      text="Tipo de ambiente creado"
+      @close-dialog="dialogoTipoAmbienteCreado = $event"
     />
 
     <!-- Dialogo de actualización -->
-    <Dialogo
-    :show="dialogoTipoAmbienteActualizado"
-    title="Registro actualizado con éxito"
-    text="Tipo de ambiente actualizado"
-    @close-dialog="dialogoTipoAmbienteActualizado = $event"
+    <Dialog
+      :show="dialogoTipoAmbienteActualizado"
+      title="Registro actualizado con éxito"
+      text="Tipo de ambiente actualizado"
+      @close-dialog="dialogoTipoAmbienteActualizado = $event"
     />
 
-    <pre>{{ $data }}</pre>
+    <!-- Dialogos de eliminación -->
+    <Dialog_confirm_delete
+      style="border: 2px solid red"
+      :show="dialogo1EliminarTipoAmbiente"
+      title="Estás seguro que quieres eliminar este tipo de ambiente?"
+      :confirmDeleteMethod="confirmarEliminacion"
+      @close-dialog="dialogo1EliminarTipoAmbiente = $event"
+    />
+
+    <Dialog
+      :show="dialogo2EliminarTipoAmbiente"
+      title="Registro eliminado con éxito"
+      text="Tipo de ambiente eliminado"
+      @close-dialog="dialogo2EliminarTipoAmbiente = $event"
+    />
+
+    <!-- <pre>{{ $data }}</pre> -->
   </v-container>
 </template>
 
 <script>
 import axios from "axios";
 import Tabla from "../components/Tabla.vue"
-import Dialogo from "../components/Dialogo.vue"
+import Dialog from "../components/Dialog.vue"
+import Dialog_confirm_delete from "../components/Dialog-confirm-delete.vue"
 
 export default {
-  components: { Tabla, Dialogo },
+  components: { Tabla, Dialog, Dialog_confirm_delete },
   props: {
     datos: Object,
     mostrar: Boolean,
@@ -103,12 +130,15 @@ export default {
       cabeceraTabla: [
         {text: "Codigo", value: "codigo"},
         {text: "Nombre", value: "nombre"},
-        {text: "Acciones", value: "acciones"},
+        {text: "Acciones", value: "actions"},
       ],
       modoEdicion: false,
+      itemEliminar: null,
       loading: false,
       dialogoTipoAmbienteCreado: false,
       dialogoTipoAmbienteActualizado: false,
+      dialogo1EliminarTipoAmbiente: false,
+      dialogo2EliminarTipoAmbiente: false,
       camposRules: [(v) => !!v || "Campo es requerido"],
     };
   },
@@ -125,48 +155,77 @@ export default {
     },
 
     async guardar() {
+      if (this.$refs.form.validate()){
+        this.loading = true
+  
+        try {
+          await axios.post(`${this.api}/tipo-ambiente/crear`, this.paquete)
+          
+          this.loading = false
+          this.cargarTiposDeAmbientes()
+          this.limpiarFormulario()
+          this.dialogoTipoAmbienteCreado = true
+
+        } catch (error) {
+          console.error(error)
+        }
+      } 
+    },
+
+    editarRegistro(item){
+      if (item._id){
+        item.id = item._id
+        delete item._id
+      }
+      delete item.__v
+      window.scrollTo(0, 0)
+      this.paquete = { ...item }
+      this.modoEdicion = true
+    },
+
+    async guardarEdicion(){
+      if (this.$refs.form.validate()){
+        this.loading = true
+        
+        try {
+          await axios.put(`${this.api}/tipo-ambiente/actualizar`, this.paquete)
+  
+          this.loading = false
+          this.modoEdicion = false
+          this.cargarTiposDeAmbientes()
+          this.limpiarFormulario()
+          this.dialogoTipoAmbienteActualizado = true
+  
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    },
+
+    eliminarRegistro(item){
+      this.itemEliminar = item
+      this.dialogo1EliminarTipoAmbiente = true
+    },
+
+    async confirmarEliminacion(){
       this.loading = true
 
       try {
-        await axios.post(`${this.api}/tipo-ambiente/crear`, this.paquete)
-        
+        await axios.delete(`${this.api}/tipo-ambiente/eliminar/${this.itemEliminar._id}`)
+
+        this.loading = false
+        this.itemEliminar = null
+        this.cargarTiposDeAmbientes()
+        this.dialogo1EliminarTipoAmbiente = false
+        this.dialogo2EliminarTipoAmbiente = true
+
       } catch (error) {
         console.error(error)
-
-      } finally {
-        this.loading = false
-        this.cargarTiposDeAmbientes()
-        this.dialogoTipoAmbienteCreado = true
-        this.limpiarFormulario()
       }
-     
     },
 
-    // editarRegistro(item){
-    //   item.id = item._id
-    //   delete item._id
-    //   delete item.__v
-    //   this.paquete = { ...item }
-    //   this.modoEdicion = true
-    // },
-
-    // async guardarEdicion(){
-    //   this.loading = true
-
-    //   try {
-    //     await axios.put(`${this.api}/tipo-ambiente/...`, this.paquete)
-
-    //     this.loading = false
-    //     this.dialogoTipoAmbienteActualizado = true
-    //     this.cargarTiposDeAmbientes()
-    //     this.limpiarFormulario()
-
-    //   } catch (error) {
-    //     console.error(error)
-    //   }
-    // },
-
     limpiarFormulario(){
+      this.$refs.form.resetValidation()
       this.paquete = {
         codigo: null,
         nombre: null

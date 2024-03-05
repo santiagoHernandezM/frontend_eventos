@@ -5,7 +5,7 @@
         <!-- Encabezado -->
         <v-app-bar flat color="rgb(52,188,52)">
           <v-toolbar-title class="text-h6 white--text pl-0">
-            CREAR CENTRO
+            {{ modoEdicion ? 'EDITAR CENTRO' : 'CREAR CENTRO' }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
@@ -14,22 +14,24 @@
         <!-- Formulario -->
         <v-card-text class="carta">
           <v-form ref="form">
-            <v-container>
+            <v-container style="padding-bottom: 0;">
               <v-row>
                 <v-col cols="6">
                   <v-text-field
                     label="Codigo del centro"
-                    prepend-icon="mdi-key"
+                    append-icon="mdi mdi-key-variant"
                     v-model="paquete.codigo"
                     :rules="camposRules"
+                    outlined
                   ></v-text-field>
                 </v-col>
                 <v-col cols="6">
                   <v-text-field
+                    append-icon="mdi mdi-pencil"
                     label="Nombre"
-                    prepend-icon="mdi-key"
                     v-model="paquete.nombre"
                     :rules="camposRules"
+                    outlined
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -41,10 +43,11 @@
                     item-text="nombre"
                     item-value="_id"
                     label="Seleccione regional"
-                    prepend-icon="map"
+                    append-icon="fa fa-building"
                     v-model="paquete.regional"
                     :rules="camposRules"
-                    @change="cargarDptoYMunicipio()"
+                    outlined
+                    @change="cargarDpto()"
                   ></v-select>
                 </v-col>
               </v-row>
@@ -52,22 +55,13 @@
               <v-row>
                 <v-col cols="6">
                   <v-text-field
-                    prepend-icon="mdi-key"
+                    append-icon="mdi mdi-map-search"
                     label="Departamento"
-                    v-model="paquete.departamento"
+                    v-model="departamento"
                     :rules="camposRules"
+                    outlined
                     readonly
-                  ></v-text-field>
-                 <!-- <v-select
-                    :items="departamentos"
-                    item-text="departamento"
-                    item-value="departamento"
-                    label="Seleccione departamento"
-                    v-model="paquete.departamento"
-                    :rules="camposRules"
-                    prepend-icon="map"
-                  ></v-select>
-                 -->
+                  ></v-text-field>                 
                 </v-col>
                 <v-col cols="6">
                   <v-select
@@ -75,9 +69,10 @@
                     label="Seleccione una ciudad"
                     v-model="paquete.municipio"
                     :rules="camposRules"
+                    outlined
                     color="black"
                     item-color="black"
-                    prepend-icon="map"
+                    append-icon="mdi mdi-map-marker-radius"
                   ></v-select>
                 </v-col>
               </v-row>
@@ -86,10 +81,21 @@
           </v-form>
         </v-card-text>
 
-        <!-- Acciones: Crear / Actualizar -->
-        <v-card-actions>
-          <v-btn class="ma-2" outlined color="indigo" @click="modoEdicion ? guardarEdicion() : guardar()">
+        <!-- Acciones: Limpiar / Editar - Cancelar -->
+        <v-card-actions style="max-width: 95%; margin: auto;">
+          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
+          </v-btn>
+          
+          
+          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
             {{ modoEdicion ? 'Editar' : 'Crear' }}
+          </v-btn>
+          
+          <v-spacer></v-spacer>
+
+          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+            Cancelar
           </v-btn>
         </v-card-actions>
 
@@ -98,10 +104,10 @@
 
     <!-- Tabla -->
     <Tabla
-    :items="centros"
-    :cabecera="cabeceraTabla"
-    :metodoEditar="editarRegistro"
-    :metodoEliminar="eliminarRegistro"
+      :items="centros"
+      :cabecera="cabeceraTabla"
+      :metodoEditar="editarRegistro"
+      :metodoEliminar="eliminarRegistro"
     />
 
     <!-- Cargando... -->
@@ -110,37 +116,35 @@
     </v-overlay>
 
     <!-- Dialogo de creación -->
-    <Dialogo
-    :show="dialogoCentroCreado"
-    title="Registro creado con éxito"
-    text="Centro creado"
-    @close-dialog="dialogoCentroCreado = $event"
+    <Dialog
+      :show="dialogoCentroCreado"
+      title="Registro creado con éxito"
+      text="Centro creado"
+      @close-dialog="dialogoCentroCreado = $event"
     />
 
     <!-- Dialogo de actualización  -->
-    <Dialogo
-    :show="dialogoCentroActualizado"
-    title="Registro actualizado con éxito"
-    text="Centro actualizado"
-    @close-dialog="dialogoCentroActualizado = $event"
+    <Dialog
+      :show="dialogoCentroActualizado"
+      title="Registro actualizado con éxito"
+      text="Centro actualizado"
+      @close-dialog="dialogoCentroActualizado = $event"
     />
 
     <!-- Dialogos de eliminación -->
-    <v-dialog v-model="dialogo1EliminarCentro" max-width="600">
-      <v-card>
-        <v-card-title class="headline">¿Estás seguro que quieres eliminar este centro?</v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="dialogo1EliminarCentro = false">Cancelar</v-btn>
-          <v-btn color="green darken-1" text @click="confirmarEliminacion">Aceptar</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <Dialogo
-    :show="dialogo2EliminarCentro"
-    title="Registro eliminado con éxito"
-    text="Centro eliminado"
-    @close-dialog="dialogo2EliminarCentro = $event"
+    <Dialog_confirm_delete
+      :show="dialogo1EliminarCentro"
+      title="Estás seguro que quieres eliminar este centro?"
+      text="También se eliminarán las sedes asociadas y todo lo que estas incluyen"
+      :confirmDeleteMethod="confirmarEliminacion"
+      @close-dialog="dialogo1EliminarCentro = $event"
+    />
+    
+    <Dialog
+      :show="dialogo2EliminarCentro"
+      title="Registro eliminado con éxito"
+      text="Centro eliminado"
+      @close-dialog="dialogo2EliminarCentro = $event"
     />
 
     <pre>{{ $data }}</pre>
@@ -150,12 +154,13 @@
 
 <script>
 import axios from "axios";
-import Dialogo from "../components/Dialogo.vue"
+import Dialog from "../components/Dialog.vue"
+import Dialog_confirm_delete from "../components/Dialog-confirm-delete.vue"
 import Tabla from "../components/Tabla.vue"
 const colombia = require("../json/ciudades");
 
 export default {
-  components: { Tabla, Dialogo },
+  components: { Tabla, Dialog, Dialog_confirm_delete },
   props: {
     datos: Object,
     mostrar: Boolean,
@@ -167,10 +172,10 @@ export default {
         codigo: null,
         nombre: null,
         regional: null,
-        // dpto no es requerido para crear un centro
-        departamento: null,
         municipio: null,
       },
+      // dpto no es requerido para crear un centro
+      departamento: null,
 
       cabeceraTabla: [
         {text: "Codigo", value: "codigo"},
@@ -196,17 +201,6 @@ export default {
   },
 
   methods: {
-    async cargarDptoYMunicipio(){
-      try {
-        const regional  = await axios.get(`${this.api}/regional/${this.paquete.regional}`);
-        this.paquete.departamento = regional.data.departamento
-        this.paquete.municipio = regional.data.municipio
-        
-      } catch (error) {
-        console.log(error)
-      }
-    },
-
     async cargarCentros(){
       try {
         const response = await axios.get(`${this.api}/centro`);
@@ -217,6 +211,16 @@ export default {
       }
 
     },
+    
+    async cargarDpto(){
+      try {
+        const regional  = await axios.get(`${this.api}/regional/${this.paquete.regional}`);
+        this.departamento = regional.data.departamento
+        
+      } catch (error) {
+        console.log(error)
+      }
+    },
 
     async guardar() {
       if (this.$refs.form.validate()){
@@ -225,25 +229,28 @@ export default {
         try {
           await axios.post(`${this.api}/centro/crear`, this.paquete)
   
+          this.loading = false,
+          this.cargarCentros()
+          this.limpiarFormulario()
+          this.dialogoCentroCreado = true
+
         } catch (error) {
           console.error(error)
   
-        } finally {
-          this.loading = false,
-          this.limpiarFormulario()
-          await this.cargarCentros()
-          this.dialogoCentroCreado = true
         }
       }
     },
 
     editarRegistro(item){
-      item.id = item._id
-      item.departamento = item.regional.departamento
-      delete item._id
+      if (item._id){
+        item.id = item._id
+        delete item._id
+      }
+      // item.departamento = item.regional.departamento
       delete item.__v
+      window.scrollTo(0, 0)
       this.paquete = {...item, regional: item.regional._id}
-      console.log(this.paquete)
+      this.departamento = item.regional.departamento
       this.modoEdicion = true
       
     },
@@ -256,10 +263,9 @@ export default {
           await axios.put(`${this.api}/centro/editar`, this.paquete)
   
           await this.cargarCentros()
-          this.limpiarFormulario()
           this.modoEdicion = false
           this.loading = false
-  
+          this.limpiarFormulario()
           this.dialogoCentroActualizado = true
   
         } catch (error) {
@@ -283,16 +289,15 @@ export default {
         this.dialogo1EliminarCentro = false
         this.dialogo2EliminarCentro = true
         this.itemEliminar = null
+        await this.cargarCentros()
 
       } catch (error) {
         console.error(error)
-
-      } finally {
-        await this.cargarCentros()
       }
     },
 
     limpiarFormulario(){
+      this.$refs.form.resetValidation()
       this.paquete = {
         codigo: null,
         nombre: null,
@@ -300,6 +305,7 @@ export default {
         departamento: null,
         municipio: null,
       }
+      this.departamento = null
     }
 
   },
@@ -314,16 +320,11 @@ export default {
     ciudades() {
       let ciudades = null;
       this.departamentos.find(dpto => {
-        if (dpto.departamento === this.paquete.departamento){
+        if (dpto.departamento === this.departamento){
           ciudades = dpto.ciudades
         }
       })
 
-      // for (var pos in this.departamentos) {
-      //   if (this.departamentos[pos].departamento == this.paquete.departamento) {
-      //     ciudades = this.departamentos[pos].ciudades;
-      //   }
-      // }
       return ciudades;
     },
   },

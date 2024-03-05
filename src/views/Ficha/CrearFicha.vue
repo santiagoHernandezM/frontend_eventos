@@ -2,18 +2,144 @@
   <v-container>
     <v-row justify="space-around">
       <v-card width="800">
+
+        <!-- Encabezado -->
         <v-app-bar flat color="rgb(52,188,52)">
           <v-toolbar-title class="text-h6 white--text pl-0">
-            CREAR FICHA
+            {{ modoEdicion ? 'EDITAR FICHA' : 'CREAR FICHA' }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
         </v-app-bar>
 
+        <!-- Formulario -->
         <v-card-text class="carta">
-          <v-form>
-            <v-container>
+          <v-form ref="form">
+            <v-container style="padding-bottom: 0;">
               <v-row>
+                <v-col cols="6">
+                  <v-text-field
+                    label="Código"
+                    prepend-inner-icon="mdi mdi-key-variant"
+                    v-model="paquete.codigo"
+                    :rules="camposRules"
+                  ></v-text-field>
+                </v-col>
+              </v-row>              
+
+              <v-row>
+                <v-col cols="6">
+                  <v-text-field
+                    class="mr-2"
+                    v-model="paquete.fechaInicio"
+                    type="date"
+                    label="Fecha de inicio"
+                    @input="validarFecha"
+                    outlined
+                    :rules="camposRules"
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="6">
+                  <v-text-field
+                    class="ml-2"
+                    v-model="paquete.fechaFin"
+                    type="date"
+                    label="Fecha de fin"
+                    outlined
+                    @input="validarFecha"
+                    :rules="camposRules"
+                  ></v-text-field>
+                </v-col>
+              </v-row>              
+
+              <v-row>
+                <v-col cols="6">
+                  <v-select
+                    :items="sedes"
+                    item-text="nombre"
+                    item-value="_id"
+                    label="Seleccione Sede"
+                    v-model="paquete.sede"
+                    append-icon="mdi mdi-home-city"
+                    @change="cargarambientes()"
+                    :rules="camposRules"
+                    outlined
+                  ></v-select>
+                </v-col>
+
+                <v-col cols="6">
+                  <v-select
+                    :items="ambientes"
+                    item-text="codigo"
+                    item-value="_id"
+                    label="Seleccione Ambiente"
+                    v-model="paquete.ambiente"
+                    append-icon="mdi mdi-home"
+                    :rules="camposRules"
+                    outlined
+                  ></v-select>
+                </v-col>
+              </v-row>              
+
+              <v-row>
+                <v-col cols="6">
+                  <v-select
+                    :items="programas"
+                    item-text="nombre"
+                    item-value="_id"
+                    label="Seleccione Programa"
+                    v-model="paquete.programa"
+                    append-icon="mdi mdi-school"
+                    @change="instrucsedeprograma()"
+                    :rules="camposRules"
+                    outlined
+                  ></v-select>
+                </v-col>
+
+                <v-col cols="6">
+                  <v-select
+                    :items="instructores"
+                    item-text="nombre"
+                    item-value="_id"
+                    label="Seleccione Instructor Lider de Ficha"
+                    v-model="paquete.instructor"
+                    append-icon="mdi mdi-account-tie"
+                    :rules="camposRules"
+                    outlined
+                  ></v-select>
+                </v-col>
+              </v-row>              
+
+              <v-row>
+                <v-col cols="6">
+                  <v-select
+                    :items="diasSemana"
+                    item-text="diasSemana"
+                    item-value="diasSemana"
+                    label="Seleccione Día"
+                    v-model="dia"
+                    append-icon="mdi-calendar"
+                    :rules="camposRules"
+                    outlined
+                  ></v-select>
+                </v-col>
+                
+                <v-col cols="6">
+                  <v-select
+                    :items="jornadas"
+                    item-text="descripcion"
+                    item-value="desctipcion"
+                    label="Seleccione Jornada"
+                    v-model="jornadaInput"
+                    append-icon="mdi-calendar"
+                    :rules="camposRules"
+                    outlined
+                  ></v-select>
+                </v-col>
+              </v-row>              
+
+              <!-- <v-row>
                 <v-col>
                   <v-row>
                     <v-col cols="6">
@@ -24,9 +150,7 @@
                         class="text-green"
                         v-model="paquete.codigo"
                         :rules="camposRules"
-                      >
-                    
-                    </v-text-field>
+                      ></v-text-field>
                     </v-col>
                   </v-row>
 
@@ -208,20 +332,37 @@
 
 
               </v-col>
-              </v-row>
+              </v-row> -->
             </v-container>
           </v-form>
         </v-card-text>
 
-       
+        <!-- Acciones: Limpiar / Editar - Cancelar -->
+        <v-card-actions style="max-width: 95%; margin: auto;">
+          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
+          </v-btn>
 
-        <v-card-actions class="mx-12">
-          <v-btn class="ma-2" color="rgb(52,188,52)" @click="guardar()">
-            Crear Ficha
+          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
+            {{ modoEdicion ? 'Editar' : 'Crear' }}
+          </v-btn>
+
+          <v-spacer></v-spacer>
+
+          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+            Cancelar
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-row>
+
+    <!-- Tabla -->
+    <!-- <Tabla
+    :items="fichas"
+    :cabecera="cabeceraTabla"
+    :metodoEliminar="eliminarRegistro"
+    :metodoEditar="editarRegistro"
+    /> -->
 
     <!-- Modal de advertencias y errores -->
     <!-- <v-btn @click="mostrarModal">Mostrar Modal</v-btn> -->
@@ -237,10 +378,7 @@
       </v-card>
     </v-dialog>
     
-    <pre>
-          {{ $data }}
-        </pre
-    >
+    <pre>{{ $data }}</pre>
     
   </v-container>
 </template>
@@ -248,15 +386,17 @@
 <script>
 import axios from "axios";
 import dia from "../../json/dia";
+import Tabla from "../../components/Tabla.vue"
 
 export default {
   props: {
     datos: Object,
+    Tabla
   },
   data() {
     
     return {
-       api : `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+      api : `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
       paquete: {
         codigo: null,
         fechaInicio: null,
@@ -267,7 +407,12 @@ export default {
         instructor: null,
         jornadas: [],
       },
+      fichas: [],
+      sedes: [],
+      ambientes: [],
+      programas: [],
       camposRules: [(v) => !!v || "Campo es requerido"],
+      modoEdicion: false,
       // titulos de la primera tabla
       cabeceraTabla: [
         { text: "Día", value: "dia" },
@@ -278,9 +423,6 @@ export default {
       // items de la tabla
       listItems: [],
       // datos de del backend
-      ambientes: null,
-      programas: null,
-      sedes: null,
       instructores: null,
       diasSemana: null,
       jornadaInput: null,
@@ -445,21 +587,29 @@ export default {
   async mounted() {
     // obtenemos las jornadas
     
-    const response = await axios.get(`${this.api}/jornada/`);
-    this.jornadas = response.data;
+    // const response = await axios.get(`${this.api}/jornada/`);
+    // this.jornadas = response.data;
 
     // obtener los ambientes
-    this.paquete.centro = this.$store.getters.usuario.centro
-    const responsede = await axios.get(`${this.api}/sedes/centro/${this.paquete.centro}`);
-   
+    // this.paquete.centro = this.$store.getters.usuario.centro
+
+    // Creando sedes del centro con el id especificado (centro1), modificarlo
+    const responseSedes = await axios.get(`${this.api}/sedes/centro/65e60d6975eac4503d838d4d`);
+    this.sedes = responseSedes.data;
     
-    this.sedes = responsede.data;
+    // Creando ambientes de la sede con el id especificado (sede1), modificarlo
+    const responseAmbientes = await axios.get(`${this.api}/ambiente/sede/65e386914055ac8b84439867`);
+    this.ambientes = responseAmbientes.data;
+
+
+    const responseProgramas = await axios.get(`${this.api}/programas`);
+    this.programas = responseProgramas.data;
 
    
     // obtener los programas
-    const programasResponse = await axios.get(`${this.api}/programas/`);
-    this.programas = programasResponse.data;
-    this.programaVista = this.programas;
+    // const programasResponse = await axios.get(`${this.api}/programas/`);
+    // this.programas = programasResponse.data;
+    // this.programaVista = this.programas;
 
     // obtener instructores
     
