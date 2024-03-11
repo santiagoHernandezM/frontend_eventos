@@ -30,6 +30,7 @@
                     label="Nombre"
                     append-icon="mdi mdi-pencil"
                     v-model="paquete.nombre"
+                    @input="convertToUppercase"
                     :rules="camposRules"
                     outlined
                   ></v-text-field>
@@ -41,17 +42,17 @@
 
         <!-- Acciones: Limpiar / Editar - Cancelar -->
         <v-card-actions style="max-width: 95%; margin: auto;">
-          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
-            Limpiar
+          <v-btn :class="['ma-2', colorBtn]" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
+            {{ modoEdicion ? 'Editar' : 'Crear' }}
           </v-btn>
 
-          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
-            {{ modoEdicion ? 'Editar' : 'Crear' }}
+          <v-btn class="ma-2 colorBtnLimpiar" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
           </v-btn>
 
           <v-spacer></v-spacer>
 
-          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+          <v-btn class="ma-2 white--text colorBtnEliminar" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
             Cancelar
           </v-btn>
         </v-card-actions>
@@ -72,7 +73,7 @@
     </v-overlay>
 
     <!-- Dialogo de creación -->
-    <Dialog
+    <Dialogo
       :show="dialogoTipoAmbienteCreado"
       title="Registro creado con éxito"
       text="Tipo de ambiente creado"
@@ -80,7 +81,7 @@
     />
 
     <!-- Dialogo de actualización -->
-    <Dialog
+    <Dialogo
       :show="dialogoTipoAmbienteActualizado"
       title="Registro actualizado con éxito"
       text="Tipo de ambiente actualizado"
@@ -88,7 +89,7 @@
     />
 
     <!-- Dialogos de eliminación -->
-    <Dialog_confirm_delete
+    <Dialogo_confirm_delete
       style="border: 2px solid red"
       :show="dialogo1EliminarTipoAmbiente"
       title="Estás seguro que quieres eliminar este tipo de ambiente?"
@@ -96,7 +97,7 @@
       @close-dialog="dialogo1EliminarTipoAmbiente = $event"
     />
 
-    <Dialog
+    <Dialogo
       :show="dialogo2EliminarTipoAmbiente"
       title="Registro eliminado con éxito"
       text="Tipo de ambiente eliminado"
@@ -110,11 +111,11 @@
 <script>
 import axios from "axios";
 import Tabla from "../components/Tabla.vue"
-import Dialog from "../components/Dialog.vue"
-import Dialog_confirm_delete from "../components/Dialog-confirm-delete.vue"
+import Dialogo from "../components/Dialog.vue"
+import Dialogo_confirm_delete from "../components/Dialog-confirm-delete.vue"
 
 export default {
-  components: { Tabla, Dialog, Dialog_confirm_delete },
+  components: { Tabla, Dialogo, Dialogo_confirm_delete },
   props: {
     datos: Object,
     mostrar: Boolean,
@@ -224,6 +225,10 @@ export default {
       }
     },
 
+    convertToUppercase(){
+      this.paquete.nombre = this.paquete.nombre.toUpperCase()
+    },
+
     limpiarFormulario(){
       this.$refs.form.resetValidation()
       this.paquete = {
@@ -235,18 +240,13 @@ export default {
 
   async mounted(){
     this.cargarTiposDeAmbientes()
-  }
-  // computed: {
-  //   ambient() {
-  //     var tipoAmb = null;
-  //     for (let pos in this.typeAmbiente) {
-  //       if (this.typeAmbiente[pos] == this.paquete.tipo) {
-  //         tipoAmb = this.typeAmbiente[pos].tipoAmb;
-  //       }
-  //     }
-  //     return tipoAmb;
-  //   },
-  // },
+  },
+
+  computed: {
+    colorBtn(){
+      return this.modoEdicion ? 'colorBtnEditar' : 'colorBtnCrear'
+    }
+  },
 };
 </script>
 

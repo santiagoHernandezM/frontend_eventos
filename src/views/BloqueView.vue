@@ -21,6 +21,7 @@
                     label="Nombre"
                     append-icon="mdi mdi-pencil"
                     v-model="paquete.nombre"
+                    @input="convertToUppercase"
                     :rules="camposRules"
                     outlined
                   ></v-text-field>
@@ -30,6 +31,7 @@
                     label="Nomenclatura"
                     append-icon="mdi mdi-draw-pen"
                     v-model="paquete.nomenclatura"
+                    @input="convertToUppercase"
                     :rules="camposRules"
                     outlined
                   ></v-text-field>
@@ -57,17 +59,17 @@
 
         <!-- Acciones: Limpiar / Editar - Cancelar -->
         <v-card-actions style="max-width: 95%; margin: auto;">
-          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
-            Limpiar
+          <v-btn :class="['ma-2', colorBtn]" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
+            {{ modoEdicion ? 'Editar' : 'Crear' }}
           </v-btn>
 
-          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
-            {{ modoEdicion ? 'Editar' : 'Crear' }}
+          <v-btn class="ma-2 colorBtnLimpiar" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
           </v-btn>
 
           <v-spacer></v-spacer>
 
-          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+          <v-btn class="ma-2 white--text colorBtnEliminar" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
             Cancelar
           </v-btn>
         </v-card-actions>
@@ -88,7 +90,7 @@
     </v-overlay>
 
     <!-- Dialogo de creación -->
-    <Dialog
+    <Dialogo
       :show="dialogoBloqueCreado"
       title="Registro creado con éxito"
       text="Bloque creado"
@@ -96,7 +98,7 @@
     />
 
     <!-- Dialogo de actualización -->
-    <Dialog
+    <Dialogo
       :show="dialogoBloqueActualizado"
       title="Registro actualizado con éxito"
       text="Bloque actualizado"
@@ -104,14 +106,14 @@
     />
 
     <!-- Dialogos de eliminación -->
-    <Dialog_confirm_delete
+    <Dialogo_confirm_delete
       :show="dialogo1EliminarBloque"
       title="Estás seguro que quieres eliminar este bloque?"
       :confirmDeleteMethod="confirmarEliminacion"
       @close-dialog="dialogo1EliminarBloque = $event"
     />
 
-    <Dialog
+    <Dialogo
       :show="dialogo2EliminarBloque"
       title="Registro eliminado con éxito"
       text="Bloque eliminado"
@@ -125,11 +127,11 @@
 <script>
 import axios from "axios";
 import Tabla from "../components/Tabla.vue"
-import Dialog from "../components/Dialog.vue"
-import Dialog_confirm_delete from "../components/Dialog-confirm-delete.vue"
+import Dialogo from "../components/Dialog.vue"
+import Dialogo_confirm_delete from "../components/Dialog-confirm-delete.vue"
 
 export default {
-  components: { Tabla, Dialog, Dialog_confirm_delete },
+  components: { Tabla, Dialogo, Dialogo_confirm_delete },
 
   data() {
     return {
@@ -240,6 +242,11 @@ export default {
       }
     },
 
+    convertToUppercase(){
+      this.paquete.nombre = this.paquete.nombre.toUpperCase()
+      this.paquete.nomenclatura = this.paquete.nomenclatura.toUpperCase()
+    },
+
     limpiarFormulario(){
       this.$refs.form.resetValidation()
       this.paquete = {
@@ -258,17 +265,11 @@ export default {
     await this.cargarBloques()
   },
 
-  // computed: {
-  //   ambient() {
-  //     var tipoAmb = null;
-  //     for (let pos in this.typeAmbiente) {
-  //       if (this.typeAmbiente[pos] == this.paquete.tipo) {
-  //         tipoAmb = this.typeAmbiente[pos].tipoAmb;
-  //       }
-  //     }
-  //     return tipoAmb;
-  //   },
-  // },
+  computed: {
+    colorBtn(){
+      return this.modoEdicion ? 'colorBtnEditar' : 'colorBtnCrear'
+    }
+  },
 };
 </script>
 

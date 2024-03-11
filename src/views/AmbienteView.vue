@@ -78,17 +78,17 @@
 
         <!-- Acciones: Limpiar / Editar - Cancelar -->
         <v-card-actions style="max-width: 95%; margin: auto;">
-          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
-            Limpiar
+          <v-btn :class="['ma-2', colorBtn]" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
+            {{ modoEdicion ? 'Editar' : 'Crear' }}
           </v-btn>
 
-          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
-            {{ modoEdicion ? 'Editar' : 'Crear' }}
+          <v-btn class="ma-2 colorBtnLimpiar" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
           </v-btn>
 
           <v-spacer></v-spacer>
 
-          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+          <v-btn class="ma-2 white--text colorBtnEliminar" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
             Cancelar
           </v-btn>
         </v-card-actions>
@@ -109,7 +109,7 @@
     </v-overlay>
 
     <!-- Dialogo de creación -->
-    <Dialog
+    <Dialogo
       :show="dialogoAmbienteCreado"
       title="Registro creado con éxito"
       text="Ambiente creado"
@@ -117,7 +117,7 @@
     />
 
     <!-- Dialogo de actualización -->
-    <Dialog
+    <Dialogo
       :show="dialogoAmbienteActualizado"
       title="Registro actualizado con éxito"
       text="Ambiente actualizado"
@@ -125,14 +125,14 @@
     />
 
     <!-- Dialogos de eliminación -->
-    <Dialog_confirm_delete
+    <Dialogo_confirm_delete
       :show="dialogo1EliminarAmbiente"
       title="Estás seguro que quieres eliminar este ambiente?"
       :confirmDeleteMethod="confirmarEliminacion"
       @close-dialog="dialogo1EliminarAmbiente = $event"
     />
 
-    <Dialog
+    <Dialogo
       :show="dialogo2EliminarAmbiente"
       title="Registro eliminado con éxito"
       text="Ambiente eliminado"
@@ -146,13 +146,13 @@
 <script>
 import axios from "axios";
 import Tabla from "../components/Tabla"
-import Dialog from "../components/Dialog.vue"
-import Dialog_confirm_delete from "../components/Dialog-confirm-delete.vue"
+import Dialogo from "../components/Dialog.vue"
+import Dialogo_confirm_delete from "../components/Dialog-confirm-delete.vue"
 //const tipoAmbiente = require("../json/tipoAmbiente");
 // const sedes = require("../json/pruebaSedes");
 
 export default {
-  components: { Tabla, Dialog, Dialog_confirm_delete },
+  components: { Tabla, Dialogo, Dialogo_confirm_delete },
   data() {
     return {
       api : `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
@@ -317,7 +317,11 @@ export default {
   },
 
 
-  computed: {},
+  computed: {
+    colorBtn(){
+      return this.modoEdicion ? 'colorBtnEditar' : 'colorBtnCrear'
+    }
+  },
 };
 </script>
 

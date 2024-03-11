@@ -21,6 +21,7 @@
                     append-icon="mdi mdi-pencil"
                     label="Nombre de la sede"
                     v-model="paquete.nombre"
+                    @input="convertToUppercase"
                     :rules="camposRules"
                     outlined
                   ></v-text-field>
@@ -47,6 +48,7 @@
                     append-icon="mdi mdi-map-marker-outline"
                     label="Lugar de funcionamiento"
                     v-model="paquete.lugar_funcionamiento"
+                    @input="convertToUppercase"
                     :rules="camposRules"
                     outlined
                   ></v-text-field>
@@ -84,17 +86,17 @@
 
         <!-- Acciones: Limpiar / Editar - Cancelar -->
         <v-card-actions style="max-width: 95%; margin: auto;">
-          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
-            Limpiar
+          <v-btn :class="['ma-2', colorBtn]" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
+            {{ modoEdicion ? 'Editar' : 'Crear' }}
           </v-btn>
 
-          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
-            {{ modoEdicion ? 'Editar' : 'Crear' }}
+          <v-btn class="ma-2 colorBtnLimpiar" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
           </v-btn>
 
           <v-spacer></v-spacer>
 
-          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+          <v-btn class="ma-2 white--text colorBtnEliminar" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
             Cancelar
           </v-btn>
         </v-card-actions>
@@ -116,7 +118,7 @@
     </v-overlay>
 
     <!-- Dialogo de creación -->
-    <Dialog
+    <Dialogo
       :show="dialogoSedeCreada"
       title="Registro creado con éxito"
       text="Sede creada"
@@ -124,7 +126,7 @@
     />
 
     <!-- Dialogo de actualización -->
-    <Dialog
+    <Dialogo
       :show="dialogoSedeActualizada"
       title="Registro actualizado con éxito"
       text="Sede actualizada"
@@ -132,7 +134,7 @@
     />
 
     <!-- Dialogos de eliminación -->
-    <Dialog_confirm_delete
+    <Dialogo_confirm_delete
       :show="dialogo1EliminarSede"
       title="Estás seguro que quieres eliminar esta sede?"
       text="También se eliminarán los bloques y ambientes asociados"
@@ -140,7 +142,7 @@
       @close-dialog="dialogo1EliminarSede = $event"
     />
 
-    <Dialog
+    <Dialogo
       :show="dialogo2EliminarSede"
       title="Registro eliminado con éxito"
       text="Sede eliminada"
@@ -152,13 +154,19 @@
 </template>
 <script>
 import axios from "axios";
-import Dialog from "../components/Dialog.vue"
-import Dialog_confirm_delete from "../components/Dialog-confirm-delete.vue"
+import Dialogo from "../components/Dialog.vue"
+import Dialogo_confirm_delete from "../components/Dialog-confirm-delete.vue"
 import Tabla from "../components/Tabla.vue"
-const colombia = require("../json/ciudades");
+
+let colombia = require("../json/ciudades");
+colombia = colombia.map(dpto => ({
+  id: dpto.id,
+  departamento: dpto.departamento.toUpperCase(),
+  ciudades: dpto.ciudades.map(ciudad => ciudad = ciudad.toUpperCase())
+}))
 
 export default {
-  components: { Tabla, Dialog, Dialog_confirm_delete },
+  components: { Tabla, Dialogo, Dialogo_confirm_delete },
   data() {
     return {
       api : `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
@@ -291,6 +299,11 @@ export default {
       }
     },
 
+    convertToUppercase(){
+      this.paquete.nombre = this.paquete.nombre.toUpperCase()
+      this.paquete.lugar_funcionamiento = this.paquete.lugar_funcionamiento.toUpperCase()
+    },
+
     limpiarFormulario(){
       this.$refs.form.resetValidation()
       this.paquete = {
@@ -324,6 +337,10 @@ export default {
       }
       return ciudades;
     },
+
+    colorBtn(){
+      return this.modoEdicion ? 'colorBtnEditar' : 'colorBtnCrear'
+    }
   },
 };
 </script>

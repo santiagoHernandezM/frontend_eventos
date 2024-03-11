@@ -339,17 +339,17 @@
 
         <!-- Acciones: Limpiar / Editar - Cancelar -->
         <v-card-actions style="max-width: 95%; margin: auto;">
-          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
-            Limpiar
-          </v-btn>
-
-          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
+          <v-btn :class="['ma-2', colorBtn]" :style="{'color': '#fff'}" @click="modoEdicion ? guardarEdicion() : guardar()">
             {{ modoEdicion ? 'Editar' : 'Crear' }}
           </v-btn>
 
+          <v-btn class="ma-2 colorBtnLimpiar" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
+          </v-btn>
+          
           <v-spacer></v-spacer>
 
-          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+          <v-btn class="ma-2 white--text colorBtnEliminar" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
             Cancelar
           </v-btn>
         </v-card-actions>
@@ -623,6 +623,10 @@ export default {
 
       return this.ambientes.filter((item) => item.sede == this.paquete.sede);
     },
+
+    colorBtn(){
+      return this.modoEdicion ? 'colorBtnEditar' : 'colorBtnCrear'
+    }
   },
 };
 </script>

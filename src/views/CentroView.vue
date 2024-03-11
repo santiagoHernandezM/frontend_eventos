@@ -30,6 +30,7 @@
                     append-icon="mdi mdi-pencil"
                     label="Nombre"
                     v-model="paquete.nombre"
+                    @input="convertToUppercase"
                     :rules="camposRules"
                     outlined
                   ></v-text-field>
@@ -83,18 +84,17 @@
 
         <!-- Acciones: Limpiar / Editar - Cancelar -->
         <v-card-actions style="max-width: 95%; margin: auto;">
-          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
-            Limpiar
-          </v-btn>
-          
-          
-          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
+          <v-btn :class="['ma-2', colorBtn]" :style="{'color': '#fff'}" @click="modoEdicion ? guardarEdicion() : guardar()">
             {{ modoEdicion ? 'Editar' : 'Crear' }}
+          </v-btn>
+
+          <v-btn class="ma-2 colorBtnLimpiar" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
           </v-btn>
           
           <v-spacer></v-spacer>
 
-          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+          <v-btn class="ma-2 white--text colorBtnEliminar" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
             Cancelar
           </v-btn>
         </v-card-actions>
@@ -116,7 +116,7 @@
     </v-overlay>
 
     <!-- Dialogo de creación -->
-    <Dialog
+    <Dialogo
       :show="dialogoCentroCreado"
       title="Registro creado con éxito"
       text="Centro creado"
@@ -124,7 +124,7 @@
     />
 
     <!-- Dialogo de actualización  -->
-    <Dialog
+    <Dialogo
       :show="dialogoCentroActualizado"
       title="Registro actualizado con éxito"
       text="Centro actualizado"
@@ -132,7 +132,7 @@
     />
 
     <!-- Dialogos de eliminación -->
-    <Dialog_confirm_delete
+    <Dialogo_confirm_delete
       :show="dialogo1EliminarCentro"
       title="Estás seguro que quieres eliminar este centro?"
       text="También se eliminarán las sedes asociadas y todo lo que estas incluyen"
@@ -140,7 +140,7 @@
       @close-dialog="dialogo1EliminarCentro = $event"
     />
     
-    <Dialog
+    <Dialogo
       :show="dialogo2EliminarCentro"
       title="Registro eliminado con éxito"
       text="Centro eliminado"
@@ -154,13 +154,19 @@
 
 <script>
 import axios from "axios";
-import Dialog from "../components/Dialog.vue"
-import Dialog_confirm_delete from "../components/Dialog-confirm-delete.vue"
+import Dialogo from "../components/Dialog.vue"
+import Dialogo_confirm_delete from "../components/Dialog-confirm-delete.vue"
 import Tabla from "../components/Tabla.vue"
-const colombia = require("../json/ciudades");
+
+let colombia = require("../json/ciudades");
+colombia = colombia.map(dpto => ({
+  id: dpto.id,
+  departamento: dpto.departamento.toUpperCase(),
+  ciudades: dpto.ciudades.map(ciudad => ciudad = ciudad.toUpperCase())
+}))
 
 export default {
-  components: { Tabla, Dialog, Dialog_confirm_delete },
+  components: { Tabla, Dialogo, Dialogo_confirm_delete },
   props: {
     datos: Object,
     mostrar: Boolean,
@@ -190,7 +196,7 @@ export default {
       dialogoCentroActualizado: false,
       dialogo1EliminarCentro: false,
       dialogo2EliminarCentro: false,
-
+      modoEdicion: false,
       itemEliminar: null,
 
       centros: [],
@@ -296,6 +302,10 @@ export default {
       }
     },
 
+    convertToUppercase(){
+      this.paquete.nombre = this.paquete.nombre.toUpperCase()
+    },
+
     limpiarFormulario(){
       this.$refs.form.resetValidation()
       this.paquete = {
@@ -327,6 +337,14 @@ export default {
 
       return ciudades;
     },
+
+    textColorBtn(){
+      return this.modoEdicion ? '#000' : '#fff'
+    },
+
+    colorBtn(){
+      return this.modoEdicion ? 'colorBtnEditar' : 'colorBtnCrear'
+    }
   },
 };
 </script>

@@ -32,9 +32,10 @@
                 </v-col>
                 <v-col cols="6">
                   <v-text-field
-                    append-icon="mdi mdi-pencil"
                     v-model="paquete.nombre"
+                    @input="convertToUppercase"
                     label="Nombre de la regional"                    
+                    append-icon="mdi mdi-pencil"
                     :rules="camposRules"
                     outlined
                   ></v-text-field>
@@ -70,18 +71,17 @@
 
         <!-- Acciones: Limpiar / Editar - Cancelar -->
         <v-card-actions style="max-width: 95%; margin: auto;">
-          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
+          <v-btn :class="['ma-2', colorBtn]" :style="{'color': '#fff'}" @click="modoEdicion ? guardarEdicion() : guardar()">
             {{ modoEdicion ? 'Editar' : 'Crear' }}
           </v-btn>
 
-          <v-btn class="ma-2" color="warning" v-if="!modoEdicion" @click="limpiarFormulario()">
+          <v-btn class="ma-2 colorBtnLimpiar" v-if="!modoEdicion" @click="limpiarFormulario()">
             Limpiar
           </v-btn>
 
-
           <v-spacer></v-spacer>
 
-          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+          <v-btn class="ma-2 white--text colorBtnEliminar" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
             Cancelar
           </v-btn>
         </v-card-actions>
@@ -103,7 +103,7 @@
     </v-overlay>
     
     <!-- Dialogo de creación -->
-    <Dialog
+    <Dialogo
     :show="dialogoRegionalCreada"
     title="Registro creado con éxito"
     text="Regional creada"
@@ -112,14 +112,14 @@
     />
 
     <!-- Dialogo de actualización -->
-    <Dialog
+    <Dialogo
     :show="dialogoRegionalActualizada"
     title="Registro actualizado con éxito"
     text="Regional actualizada"
     @close-dialog="dialogoRegionalActualizada = $event"/>
     
     <!-- Dialogos de eliminación -->
-    <Dialog_confirm_delete
+    <Dialogo_confirm_delete
     :show="dialogo1EliminarRegional"
     title="Estás seguro que quieres eliminar esta regional?"
     text="También se eliminarán los centros asociados y todo lo que estos incluyen"
@@ -127,27 +127,32 @@
     @close-dialog="dialogo1EliminarRegional = $event"
     />
 
-    <Dialog
+    <Dialogo
     :show="dialogo2EliminarRegional"
     title="Registro eliminado con éxito"
     text="Regional eliminada"
     @close-dialog="dialogo2EliminarRegional = $event"
     />
     
-    <!-- <pre>{{ $data }}</pre> -->
+    <pre>{{ $data }}</pre>
   </v-container>
 </template>
 
 <script>
 import axios from "axios";
-import Dialog from "../components/Dialog.vue"
-import Dialog_confirm_delete from "../components/Dialog-confirm-delete.vue"
+import Dialogo from "../components/Dialog.vue"
+import Dialogo_confirm_delete from "../components/Dialog-confirm-delete.vue"
 import Tabla from "../components/Tabla.vue"
-const colombia = require("../json/ciudades");
-// const paquete = data
+
+let colombia = require("../json/ciudades");
+colombia = colombia.map(dpto => ({
+  id: dpto.id,
+  departamento: dpto.departamento.toUpperCase(),
+  ciudades: dpto.ciudades.map(ciudad => ciudad = ciudad.toUpperCase())
+}))
 
 export default {
-  components: { Tabla, Dialog, Dialog_confirm_delete },
+  components: { Tabla, Dialogo, Dialogo_confirm_delete },
 
   props: {
     datos: Object,
@@ -163,6 +168,7 @@ export default {
         departamento: null,
         municipio: null,
       },
+      regionales: [],
       cabeceraTabla: [
         { text: "Codigo", value: "codigo" },
         { text: "Nombre", value: "nombre" },
@@ -170,7 +176,6 @@ export default {
         { text: "Municipio", value: "municipio" },
         { text: "Acciones", value: "actions"},
       ],
-      regionales: [],
       departamentos: colombia,
       itemEliminar: null,
       
@@ -180,8 +185,12 @@ export default {
       dialogoRegionalCreada: false,
       dialogoRegionalActualizada: false,
       loading: false,
-
+      
       camposRules: [(v) => !!v || "Campo es requerido"],
+      // codigoRules: [
+      //   (v) => !!v || "Código es requerido",
+      //   (v) => this.esCodigoUnico(v) || "La regional ya existe"
+      // ],
       // camposForm: [
       //   [
       //     {
@@ -237,10 +246,10 @@ export default {
       if (this.$refs.form.validate()){
 
         this.loading = true;
-  
+        delete this.paquete.codigo
         try {
-          await axios.post(`${this.api}/regional/crear`, this.paquete);
-          
+          await axios.post(`${this.api}/regional/crear`, this.paquete)
+
           this.loading = false;
           this.cargarRegionales()
           this.limpiarFormulario();
@@ -304,6 +313,10 @@ export default {
       }
     },
 
+    convertToUppercase(){
+      this.paquete.nombre = this.paquete.nombre.toUpperCase()
+    },
+
     limpiarFormulario() {
       this.$refs.form.resetValidation()
       this.paquete = {
@@ -315,7 +328,7 @@ export default {
     },
   },
 
-  async mounted() {    
+  async mounted() {
     try {
       const response = await axios.get(`${this.api}/regional`);
       this.regionales = response.data;
@@ -331,7 +344,28 @@ export default {
       return departamento
         ? departamento.ciudades
         : []
-    }
+    },
+
+    textColorBtn(){
+      return this.modoEdicion ? '#000' : '#fff'
+    },
+
+    colorBtn(){
+      return this.modoEdicion ? 'colorBtnEditar' : 'colorBtnCrear'
+    },
+
+    // isValidCodigo(v){
+    //   return (v ===)
+    // }
+
+    // esCodigoUnico(codigoIngresado){
+    //   this.regionales.forEach(({ codigo }) => {
+    //     if (codigo === codigoIngresado){
+    //       return false
+    //     }
+    //   })
+    //   return true
+    // }
   },
 };
 </script>
@@ -345,6 +379,6 @@ export default {
     rgba(168, 120, 6, 1) 58%,
     rgba(0, 212, 255, 1) 100%
   );
-  color: rgb(90, 221, 90);
+  color: #e66b1a;
 }
 </style>

@@ -31,6 +31,7 @@
                     label="Nombre"
                     append-icon="mdi mdi-pencil"
                     v-model="paquete.nombre"
+                    @input="convertToUppercase"
                     :rules="camposRules"
                     outlined
                   ></v-text-field>
@@ -90,17 +91,17 @@
 
         <!-- Acciones: Limpiar / Editar - Cancelar -->
         <v-card-actions style="max-width: 95%; margin: auto;">
-          <v-btn class="ma-2" color="error" v-if="!modoEdicion" @click="limpiarFormulario()">
-            Limpiar
+          <v-btn :class="['ma-2', colorBtn]" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
+            {{ modoEdicion ? 'Editar' : 'Crear' }}
           </v-btn>
 
-          <v-btn class="ma-2" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
-            {{ modoEdicion ? 'Editar' : 'Crear' }}
+          <v-btn class="ma-2 colorBtnLimpiar" v-if="!modoEdicion" @click="limpiarFormulario()">
+            Limpiar
           </v-btn>
 
           <v-spacer></v-spacer>
 
-          <v-btn class="ma-2" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+          <v-btn class="ma-2 white--text colorBtnEliminar" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
             Cancelar
           </v-btn>
         </v-card-actions>
@@ -138,7 +139,7 @@
     />
 
     <!-- Dialogos de eliminación -->
-    <Dialog_confirm_delete
+    <Dialogo_confirm_delete
       :show="dialogo1EliminarPrograma"
       title="Estás seguro que quieres eliminar este programa?"
       :confirmDeleteMethod="confirmarEliminacion"
@@ -161,7 +162,7 @@
 import axios from "axios";
 import Tabla from "../../components/Tabla.vue"
 import Dialogo from "../../components/Dialog.vue"
-import Dialog_confirm_delete from "../../components/Dialog-confirm-delete.vue"
+import Dialogo_confirm_delete from "../../components/Dialog-confirm-delete.vue"
 
 // import mensaje from "../../components/MensajesView.vue";
 export default {
@@ -172,7 +173,7 @@ export default {
   components: {
     Tabla,
     Dialogo,
-    Dialog_confirm_delete
+    Dialogo_confirm_delete
     // mensaje,
   },
 
@@ -210,11 +211,11 @@ export default {
       color: "",
       show: false,
       niveles: [
-        "Tecnico",
-        "Tecnologo",
-        "Operario",
-        "Auxiliar",
-        "Especializacion",
+        "TÉCNICO",
+        "TECNÓLOGO",
+        "OPERARIO",
+        "AUXILIAR",
+        "ESPECIALIZACIÓN",
       ],
       camposRules: [(v) => !!v || "Campo es requerido"],
     };
@@ -303,6 +304,10 @@ export default {
       }
     },
 
+    convertToUppercase(){
+      this.paquete.nombre = this.paquete.nombre.toUpperCase()
+    },
+
     limpiarFormulario(){
       this.$refs.form.resetValidation()
       this.paquete = {
@@ -319,5 +324,11 @@ export default {
   async mounted() {
     this.cargarProgramas()
   },
+
+  computed: {
+    colorBtn(){
+      return this.modoEdicion ? 'colorBtnEditar' : 'colorBtnCrear'
+    }
+  }
 };
 </script>
