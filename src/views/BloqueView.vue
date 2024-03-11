@@ -258,9 +258,9 @@ export default {
   },
   async mounted() {
     
-    // let centro = this.$store.getters.usuario.centro
-    // const response = await axios.get(`${this.api}/sedes/centro/${centro}`);
-    const response = await axios.get(`${this.api}/sedes`);
+    let centro = this.$store.getters.usuario.centro
+    const response = await axios.get(`${this.api}/sedes/centro/${centro}`);
+   // const response = await axios.get(`${this.api}/sedes`);
     this.sedes = response.data
     await this.cargarBloques()
   },

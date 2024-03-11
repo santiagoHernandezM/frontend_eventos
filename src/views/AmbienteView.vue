@@ -291,8 +291,13 @@ export default {
 
     await this.cargarAmbientes()
 
-    const responseSedes = await axios.get(`${this.api}/sedes`);
-    this.sedes = responseSedes.data
+
+    this.paquete.centro = this.$store.getters.usuario.centro
+    const response = await axios.get(`${this.api}/sedes/centro/${this.paquete.centro}`);
+    this.sedes = response.data;
+
+    //const responseSedes = await axios.get(`${this.api}/sedes`);
+   // this.sedes = responseSedes.data
 
     const resTiposAmbientes = await axios.get(`${this.api}/tipo-ambiente`);
     this.tiposDeAmbiente = resTiposAmbientes.data
