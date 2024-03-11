@@ -207,9 +207,11 @@ export default {
 
   methods: {
     async cargarSedes(){
+      const centro = this.$store.getters.usuario.centro
       try {
-        const response = await axios.get(`${this.api}/sedes`)
+        const response = await axios.get(`${this.api}/sedes/centro/${centro}`)
         this.sedes = response.data
+        console.log(this.sedes)
         
       } catch (error) {
         console.error(error)
@@ -317,8 +319,12 @@ export default {
   },
 
   async mounted() {
-    // this.paquete.centro = this.$store.getters.usuario.centro
-    const responseCentros = await axios.get(`${this.api}/centro`);
+    this.paquete.centro = this.$store.getters.usuario.centro
+    console.log(this.paquete.centro)
+    const responseCentros = await axios.get(`${this.api}/centro/${this.paquete.centro}`);
+    this.paquete.departamento = responseCentros.data.regional.departamento
+
+    //const responseCentros = await axios.get(`${this.api}/centro`);
     this.centros = responseCentros.data
 
     await this.cargarSedes()
