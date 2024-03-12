@@ -18,7 +18,7 @@
               <v-row>
                 <v-col cols="6">
                   <v-text-field
-                    label="Codigo del centro"
+                    label="CÓDIGO"
                     append-icon="mdi mdi-key-variant"
                     v-model="paquete.codigo"
                     :rules="camposRules"
@@ -28,7 +28,7 @@
                 <v-col cols="6">
                   <v-text-field
                     append-icon="mdi mdi-pencil"
-                    label="Nombre"
+                    label="NOMBRE"
                     v-model="paquete.nombre"
                     @input="convertToUppercase"
                     :rules="camposRules"
@@ -43,7 +43,7 @@
                     :items="regionales"
                     item-text="nombre"
                     item-value="_id"
-                    label="Seleccione regional"
+                    label="REGIONAL"
                     append-icon="fa fa-building"
                     v-model="paquete.regional"
                     :rules="camposRules"
@@ -57,9 +57,8 @@
                 <v-col cols="6">
                   <v-text-field
                     append-icon="mdi mdi-map-search"
-                    label="Departamento"
+                    label="DEPARTAMENTO"
                     v-model="departamento"
-                    :rules="camposRules"
                     outlined
                     readonly
                   ></v-text-field>                 
@@ -67,7 +66,7 @@
                 <v-col cols="6">
                   <v-select
                     :items="ciudades"
-                    label="Seleccione una ciudad"
+                    label="CIUDAD"
                     v-model="paquete.municipio"
                     :rules="camposRules"
                     outlined

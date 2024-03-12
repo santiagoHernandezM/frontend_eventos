@@ -19,7 +19,7 @@
                 <v-col cols="12">
                   <v-text-field
                     append-icon="mdi mdi-pencil"
-                    label="Nombre de la sede"
+                    label="NOMBRE"
                     v-model="paquete.nombre"
                     @input="convertToUppercase"
                     :rules="camposRules"
@@ -29,24 +29,22 @@
               </v-row>
 
               <v-row>
-                <v-col cols="6">
-                  <v-select
-                    :items="centros"
-                    item-text="nombre"
-                    item-value="_id"
-                    label="Seleccione centro"
+                <v-col cols="12">
+                  <v-text-field
+                    label="CENTRO"
                     append-icon="mdi mdi-bank"
-                    v-model="paquete.centro"
-                    :rules="camposRules"
+                    v-model="nombreCentro"
+                    readonly
                     outlined
-                    @change="cargarDpto()"
-                  ></v-select>
+                  ></v-text-field>
                 </v-col>
+              </v-row>
 
-                <v-col cols="6">
+              <v-row>
+                <v-col cols="12">
                   <v-text-field
                     append-icon="mdi mdi-map-marker-outline"
-                    label="Lugar de funcionamiento"
+                    label="UBICACIÓN"
                     v-model="paquete.lugar_funcionamiento"
                     @input="convertToUppercase"
                     :rules="camposRules"
@@ -59,9 +57,8 @@
                 <v-col cols="6">
                   <v-text-field
                     append-icon="mdi mdi-map-search"
-                    label="Departamento"
+                    label="DEPARTAMENTO"
                     v-model="paquete.departamento"
-                    :rules="camposRules"
                     outlined
                     readonly
                   ></v-text-field>
@@ -70,7 +67,7 @@
                 <v-col cols="6">
                   <v-select
                     :items="ciuda"
-                    label="Seleccione una ciudad"
+                    label="CIUDAD"
                     v-model="paquete.municipio"
                     :rules="camposRules"
                     color="black"
@@ -170,6 +167,7 @@ export default {
   data() {
     return {
       api : `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+      nombreCentro: null,
       paquete: {
         nombre: null,
         centro: null,
@@ -310,22 +308,24 @@ export default {
       this.$refs.form.resetValidation()
       this.paquete = {
         nombre: null,
-        centro: null,
+        centro: this.paquete.centro,
         lugar_funcionamiento: null,
-        departamento: null,
+        departamento: this.paquete.departamento,
         municipio: null,
       }
     }
   },
 
   async mounted() {
-    this.paquete.centro = this.$store.getters.usuario.centro
-    console.log(this.paquete.centro)
-    const responseCentros = await axios.get(`${this.api}/centro/${this.paquete.centro}`);
-    this.paquete.departamento = responseCentros.data.regional.departamento
+    const centroId = this.$store.getters.usuario.centro
+    this.paquete.centro = centroId
+
+    const responseCentro = await axios.get(`${this.api}/centro/${centroId}`);
+
+    this.nombreCentro = responseCentro.data.nombre
+    this.paquete.departamento = responseCentro.data.regional.departamento
 
     //const responseCentros = await axios.get(`${this.api}/centro`);
-    this.centros = responseCentros.data
 
     await this.cargarSedes()
 

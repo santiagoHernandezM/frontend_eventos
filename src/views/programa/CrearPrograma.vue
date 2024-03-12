@@ -18,7 +18,7 @@
               <v-row>
                 <v-col cols="4">
                   <v-text-field
-                    label="Codigo"
+                    label="CÓDIGO"
                     append-icon="mdi-key-variant"
                     v-model="paquete.codigo"
                     :rules="camposRules"
@@ -28,7 +28,7 @@
                 
                 <v-col cols="8">
                   <v-text-field
-                    label="Nombre"
+                    label="NOMBRE"
                     append-icon="mdi mdi-pencil"
                     v-model="paquete.nombre"
                     @input="convertToUppercase"
@@ -43,7 +43,7 @@
                   <v-select
                     :items="niveles"
                     item-text="paquete.nivel"
-                    label="Seleccione nivel de formacion"
+                    label="NIVEL DE FORMACIÓN"
                     append-icon="mdi mdi-account-school"
                     v-model="paquete.nivel"
                     :rules="camposRules"
@@ -53,7 +53,7 @@
 
                 <v-col cols="5">
                   <v-text-field
-                    label="Version"
+                    label="VERSIÓN"
                     append-icon="mdi mdi-numeric"
                     v-model="paquete.version"
                     type="number"
@@ -66,7 +66,7 @@
               <v-row>
                 <v-col cols="6">
                   <v-text-field
-                    label="Duracion"
+                    label="DURACIÓN"
                     append-icon="mdi mdi-clock-time-eight-outline"
                     v-model="paquete.duracion"
                     type="number"
@@ -77,7 +77,7 @@
                 <v-col cols="6">
                   <v-select
                   :items="inthoraria"
-                  label="Intensidad horaria"
+                  label="INTENSIDAD HORARIA"
                   append-icon="mdi mdi-calendar-clock"
                   v-model="paquete.intensidad_horaria"
                   :rules="camposRules"
@@ -284,7 +284,6 @@ export default {
     eliminarRegistro(item){
       this.itemEliminar = item
       this.dialogo1EliminarPrograma = true
-
     },
 
     async confirmarEliminacion(){

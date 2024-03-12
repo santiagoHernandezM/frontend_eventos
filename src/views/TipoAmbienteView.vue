@@ -18,7 +18,7 @@
               <v-row>
                 <v-col cols="6">
                   <v-text-field
-                    label="Codigo"
+                    label="CÓDIGO"
                     append-icon="mdi-key-variant"
                     v-model="paquete.codigo"
                     :rules="camposRules"
@@ -27,7 +27,7 @@
                 </v-col>
                 <v-col cols="6">
                   <v-text-field
-                    label="Nombre"
+                    label="NOMBRE"
                     append-icon="mdi mdi-pencil"
                     v-model="paquete.nombre"
                     @input="convertToUppercase"

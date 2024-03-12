@@ -18,7 +18,7 @@
               <v-row>
                 <v-col>
                   <v-text-field
-                    label="Codigo"
+                    label="CÓDIGO"
                     append-icon="mdi-key-variant"
                     v-model="paquete.codigo"
                     :rules="camposRules"
@@ -29,7 +29,7 @@
                   <v-select
                     :items="sedes"
                     item-value="_id"
-                    label="Seleccione una sede"
+                    label="SEDE"
                     v-model="paquete.sede"
                     :rules="camposRules"
                     @change="cargarBloques()"
@@ -46,7 +46,7 @@
                 <v-col>
                   <v-select
                     :items="bloques"
-                    label="Seleccione un bloque"
+                    label="BLOQUE"
                     v-model="paquete.bloque"
                     :rules="camposRules"
                     item-value="_id"
@@ -60,7 +60,7 @@
                 <v-col>
                   <v-select
                     :items="tiposDeAmbiente"
-                    label="Tipo de ambiente"
+                    label="TIPO DE AMBIENTE"
                     v-model="paquete.tipo"
                     :rules="camposRules"
                      color="black"

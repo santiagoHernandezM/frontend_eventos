@@ -23,8 +23,9 @@
               <v-row>
                 <v-col cols="6">
                   <v-text-field
+                    type="number"
                     v-model="paquete.codigo"
-                    label="Codigo de la regional"
+                    label="CÓDIGO"
                     append-icon="mdi mdi-key-variant"
                     :rules="camposRules"
                     outlined
@@ -34,7 +35,7 @@
                   <v-text-field
                     v-model="paquete.nombre"
                     @input="convertToUppercase"
-                    label="Nombre de la regional"                    
+                    label="NOMBRE"                    
                     append-icon="mdi mdi-pencil"
                     :rules="camposRules"
                     outlined
@@ -48,7 +49,7 @@
                     :items="departamentos"
                     item-text="departamento"
                     item-value="departamento"
-                    label="Seleccione departamento"
+                    label="DEPARTAMENTO"
                     append-icon="mdi mdi-map-search"
                     :rules="camposRules"
                     outlined
@@ -58,7 +59,7 @@
                   <v-select
                     v-model="paquete.municipio"
                     :items="ciudades"
-                    label="Seleccione una ciudad"
+                    label="CIUDAD"
                     append-icon="mdi mdi-map-marker-radius"
                     :rules="camposRules"
                     outlined
@@ -91,10 +92,10 @@
 
     <!-- Tabla -->
     <Tabla
-    :items="regionales"
-    :cabecera="cabeceraTabla"
-    :metodoEditar="editarRegistro"
-    :metodoEliminar="eliminarRegistro"
+      :items="regionales"
+      :cabecera="cabeceraTabla"
+      :metodoEditar="editarRegistro"
+      :metodoEliminar="eliminarRegistro"
     />
 
     <!-- Cargando... -->

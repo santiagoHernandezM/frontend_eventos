@@ -15,11 +15,11 @@
         <!-- Formulario -->
         <v-card-text class="carta">
           <v-form ref="form">
-            <v-container style="padding-bottom: 0;">
+            <v-container>
               <v-row>
                 <v-col cols="6">
                   <v-text-field
-                    label="Código"
+                    label="CÓDIGO"
                     prepend-inner-icon="mdi mdi-key-variant"
                     v-model="paquete.codigo"
                     :rules="camposRules"
@@ -30,10 +30,9 @@
               <v-row>
                 <v-col cols="6">
                   <v-text-field
-                    class="mr-2"
                     v-model="paquete.fechaInicio"
                     type="date"
-                    label="Fecha de inicio"
+                    label="FECHA DE INICIO"
                     @input="validarFecha"
                     outlined
                     :rules="camposRules"
@@ -42,10 +41,9 @@
 
                 <v-col cols="6">
                   <v-text-field
-                    class="ml-2"
                     v-model="paquete.fechaFin"
                     type="date"
-                    label="Fecha de fin"
+                    label="FECHA DE FINALIZACIÓN"
                     outlined
                     @input="validarFecha"
                     :rules="camposRules"
@@ -59,10 +57,10 @@
                     :items="sedes"
                     item-text="nombre"
                     item-value="_id"
-                    label="Seleccione Sede"
+                    label="SEDE"
                     v-model="paquete.sede"
                     append-icon="mdi mdi-home-city"
-                    @change="cargarambientes()"
+                    @change="cargarambientes"
                     :rules="camposRules"
                     outlined
                   ></v-select>
@@ -73,7 +71,7 @@
                     :items="ambientes"
                     item-text="codigo"
                     item-value="_id"
-                    label="Seleccione Ambiente"
+                    label="AMBIENTE"
                     v-model="paquete.ambiente"
                     append-icon="mdi mdi-home"
                     :rules="camposRules"
@@ -88,10 +86,10 @@
                     :items="programas"
                     item-text="nombre"
                     item-value="_id"
-                    label="Seleccione Programa"
+                    label="PROGRAMA"
                     v-model="paquete.programa"
                     append-icon="mdi mdi-school"
-                    @change="instrucsedeprograma()"
+                    @change="instrucsedeprograma"
                     :rules="camposRules"
                     outlined
                   ></v-select>
@@ -101,240 +99,87 @@
                   <v-select
                     :items="instructores"
                     item-text="nombre"
-                    item-value="_id"
-                    label="Seleccione Instructor Lider de Ficha"
+                    item-value="nombre"
+                    label="INSTRUCTOR LIDER DE FICHA"
                     v-model="paquete.instructor"
                     append-icon="mdi mdi-account-tie"
                     :rules="camposRules"
                     outlined
                   ></v-select>
                 </v-col>
-              </v-row>              
+              </v-row>        
 
               <v-row>
-                <v-col cols="6">
+                <v-col>
+                  <v-divider></v-divider>
+                </v-col>
+              </v-row>
+              
+              
+            </v-container>
+          </v-form>
+
+          <!-- Datos de Jornada -->
+          <v-form ref="formJornada">
+            <v-container>
+              <v-row>
+                <v-col cols="5">
                   <v-select
                     :items="diasSemana"
                     item-text="diasSemana"
                     item-value="diasSemana"
-                    label="Seleccione Día"
+                    label="DIA"
                     v-model="dia"
                     append-icon="mdi-calendar"
                     :rules="camposRules"
+                    class="ml-5"
                     outlined
                   ></v-select>
                 </v-col>
-                
-                <v-col cols="6">
+                <v-col cols="5">
                   <v-select
                     :items="jornadas"
                     item-text="descripcion"
-                    item-value="desctipcion"
-                    label="Seleccione Jornada"
+                    item-value="descripcion"
+                    label="JORNADA"
                     v-model="jornadaInput"
                     append-icon="mdi-calendar"
                     :rules="camposRules"
+                    class="ml-5"
                     outlined
                   ></v-select>
                 </v-col>
-              </v-row>              
-
-              <!-- <v-row>
-                <v-col>
-                  <v-row>
-                    <v-col cols="6">
-                      <v-text-field
-                        label="Código"
-                        color="red"
-                        append-icon="mdi-key"
-                        class="text-green"
-                        v-model="paquete.codigo"
-                        :rules="camposRules"
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-
-                  <v-row cols="12" class="mx-2">
-                    <v-text-field
-                      class="mr-2"
-                      v-model="paquete.fechaInicio"
-                      type="date"
-                      label="Fecha de inicio"
-                      @input="validarFecha"
-                      outlined
-                      :rules="camposRules"
-                    ></v-text-field>
-                    <v-text-field
-                      class="ml-2"
-                      v-model="paquete.fechaFin"
-                      type="date"
-                      label="Fecha de fin"
-                      outlined
-                      @input="validarFecha"
-                      :rules="camposRules"
-                    ></v-text-field>
-                  </v-row>
-
-                  <v-row >
-                    <v-col cols="6">
-                      <v-select
-                        :items="sedes"
-                        item-text="nombre"
-                        item-value="_id"
-                        label="Seleccione Sede"
-                        v-model="paquete.sede"
-                        append-icon="school"
-                        @change="cargarambientes()"
-                        :rules="camposRules"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-select
-                        :items="ambientes"
-                        item-text="codigo"
-                        item-value="_id"
-                        label="Seleccione Ambiente"
-                        v-model="paquete.ambiente"
-                        append-icon="book"
-                        :rules="camposRules"
-                      >
-                      <template v-slot:item="{ item }">
-                        {{ item.bloque.nomenclatura }}-{{ item.codigo }}
-                      </template>
-
-                      <template slot="selection" slot-scope="data">
-                        {{ data.item.bloque.nomenclatura }} - {{ data.item.codigo }}
-                      </template>
-                    </v-select>
-                    </v-col>
-                     </v-row>  
-
-                    <v-row>
-                    <v-col cols="6">
-                      <v-select
-                        :items="programaVista"
-                        item-text="nombre"
-                        item-value="_id"
-                        label="Seleccione Programa"
-                        v-model="paquete.programa"
-                        append-icon="book"
-                        @change="instrucsedeprograma()"
-                        :rules="camposRules"
-                      >
-                      <template v-slot:item="{ item }">
-                        {{ item.nivel }} - {{ item.nombre}} - Intensidad horaria : {{item.intensidad_horaria }}
-                      </template>
-
-                      <template slot="selection" slot-scope="data">
-                        {{ data.item.nivel }} - {{ data.item.nombre }}
-                      </template>
-                    
-                    </v-select>
-                    </v-col>
-                                  
-                    <v-col cols="6">
-                      <v-select
-                        :items="instructores"
-                        item-text="nombre"
-                        item-value="_id"
-                        label="Seleccione Instructor Lider de Ficha"
-                        v-model="paquete.instructor"
-                        append-icon="mdi-account"
-                        :rules="camposRules"
-                      >
-                    
-                      <template v-slot:item="{ item }">
-                        {{ item.nombre}}  {{item.apellido }}
-                      </template>
-
-                      <template slot="selection" slot-scope="data">
-                        {{ data.item.nombre }}  {{ data.item.apellido }}
-                      </template>
-                    
-                    </v-select>
-                    </v-col>
-                  </v-row>
-                    <v-row>
-                     <v-col cols="12">
-                      <v-sheet
-                      class="d-flex"
-                      color="blue lighten-3"
-                      height="50"
-                      width="100%"
-                     >
-                     <v-row>
-                      <v-col cols="5">
-                        <v-select
-                          :items="diasSemana"
-                          item-text="diasSemana"
-                          item-value="diasSemana"
-                          label="Seleccione Día"
-                          v-model="dia"
-                          append-icon="mdi-calendar"
-                          :rules="camposRules"
-                          class="ml-5"
-                        ></v-select>
-                      </v-col>
-                      <v-col cols="5">
-                        <v-select
-                          :items="jornadas"
-                          item-text="descripcion"
-                          item-value="desctipcion"
-                          label="Seleccione Jornada"
-                          v-model="jornadaInput"
-                          append-icon="mdi-calendar"
-                          :rules="camposRules"
-                        ></v-select>
-                      </v-col>
     
-                      <v-col cols="2">
-                        <v-btn
-                        class="mx-2 mt-2"
-                        fab
-                        dark
-                        color="green"
-                        width="40px"
-                        height="40px"
-                        @click="agregarLista"
-    
-                      >
-                        <v-icon dark>
-                          mdi-plus
-                        </v-icon>
-                      </v-btn>
-                     
-                     </v-col>
-                   </v-row>
-                  </v-sheet>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="12">
-                   <v-sheet
-                   class="d-flex"
-                   
-                   height="370"
-                   width="100%"
+                <v-col cols="1">
+                  <v-btn
+                    class="mx-2 mt-2"
+                    fab
+                    dark
+                    color="green"
+                    width="40px"
+                    height="40px"
+                    @click="agregarLista"
                   >
-                  <v-row>
-                    <v-col cols="12">
-                      <v-data-table
-                      :items="paquete.jornadas"
-                      :headers="cabeceraTabla"
-                      class="elevation-1 mx-12"
-                    ></v-data-table>
-                    </v-col>
-                  </v-row>
-                  
-                </v-sheet>
+                    <v-icon dark>mdi-plus</v-icon>
+                  </v-btn>
                 </v-col>
-                </v-row>
-
-
-              </v-col>
-              </v-row> -->
+              </v-row>
             </v-container>
           </v-form>
+
+          <!-- Tabla Jornadas -->
+          <v-row>
+            <v-col cols="12">
+              <v-data-table
+                :items="paquete.jornadas"
+                :headers="cabeceraTablaHorario"
+                class="elevation-1 mx-5"
+              ></v-data-table>
+            </v-col>
+          </v-row>
+
+          <!-- Formulario Jornada -->
+
         </v-card-text>
 
         <!-- Acciones: Limpiar / Editar - Cancelar -->
@@ -357,23 +202,69 @@
     </v-row>
 
     <!-- Tabla -->
-    <!-- <Tabla
-    :items="fichas"
-    :cabecera="cabeceraTabla"
-    :metodoEliminar="eliminarRegistro"
-    :metodoEditar="editarRegistro"
-    /> -->
+    <Tabla
+      :items="fichas"
+      :cabecera="cabeceraTablaFichas"
+      :metodoEliminar="eliminarRegistro"
+      :metodoEditar="editarRegistro"
+    />
 
-    <!-- Modal de advertencias y errores -->
-    <!-- <v-btn @click="mostrarModal">Mostrar Modal</v-btn> -->
-    <v-dialog v-model="mostrar" max-width="500px" class="">
+    <!-- Cargando... -->
+    <v-overlay :value="loading">
+      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+    </v-overlay>
+
+    <!-- Dialogo de creación -->
+    <Dialogo
+      :show="dialogoFichaCreada"
+      title="Registro creado con éxito"
+      text="Ficha creada"
+      @close-dialog="dialogoFichaCreada = $event"
+    />
+
+    <!-- Dialogo de actualización -->
+    <Dialogo
+      :show="dialogoFichaActualizada"
+      title="Registro actualizado con éxito"
+      text="Ficha actualizada"
+      @close-dialog="dialogoFichaActualizada = $event"
+    />
+
+    <!-- Dialogos de eliminación -->
+    <Dialogo_confirm_delete
+      :show="dialogo1EliminarFicha"
+      title="Estás seguro que quieres eliminar esta ficha?"
+      :confirmDeleteMethod="confirmarEliminacion"
+      @close-dialog="dialogo1EliminarFicha = $event"
+    />
+
+    <Dialogo
+      :show="dialogo2EliminarFicha"
+      title="Registro eliminado con éxito"
+      text="Ficha eliminada"
+      @close-dialog="dialogo2EliminarFicha = $event"
+    />
+
+    <!-- Dialogo jornadas vacias -->
+    <v-dialog v-model="dialogoJornadasVacias" persistent max-width="670">
       <v-card>
-        <v-card-title>
-          <span class="headline text-lg-h4">{{ modalTitle }}</span>
-        </v-card-title>
-        <v-card-text class="text-lg-h6"> {{ modalText }} </v-card-text>
+        <v-card-title style="color: rgb(248, 74, 74)" class="headline">No ha asignado ninguna jornada a la ficha</v-card-title>
+        <v-card-text>La ficha debe tener al menos una jordana</v-card-text>
         <v-card-actions>
-          <v-btn color="error" @click="cerrarModal">Cerrar</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialogoJornadasVacias = false">Aceptar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Dialogo fecha inválida -->
+    <v-dialog v-model="dialogoFechaInvalida" persistent max-width="670">
+      <v-card>
+        <v-card-title style="color: rgb(248, 74, 74)" class="headline">Fecha inválida</v-card-title>
+        <v-card-text>La fecha de inicio debe ser menor a la fecha de fin</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialogoFechaInvalida = false">Aceptar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -387,14 +278,15 @@
 import axios from "axios";
 import dia from "../../json/dia";
 import Tabla from "../../components/Tabla.vue"
+import Dialogo from "../../components/Dialog.vue"
+import Dialogo_confirm_delete from "../../components/Dialog-confirm-delete.vue"
 
 export default {
+  components: { Tabla, Dialogo, Dialogo_confirm_delete},
   props: {
     datos: Object,
-    Tabla
   },
   data() {
-    
     return {
       api : `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
       paquete: {
@@ -414,99 +306,215 @@ export default {
       camposRules: [(v) => !!v || "Campo es requerido"],
       modoEdicion: false,
       // titulos de la primera tabla
-      cabeceraTabla: [
-        { text: "Día", value: "dia" },
+      cabeceraTablaHorario: [
+        { text: "Dia", value: "dia" },
         { text: "Jornada", value: "jornada" },
-        { text: "Hora Inicio", value: "horaInicio" },
+        { text: "Hora inicio", value: "horaInicio" },
         { text: "Hora Fin", value: "horaFin" },
+      ],
+      cabeceraTablaFichas: [
+        { text: "Código", value: "codigo" },
+        { text: "Fecha inicio", value: "fechaInicio" },
+        { text: "Fecha fin", value: "fechaFin" },
+        { text: "Sede", value: "sede.nombre" },
+        { text: "Ambiente", value: "ambiente.codigo" },
+        { text: "Programa", value: "programa.nombre" },
+        { text: "Instructor", value: "instructor.nombre" },
+        { text: "Jornadas", value: "jornadas" },
+        { text: "Acciones", value: "actions" },
       ],
       // items de la tabla
       listItems: [],
       // datos de del backend
-      instructores: null,
-      diasSemana: null,
+      instructores: [],
+      diasSemana: dia,
+      dia: null,
       jornadaInput: null,
       mostrar: false,
       modalTitle: "",
       modalText: "",
-      dia: null,
       textoBusqueda: "",
       programaVista: [],
+      loading: false,
+      dialogoFichaCreada: false,
+      dialogoFichaActualizada: false,
+      dialogo1EliminarFicha: false,
+      dialogo2EliminarFicha: false,
+      dialogoJornadasVacias: false,
+      dialogoFechaInvalida: false,
+      itemEliminar: null,
+      jornadas: []
     };
   },
 
   methods: {
+    async cargarFichas(){
+      const fichasResponse = await axios.get(`${this.api}/ficha`)
+      this.fichas = fichasResponse.data
+    },
+
     async cargarambientes(){
-       // obtener los ambientes por sede
-    const ambientesResponse = await axios.get(`${this.api}/ambiente/sede/${this.paquete.sede}`);
-    this.ambientes = ambientesResponse.data;
-   },
+      // obtener los ambientes por sede
+      const ambientesResponse = await axios.get(`${this.api}/ambiente/sede/${this.paquete.sede}`);
+      this.ambientes = ambientesResponse.data;
+    },
 
-   async instrucsedeprograma(){
+    async instrucsedeprograma(){
 
-    //const instructoresResponse = await axios.get(`${this.api}/instructor/programa/${this.paquete.programa}/sede/${this.paquete.sede}`);
-    let centro = this.$store.getters.usuario.centro
-    const instructoresResponse = await axios.get(`${this.api}/user/programa/centro/${this.paquete.programa}/${centro}`);
-    console.log(instructoresResponse.data)
-    this.instructores = instructoresResponse.data
+      //const instructoresResponse = await axios.get(`${this.api}/instructor/programa/${this.paquete.programa}/sede/${this.paquete.sede}`);
+      let centro = this.$store.getters.usuario.centro
+      const instructoresResponse = await axios.get(`${this.api}/user/programa/centro/${this.paquete.programa}/${centro}`);
+      console.log(instructoresResponse.data)
+      this.instructores = instructoresResponse.data
+    },
 
-   },
     async guardar() {
-      this.agregarFormatoFecha;
+    
+      if (this.$refs.form.validate()){
 
-      let respuesta = null;
-      await axios
-        .post(`${this.api}/ficha/crear`, this.paquete)
-        .then(function (response) {
-          console.log(response);
-          respuesta = response;
-        })
-        .catch(function (error) {
-          console.log(error);
-          respuesta = error.response;
-        });
+        if (!this.validarFecha()){
+          this.dialogoFechaInvalida = true
+          return
+        }
 
-      if (respuesta.status == 201) {
-        this.mostrarModal("Exito", "Ficha creada correctamente");
-      } else if (respuesta.status == 400) {
-        let errores = JSON.parse(respuesta.request.response);
-        this.mostrarModal(
-          "Error al crear la ficha, vuelva a intentarlo",
-          errores.message
-        );
+        if (this.paquete.jornadas.length < 1){
+          this.dialogoJornadasVacias = true
+          return
+        }
+
+        this.agregarFormatoFecha;
+      
+        this.loading = true;
+        try {
+          await axios.post(`${this.api}/ficha/crear`, this.paquete);
+  
+          this.loading = false;
+          this.cargarFichas()
+          this.limpiarFormulario();
+          this.dialogoFichaCreada = true
+
+        } catch (error) {
+          console.error(error) 
+        }
+      }
+    },
+
+    // async guardar() {
+    //   this.agregarFormatoFecha;
+
+    //   let respuesta = null;
+    //   await axios
+    //     .post(`${this.api}/ficha/crear`, this.paquete)
+    //     .then(function (response) {
+    //       console.log(response);
+    //       respuesta = response;
+    //     })
+    //     .catch(function (error) {
+    //       console.log(error);
+    //       respuesta = error.response;
+    //     });
+
+    //   if (respuesta.status == 201) {
+    //     this.mostrarModal("Exito", "Ficha creada correctamente");
+    //   } else if (respuesta.status == 400) {
+    //     let errores = JSON.parse(respuesta.request.response);
+    //     this.mostrarModal(
+    //       "Error al crear la ficha, vuelva a intentarlo",
+    //       errores.message
+    //     );
+    //   }
+    // },
+
+    editarRegistro(item){
+      if (item._id){
+        item.id = item._id
+        delete item._id
+      }
+      delete item.__v
+
+      window.scrollTo(0, 0)
+      this.paquete = {
+        ...item,
+        ambiente: item.ambiente._id,
+        programa: item.programa._id,
+        instructor: item.instructor._id
+      }
+      this.modoEdicion = true
+    },
+
+    async guardarEdicion(){
+      if (this.$refs.form.validate()){
+
+        this.loading = true
+        try {
+          await axios.put(`${this.api}/ficha/actualizar`, this.paquete)
+  
+          this.loading = false
+          this.modoEdicion = false
+          this.cargarFichas()
+          this.limpiarFormulario()
+          this.dialogoFichaActualizada = true
+  
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    },
+
+    eliminarRegistro(item){
+      this.itemEliminar = item
+      this.dialogo1EliminarFicha = true
+    },
+
+    async confirmarEliminacion(){
+      this.loading = true
+
+      try {
+        await axios.delete(`${this.api}/ficha/eliminar/${this.itemEliminar._id}`)
+
+        this.loading = false
+        this.itemEliminar = null
+        this.cargarFichas()
+        this.dialogo1EliminarFicha = false
+        this.dialogo2EliminarFicha = true
+
+      } catch (error) {
+        console.error(error)
       }
     },
 
     agregarLista() {
-      if (this.dia == null || this.jornadaInput == null) {
-        this.mostrarModal("Error", "Debe seleccionar un día y una jornada");
-        return;
-      }
-
-      let v = this.paquete.jornadas.filter(e => e.dia == this.dia && e.jornada == this.jornadaInput)
-      if (v.length ==0)
-       {
-      let indice = null;
-      for (let i = 0; i < this.jornadas.length; i++) {
-        if (this.jornadas[i].descripcion.includes(this.jornadaInput)) {
-          indice = i;
-          break; // Si se encuentra el item, se sale del bucle
+      if (this.$refs.formJornada.validate()){
+        if (this.dia == null || this.jornadaInput == null) {
+          this.mostrarModal("Error", "Debe seleccionar un día y una jornada");
+          return;
         }
+  
+        let v = this.paquete.jornadas.filter(e => e.dia == this.dia && e.jornada == this.jornadaInput)
+        if (v.length ==0){
+          let indice = null;
+          for (let i = 0; i < this.jornadas.length; i++) {
+            if (this.jornadas[i].descripcion.includes(this.jornadaInput)) {
+              indice = i;
+              break; // Si se encuentra el item, se sale del bucle
+            }
+          }
+  
+          this.paquete.jornadas.push({
+            dia: this.dia,
+            jornada: this.jornadaInput,
+            horaInicio: this.jornadas[indice].horaInicio,
+            horaFin: this.jornadas[indice].horaFin,
+          })
+
+          this.limpiarDatosJornada()
+        }
+        else {
+          this.mostrarModal("Error", "Ya esta registrado un horario similar")
+        }
+  
+        this.limpiarDatosJornada()
       }
-
-      this.paquete.jornadas.push({
-        dia: this.dia,
-        jornada: this.jornadaInput,
-        horaInicio: this.jornadas[indice].horaInicio,
-        horaFin: this.jornadas[indice].horaFin,
-      });
-    }
-    else{
-      this.mostrarModal("Error", "Ya esta registrado un horario similar");
-    }
-
-      this.dia = null;
-      this.jornadaInput = null;
     },
 
     agregarFormatoFecha() {
@@ -552,10 +560,6 @@ export default {
         isNaN(fechaFinObj.getTime()) ||
         fechaInicioObj > fechaFinObj
       ) {
-        this.mostrarModal(
-          "Error",
-          "La fecha de inicio debe ser menor a la fecha de fin"
-        );
         return false; // Las fechas no son válidas
       }
 
@@ -578,23 +582,44 @@ export default {
     cerrarModal() {
       this.mostrar = false;
     },
-  },
 
-  created() {
-    this.diasSemana = dia;
+    limpiarFormulario(){
+      this.$refs.form.resetValidation()
+      this.paquete = {
+        codigo: null,
+        fechaInicio: null,
+        fechaFin: null,
+        sede: null,
+        ambiente: null,
+        programa: null,
+        instructor: null,
+        jornadas: [],
+      }
+    },
+
+    limpiarDatosJornada(){
+      this.$refs.formJornada.resetValidation()
+
+      this.dia = null
+      this.jornadaInput = null
+    }
   },
 
   async mounted() {
+    await this.cargarFichas()
+
     // obtenemos las jornadas
     
-    // const response = await axios.get(`${this.api}/jornada/`);
-    // this.jornadas = response.data;
+    const response = await axios.get(`${this.api}/jornada`);
+    this.jornadas = response.data;
 
     // obtener los ambientes
     // this.paquete.centro = this.$store.getters.usuario.centro
 
     // Creando sedes del centro con el id especificado (centro1), modificarlo
-    const responseSedes = await axios.get(`${this.api}/sedes/centro/65e60d6975eac4503d838d4d`);
+    const centro = this.$store.getters.usuario.centro
+    console.log(centro)
+    const responseSedes = await axios.get(`${this.api}/sedes/centro/${centro}`);
     this.sedes = responseSedes.data;
     
     // Creando ambientes de la sede con el id especificado (sede1), modificarlo

@@ -18,7 +18,7 @@
               <v-row>
                 <v-col cols="6">
                   <v-text-field
-                    label="Nombre"
+                    label="NOMBRE"
                     append-icon="mdi mdi-pencil"
                     v-model="paquete.nombre"
                     @input="convertToUppercase"
@@ -28,7 +28,7 @@
                 </v-col>
                 <v-col cols="6">
                   <v-text-field
-                    label="Nomenclatura"
+                    label="NOMENCLATURA"
                     append-icon="mdi mdi-draw-pen"
                     v-model="paquete.nomenclatura"
                     @input="convertToUppercase"
@@ -41,7 +41,7 @@
                 <v-col cols="12">
                   <v-select
                   :items="sedes"
-                  label="Seleccione una sede"
+                  label="SEDE"
                   item-text="nombre"
                   item-value="_id"
                   v-model="paquete.sede"
@@ -260,7 +260,6 @@ export default {
     
     let centro = this.$store.getters.usuario.centro
     const response = await axios.get(`${this.api}/sedes/centro/${centro}`);
-   // const response = await axios.get(`${this.api}/sedes`);
     this.sedes = response.data
     await this.cargarBloques()
   },
