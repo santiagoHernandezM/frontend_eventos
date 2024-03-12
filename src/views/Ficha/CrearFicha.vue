@@ -76,7 +76,17 @@
                     append-icon="mdi mdi-home"
                     :rules="camposRules"
                     outlined
-                  ></v-select>
+                  >
+                  <template v-slot:item="{ item }">
+                    {{ item.bloque.nomenclatura }}-{{ item.codigo }}
+                  </template>
+
+                  <template slot="selection" slot-scope="data">
+                    {{ data.item.bloque.nomenclatura }} - {{ data.item.codigo }}
+                  </template>
+                
+                
+                </v-select>
                 </v-col>
               </v-row>              
 
@@ -92,20 +102,36 @@
                     @change="instrucsedeprograma"
                     :rules="camposRules"
                     outlined
-                  ></v-select>
+                  >
+                  <template v-slot:item="{ item }">
+                    {{ item.nivel }} - {{ item.nombre}} - Intensidad horaria : {{item.intensidad_horaria }}
+                  </template>
+
+                  <template slot="selection" slot-scope="data">
+                    {{ data.item.nivel }} - {{ data.item.nombre }}
+                  </template>
+                </v-select>
                 </v-col>
 
                 <v-col cols="6">
                   <v-select
                     :items="instructores"
                     item-text="nombre"
-                    item-value="nombre"
+                    item-value="_id"
                     label="INSTRUCTOR LIDER DE FICHA"
                     v-model="paquete.instructor"
                     append-icon="mdi mdi-account-tie"
                     :rules="camposRules"
                     outlined
-                  ></v-select>
+                  >
+                  <template v-slot:item="{ item }">
+                    {{ item.nombre}}  {{item.apellido }}
+                  </template>
+
+                  <template slot="selection" slot-scope="data">
+                    {{ data.item.nombre }}  {{ data.item.apellido }}
+                  </template>
+                </v-select>
                 </v-col>
               </v-row>        
 
@@ -319,7 +345,7 @@ export default {
         { text: "Sede", value: "sede.nombre" },
         { text: "Ambiente", value: "ambiente.codigo" },
         { text: "Programa", value: "programa.nombre" },
-        { text: "Instructor", value: "instructor.nombre" },
+        { text: "Lider Ficha", value: `instructor.nombre` },
         { text: "Jornadas", value: "jornadas" },
         { text: "Acciones", value: "actions" },
       ],
@@ -351,6 +377,7 @@ export default {
     async cargarFichas(){
       const fichasResponse = await axios.get(`${this.api}/ficha`)
       this.fichas = fichasResponse.data
+      console.log(this.fichas)
     },
 
     async cargarambientes(){
