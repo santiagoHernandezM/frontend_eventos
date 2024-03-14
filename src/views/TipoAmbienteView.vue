@@ -5,7 +5,9 @@
         <!-- Encabezado -->
         <v-app-bar flat color="rgb(52,188,52)">
           <v-toolbar-title class="text-h6 white--text pl-0">
-            {{ modoEdicion ? 'EDITAR TIPO DE AMBIENTE' : 'CREAR TIPO DE AMBIENTE' }}
+            {{
+              modoEdicion ? "EDITAR TIPO DE AMBIENTE" : "CREAR TIPO DE AMBIENTE"
+            }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
@@ -14,25 +16,27 @@
         <!-- Formulario -->
         <v-card-text class="carta">
           <v-form ref="form">
-            <v-container style="padding-bottom: 0;">
+            <v-container style="padding-bottom: 0">
               <v-row>
                 <v-col cols="6">
                   <v-text-field
-                    label="CÓDIGO"
+                    label="Código"
                     append-icon="mdi-key-variant"
                     v-model="paquete.codigo"
                     :rules="camposRules"
                     outlined
+                    color="rgb(52,188,52)"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="6">
                   <v-text-field
-                    label="NOMBRE"
+                    label="Nombre"
                     append-icon="mdi mdi-pencil"
                     v-model="paquete.nombre"
                     @input="convertToUppercase"
                     :rules="camposRules"
                     outlined
+                    color="rgb(52,188,52)"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -41,22 +45,36 @@
         </v-card-text>
 
         <!-- Acciones: Limpiar / Editar - Cancelar -->
-        <v-card-actions style="max-width: 95%; margin: auto;">
-          <v-btn :class="['ma-2', colorBtn]" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
-            {{ modoEdicion ? 'Editar' : 'Crear' }}
+        <v-card-actions style="max-width: 95%; margin: auto">
+          <v-btn
+            :class="['ma-2', colorBtn]"
+            color="success"
+            @click="modoEdicion ? guardarEdicion() : guardar()"
+          >
+            {{ modoEdicion ? "Editar" : "Crear" }}
           </v-btn>
 
-          <v-btn class="ma-2 colorBtnLimpiar" v-if="!modoEdicion" @click="limpiarFormulario()">
+          <v-btn
+            class="ma-2 colorBtnLimpiar"
+            v-if="!modoEdicion"
+            @click="limpiarFormulario()"
+          >
             Limpiar
           </v-btn>
 
           <v-spacer></v-spacer>
 
-          <v-btn class="ma-2 white--text colorBtnEliminar" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+          <v-btn
+            class="ma-2 white--text colorBtnEliminar"
+            v-if="modoEdicion"
+            @click="
+              limpiarFormulario();
+              modoEdicion = false;
+            "
+          >
             Cancelar
           </v-btn>
         </v-card-actions>
-
       </v-card>
     </v-row>
 
@@ -68,9 +86,7 @@
     />
 
     <!-- Cargando... -->
-    <v-overlay :value="loading">
-      <v-progress-circular indeterminate color="primary"></v-progress-circular>
-    </v-overlay>
+    <Spinner :value="loading" />
 
     <!-- Dialogo de creación -->
     <Dialogo
@@ -92,7 +108,7 @@
     <Dialogo_confirm_delete
       style="border: 2px solid red"
       :show="dialogo1EliminarTipoAmbiente"
-      title="Estás seguro que quieres eliminar este tipo de ambiente?"
+      title="Realmente quieres eliminar este tipo de ambiente?"
       :confirmDeleteMethod="confirmarEliminacion"
       @close-dialog="dialogo1EliminarTipoAmbiente = $event"
     />
@@ -110,28 +126,29 @@
 
 <script>
 import axios from "axios";
-import Tabla from "../components/Tabla.vue"
-import Dialogo from "../components/Dialog.vue"
-import Dialogo_confirm_delete from "../components/Dialog-confirm-delete.vue"
+import Tabla from "../components/Tabla.vue";
+import Dialogo from "../components/Dialog.vue";
+import Dialogo_confirm_delete from "../components/Dialog-confirm-delete.vue";
+import Spinner from "../components/Spinner.vue";
 
 export default {
-  components: { Tabla, Dialogo, Dialogo_confirm_delete },
+  components: { Tabla, Dialogo, Dialogo_confirm_delete, Spinner },
   props: {
     datos: Object,
     mostrar: Boolean,
   },
   data() {
     return {
-      api : `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+      api: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
       paquete: {
         codigo: null,
         nombre: null,
       },
       tiposDeAmbientes: [],
       cabeceraTabla: [
-        {text: "Codigo", value: "codigo"},
-        {text: "Nombre", value: "nombre"},
-        {text: "Acciones", value: "actions"},
+        { text: "Código", value: "codigo" },
+        { text: "Nombre", value: "nombre" },
+        { text: "Acciones", value: "actions" },
       ],
       modoEdicion: false,
       itemEliminar: null,
@@ -140,112 +157,121 @@ export default {
       dialogoTipoAmbienteActualizado: false,
       dialogo1EliminarTipoAmbiente: false,
       dialogo2EliminarTipoAmbiente: false,
-      camposRules: [(v) => !!v || "Campo es requerido"],
+      camposRules: [(v) => !!v || "Requerido !"],
     };
   },
 
   methods: {
-    async cargarTiposDeAmbientes(){
+    async cargarTiposDeAmbientes() {
       try {
-        const response = await axios.get(`${this.api}/tipo-ambiente`)
-        this.tiposDeAmbientes = response.data
-
+        const response = await axios.get(`${this.api}/tipo-ambiente`);
+        this.tiposDeAmbientes = response.data;
       } catch (error) {
-        console.error(error) 
+        console.error(error);
       }
     },
 
     async guardar() {
-      if (this.$refs.form.validate()){
-        this.loading = true
-  
+      if (this.$refs.form.validate()) {
+        this.loading = true;
+
         try {
-          await axios.post(`${this.api}/tipo-ambiente/crear`, this.paquete)
-          
-          this.loading = false
-          this.cargarTiposDeAmbientes()
-          this.limpiarFormulario()
-          this.dialogoTipoAmbienteCreado = true
+          await axios.post(`${this.api}/tipo-ambiente/crear`, this.paquete);
 
+          await this.cargarTiposDeAmbientes();
+          this.limpiarFormulario();
+          this.loading = false;
+          this.dialogoTipoAmbienteCreado = true;
         } catch (error) {
-          console.error(error)
-        }
-      } 
-    },
-
-    editarRegistro(item){
-      if (item._id){
-        item.id = item._id
-        delete item._id
-      }
-      delete item.__v
-      window.scrollTo(0, 0)
-      this.paquete = { ...item }
-      this.modoEdicion = true
-    },
-
-    async guardarEdicion(){
-      if (this.$refs.form.validate()){
-        this.loading = true
-        
-        try {
-          await axios.put(`${this.api}/tipo-ambiente/actualizar`, this.paquete)
-  
-          this.loading = false
-          this.modoEdicion = false
-          this.cargarTiposDeAmbientes()
-          this.limpiarFormulario()
-          this.dialogoTipoAmbienteActualizado = true
-  
-        } catch (error) {
-          console.error(error)
+          console.error(error);
         }
       }
+
+      window.scrollTo(0, 0);
     },
 
-    eliminarRegistro(item){
-      this.itemEliminar = item
-      this.dialogo1EliminarTipoAmbiente = true
+    editarRegistro(item) {
+      window.scrollTo(0, 0);
+
+      const { _id, codigo, nombre } = item;
+
+      this.paquete = {
+        id: _id,
+        codigo,
+        nombre,
+      };
+
+      this.modoEdicion = true;
     },
 
-    async confirmarEliminacion(){
-      this.loading = true
+    async guardarEdicion() {
+      if (this.$refs.form.validate()) {
+        this.loading = true;
+
+        try {
+          await axios.put(`${this.api}/tipo-ambiente/actualizar`, this.paquete);
+
+          await this.cargarTiposDeAmbientes();
+          this.limpiarFormulario();
+          this.modoEdicion = false;
+          this.loading = false;
+          this.dialogoTipoAmbienteActualizado = true;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      window.scrollTo(0, 0);
+    },
+
+    eliminarRegistro(item) {
+      this.itemEliminar = item;
+      this.dialogo1EliminarTipoAmbiente = true;
+    },
+
+    async confirmarEliminacion() {
+      this.dialogo1EliminarTipoAmbiente = false;
+      this.loading = true;
 
       try {
-        await axios.delete(`${this.api}/tipo-ambiente/eliminar/${this.itemEliminar._id}`)
+        await axios.delete(
+          `${this.api}/tipo-ambiente/eliminar/${this.itemEliminar._id}`
+        );
 
-        this.loading = false
-        this.itemEliminar = null
-        this.cargarTiposDeAmbientes()
-        this.dialogo1EliminarTipoAmbiente = false
-        this.dialogo2EliminarTipoAmbiente = true
-
+        await this.cargarTiposDeAmbientes();
+        this.itemEliminar = null;
+        this.loading = false;
+        this.dialogo2EliminarTipoAmbiente = true;
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     },
 
-    convertToUppercase(){
-      this.paquete.nombre = this.paquete.nombre.toUpperCase()
+    convertToUppercase() {
+      this.paquete.nombre = this.paquete.nombre.toUpperCase();
     },
 
-    limpiarFormulario(){
-      this.$refs.form.resetValidation()
+    limpiarFormulario() {
+      this.$refs.form.resetValidation();
       this.paquete = {
         codigo: null,
-        nombre: null
-      }
-    }
+        nombre: null,
+      };
+    },
   },
 
-  async mounted(){
-    this.cargarTiposDeAmbientes()
+  async mounted() {
+    this.loading = true;
+
+    await this.cargarTiposDeAmbientes();
+
+    this.loading = false;
   },
 
   computed: {
-    colorBtn(){
-      return this.modoEdicion ? 'colorBtnEditar' : 'colorBtnCrear'
-    }
+    colorBtn() {
+      return this.modoEdicion ? "colorBtnEditar" : "colorBtnCrear";
+    },
   },
 };
 </script>

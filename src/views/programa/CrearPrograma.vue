@@ -5,7 +5,11 @@
         <!-- Encabezado -->
         <v-app-bar flat color="rgb(52,188,52)">
           <v-toolbar-title class="text-h6 white--text pl-0">
-            {{ modoEdicion ? 'EDITAR PROGRAMA' : 'CREAR PROGRAMA' }}
+            {{
+              modoEdicion
+                ? "EDITAR PROGRAMA DE FORMACIÓN"
+                : "CREAR PROGRAMA DE FORMACIÓN"
+            }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
@@ -14,26 +18,30 @@
         <!-- Formulario -->
         <v-card-text class="carta">
           <v-form ref="form">
-            <v-container style="padding-bottom: 0;">
+            <v-container style="padding-bottom: 0">
               <v-row>
-                <v-col cols="4">
+                <v-col cols="6">
                   <v-text-field
-                    label="CÓDIGO"
+                    label="Código"
                     append-icon="mdi-key-variant"
                     v-model="paquete.codigo"
                     :rules="camposRules"
                     outlined
+                    color="rgb(52,188,52)"
                   ></v-text-field>
-                </v-col>    
-                
-                <v-col cols="8">
+                </v-col>
+              </v-row>
+
+              <v-row>
+                <v-col cols="12">
                   <v-text-field
-                    label="NOMBRE"
+                    label="Nombre"
                     append-icon="mdi mdi-pencil"
                     v-model="paquete.nombre"
                     @input="convertToUppercase"
                     :rules="camposRules"
                     outlined
+                    color="rgb(52,188,52)"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -43,45 +51,49 @@
                   <v-select
                     :items="niveles"
                     item-text="paquete.nivel"
-                    label="NIVEL DE FORMACIÓN"
+                    label="Nivel de formación"
                     append-icon="mdi mdi-account-school"
                     v-model="paquete.nivel"
                     :rules="camposRules"
                     outlined
+                    color="rgb(52,188,52)"
                   ></v-select>
                 </v-col>
 
                 <v-col cols="5">
                   <v-text-field
-                    label="VERSIÓN"
+                    label="Versión"
                     append-icon="mdi mdi-numeric"
                     v-model="paquete.version"
                     type="number"
                     :rules="camposRules"
                     outlined
+                    color="rgb(52,188,52)"
                   ></v-text-field>
-                </v-col>              
+                </v-col>
               </v-row>
 
               <v-row>
                 <v-col cols="6">
                   <v-text-field
-                    label="DURACIÓN"
+                    label="Duración"
                     append-icon="mdi mdi-clock-time-eight-outline"
                     v-model="paquete.duracion"
                     type="number"
                     :rules="camposRules"
                     outlined
+                    color="rgb(52,188,52)"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="6">
                   <v-select
-                  :items="inthoraria"
-                  label="INTENSIDAD HORARIA"
-                  append-icon="mdi mdi-calendar-clock"
-                  v-model="paquete.intensidad_horaria"
-                  :rules="camposRules"
-                  outlined
+                    :items="inthoraria"
+                    label="Intensidad horaria"
+                    append-icon="mdi mdi-calendar-clock"
+                    v-model="paquete.intensidad_horaria"
+                    :rules="camposRules"
+                    outlined
+                    color="rgb(52,188,52)"
                   ></v-select>
                 </v-col>
               </v-row>
@@ -90,22 +102,37 @@
         </v-card-text>
 
         <!-- Acciones: Limpiar / Editar - Cancelar -->
-        <v-card-actions style="max-width: 95%; margin: auto;">
-          <v-btn :class="['ma-2', colorBtn]" color="success" @click="modoEdicion ? guardarEdicion() : guardar()">
-            {{ modoEdicion ? 'Editar' : 'Crear' }}
+        <v-card-actions style="max-width: 95%; margin: auto">
+          <v-btn
+            :class="['ma-2', colorBtn]"
+            color="success"
+            @click="modoEdicion ? guardarEdicion() : guardar()"
+          >
+            {{ modoEdicion ? "Editar" : "Crear" }}
           </v-btn>
 
-          <v-btn class="ma-2 colorBtnLimpiar" v-if="!modoEdicion" @click="limpiarFormulario()">
+          <v-btn
+            class="ma-2 colorBtnLimpiar"
+            v-if="!modoEdicion"
+            @click="limpiarFormulario()"
+          >
             Limpiar
           </v-btn>
 
           <v-spacer></v-spacer>
 
-          <v-btn class="ma-2 white--text colorBtnEliminar" color="error" v-if="modoEdicion" @click="limpiarFormulario(); modoEdicion = false">
+          <v-btn
+            class="ma-2 white--text colorBtnEliminar"
+            color="error"
+            v-if="modoEdicion"
+            @click="
+              limpiarFormulario();
+              modoEdicion = false;
+            "
+          >
             Cancelar
           </v-btn>
         </v-card-actions>
-
       </v-card>
     </v-row>
 
@@ -118,9 +145,7 @@
     />
 
     <!-- Cargando... -->
-    <v-overlay :value="loading">
-      <v-progress-circular indeterminate color="primary"></v-progress-circular>
-    </v-overlay>
+    <Spinner :value="loading" />
 
     <!-- Dialogo de creación -->
     <Dialogo
@@ -141,7 +166,7 @@
     <!-- Dialogos de eliminación -->
     <Dialogo_confirm_delete
       :show="dialogo1EliminarPrograma"
-      title="Estás seguro que quieres eliminar este programa?"
+      title="Realmente quieres eliminar este programa?"
       :confirmDeleteMethod="confirmarEliminacion"
       @close-dialog="dialogo1EliminarPrograma = $event"
     />
@@ -160,9 +185,10 @@
 
 <script>
 import axios from "axios";
-import Tabla from "../../components/Tabla.vue"
-import Dialogo from "../../components/Dialog.vue"
-import Dialogo_confirm_delete from "../../components/Dialog-confirm-delete.vue"
+import Tabla from "../../components/Tabla.vue";
+import Dialogo from "../../components/Dialog.vue";
+import Dialogo_confirm_delete from "../../components/Dialog-confirm-delete.vue";
+import Spinner from "../../components/Spinner.vue";
 
 // import mensaje from "../../components/MensajesView.vue";
 export default {
@@ -173,31 +199,32 @@ export default {
   components: {
     Tabla,
     Dialogo,
-    Dialogo_confirm_delete
+    Dialogo_confirm_delete,
+    Spinner,
     // mensaje,
   },
 
   data() {
     return {
-      api : `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
-      inthoraria : [8,6],
+      api: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+      inthoraria: [8, 6],
       paquete: {
         codigo: null,
         nombre: null,
         nivel: null,
         version: null,
         duracion: null,
-        intensidad_horaria : null
+        intensidad_horaria: null,
       },
       programas: [],
       cabeceraTabla: [
-        {text: "Codigo", value: "codigo"},
-        {text: "Nombre", value: "nombre"},
-        {text: "Nivel", value: "nivel"},
-        {text: "Version", value: "version"},
-        {text: "Duración", value: "duracion"},
-        {text: "Intensidad horaria", value: "intensidad_horaria"},
-        {text: "Acciones", value: "actions"},
+        { text: "Código", value: "codigo" },
+        { text: "Nombre", value: "nombre" },
+        { text: "Nivel", value: "nivel" },
+        { text: "Versión", value: "version" },
+        { text: "Duración", value: "duracion" },
+        { text: "Intensidad horaria", value: "intensidad_horaria" },
+        { text: "Acciones", value: "actions" },
       ],
       modoEdicion: false,
       loading: false,
@@ -217,117 +244,137 @@ export default {
         "AUXILIAR",
         "ESPECIALIZACIÓN",
       ],
-      camposRules: [(v) => !!v || "Campo es requerido"],
+      camposRules: [(v) => !!v || "Requerido !"],
     };
   },
 
   methods: {
-    async cargarProgramas(){
+    async cargarProgramas() {
       try {
-        const response = await axios.get(`${this.api}/programas`)
-        this.programas = response.data
-        
+        const response = await axios.get(`${this.api}/programas`);
+        this.programas = response.data;
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     },
 
     async guardar() {
-      if (this.$refs.form.validate()){
+      if (this.$refs.form.validate()) {
         this.loading = true;
-  
+
         try {
           await axios.post(`${this.api}/programas/crear`, this.paquete);
-  
-          this.loading = false;
-          this.cargarProgramas()
+
+          await this.cargarProgramas();
           this.limpiarFormulario();
-          this.dialogoProgramaCreado = true
-
+          this.loading = false;
+          this.dialogoProgramaCreado = true;
         } catch (error) {
-          console.error(error) 
+          console.error(error);
         }
       }
+
+      window.scrollTo(0, 0);
     },
 
-    editarRegistro(item){
-      if (item._id){
-        item.id = item._id
-        delete item._id
-      }
-      delete item.__v
-      window.scrollTo(0, 0)
-      this.paquete = {...item}
-      this.modoEdicion = true
+    editarRegistro(item) {
+      window.scrollTo(0, 0);
+
+      const {
+        _id,
+        codigo,
+        nombre,
+        nivel,
+        version,
+        duracion,
+        intensidad_horaria,
+      } = item;
+
+      this.paquete = {
+        id: _id,
+        codigo,
+        nombre,
+        nivel,
+        version,
+        duracion,
+        intensidad_horaria,
+      };
+
+      this.modoEdicion = true;
     },
 
-    async guardarEdicion(){
-      if (this.$refs.form.validate()){
-
-        this.loading = true
-        console.log(this.paquete)
+    async guardarEdicion() {
+      if (this.$refs.form.validate()) {
+        this.loading = true;
+        console.log(this.paquete);
         try {
-          await axios.put(`${this.api}/programas/actualizar`, this.paquete)
-  
-          this.loading = false
-          this.modoEdicion = false
-          this.cargarProgramas()
-          this.limpiarFormulario()
-          this.dialogoProgramaActualizado = true
-  
+          await axios.put(`${this.api}/programas/actualizar`, this.paquete);
+
+          await this.cargarProgramas();
+          this.limpiarFormulario();
+          this.modoEdicion = false;
+          this.loading = false;
+          this.dialogoProgramaActualizado = true;
         } catch (error) {
-          console.error(error)
+          console.error(error);
         }
       }
+
+      window.scrollTo(0, 0);
     },
 
-    eliminarRegistro(item){
-      this.itemEliminar = item
-      this.dialogo1EliminarPrograma = true
+    eliminarRegistro(item) {
+      this.itemEliminar = item;
+      this.dialogo1EliminarPrograma = true;
     },
 
-    async confirmarEliminacion(){
-      this.loading = true
+    async confirmarEliminacion() {
+      this.dialogo1EliminarPrograma = false;
+      this.loading = true;
 
       try {
-        await axios.delete(`${this.api}/programas/eliminar/${this.itemEliminar._id}`)
+        await axios.delete(
+          `${this.api}/programas/eliminar/${this.itemEliminar._id}`
+        );
 
-        this.loading = false
-        this.itemEliminar = null
-        this.cargarProgramas()
-        this.dialogo1EliminarPrograma = false
-        this.dialogo2EliminarPrograma = true
-
+        await this.cargarProgramas();
+        this.itemEliminar = null;
+        this.loading = false;
+        this.dialogo2EliminarPrograma = true;
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     },
 
-    convertToUppercase(){
-      this.paquete.nombre = this.paquete.nombre.toUpperCase()
+    convertToUppercase() {
+      this.paquete.nombre = this.paquete.nombre.toUpperCase();
     },
 
-    limpiarFormulario(){
-      this.$refs.form.resetValidation()
+    limpiarFormulario() {
+      this.$refs.form.resetValidation();
       this.paquete = {
         codigo: null,
         nombre: null,
         nivel: null,
         version: null,
         duracion: null,
-        intensidad_horaria : null
-      }
-    }
+        intensidad_horaria: null,
+      };
+    },
   },
 
   async mounted() {
-    this.cargarProgramas()
+    this.loading = true;
+
+    await this.cargarProgramas();
+
+    this.loading = false;
   },
 
   computed: {
-    colorBtn(){
-      return this.modoEdicion ? 'colorBtnEditar' : 'colorBtnCrear'
-    }
-  }
+    colorBtn() {
+      return this.modoEdicion ? "colorBtnEditar" : "colorBtnCrear";
+    },
+  },
 };
 </script>
