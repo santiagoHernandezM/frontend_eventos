@@ -380,37 +380,16 @@
       @close-dialog="dialogo2EliminarFicha = $event"
     />
 
-    <!-- Dialogo jornadas vacias -->
-    <DialogError
-      :show="dialogoJornadasVacias"
-      title="Se debe establecer el horario de la ficha"
-      text="La ficha debe tener al menos el horario para un día en
-          específico"
-      @close-dialog="dialogoJornadasVacias = $event"
-    />
-    <!-- <v-dialog v-model="dialogoJornadasVacias" persistent max-width="670">
-      <v-card>
-        <v-card-title style="color: rgb(248, 74, 74)" class="headline"
-          >Se debe establecer el horario de la ficha</v-card-title
-        >
-        <v-card-text
-          >La ficha debe tener al menos el horario para un día en
-          específico</v-card-text
-        >
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="green darken-1"
-            text
-            @click="dialogoJornadasVacias = false"
-            >Aceptar</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog> -->
-
     <!-- Dialogo fecha inválida -->
-    <v-dialog v-model="dialogoFechaInvalida" persistent max-width="670">
+    <DialogError
+      :show="dialogoFechaInvalida"
+      title="Fecha inválida !"
+      text="La fecha de inicio no puede ser mayor o igual a la fecha de
+      finalización"
+      @close-dialog="dialogoFechaInvalida = $event"
+    />
+
+    <!-- <v-dialog v-model="dialogoFechaInvalida" persistent max-width="670">
       <v-card>
         <v-card-title style="color: rgb(248, 74, 74)" class="headline"
           >Fecha inválida !</v-card-title
@@ -429,7 +408,23 @@
           >
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
+
+    <DialogError
+      :show="dialogoHorarioRepetido"
+      title="La jornada ya existe!"
+      text="No se puede volver a registrar una jornada para el mismo día"
+      @close-dialog="dialogoHorarioRepetido = $event"
+    />
+
+    <!-- Dialogo jornadas vacias -->
+    <DialogError
+      :show="dialogoJornadasVacias"
+      title="Se debe establecer el horario de la ficha"
+      text="La ficha debe tener al menos el horario para un día en
+          específico"
+      @close-dialog="dialogoJornadasVacias = $event"
+    />
 
     <pre>{{ $data }}</pre>
   </v-container>
@@ -505,6 +500,7 @@ export default {
       dialogo2EliminarFicha: false,
       dialogoJornadasVacias: false,
       dialogoFechaInvalida: false,
+      dialogoHorarioRepetido: false,
       itemEliminar: null,
       jornadas: [],
 
@@ -657,19 +653,17 @@ export default {
 
     agregarLista() {
       if (this.$refs.formJornada.validate()) {
-        if (this.dia == null || this.jornadaInput == null) {
-          this.mostrarModal("Error", "Debe seleccionar un día y una jornada");
-          return;
-        }
-
-        let v = this.paquete.jornadas.filter(
-          (e) => e.dia == this.dia && e.jornada == this.jornadaInput
+        const existeHorario = this.paquete.jornadas.some(
+          (jornada) =>
+            jornada.dia == this.dia && jornada.jornada == this.jornadaInput
         );
-        if (v.length == 0) {
+
+        if (!existeHorario) {
           let indice = null;
-          for (let i = 0; i < this.jornadas.length; i++) {
-            if (this.jornadas[i].descripcion.includes(this.jornadaInput)) {
-              indice = i;
+
+          for (const jornada of this.jornadas) {
+            if (jornada.descripcion.includes(this.jornadaInput)) {
+              indice = this.jornadas.indexOf(jornada);
               break; // Si se encuentra el item, se sale del bucle
             }
           }
@@ -680,10 +674,8 @@ export default {
             horaInicio: this.jornadas[indice].horaInicio,
             horaFin: this.jornadas[indice].horaFin,
           });
-
-          this.limpiarDatosHorario();
         } else {
-          this.mostrarModal("Error", "Ya esta registrado un horario similar");
+          this.dialogoHorarioRepetido = true;
         }
 
         this.limpiarDatosHorario();
