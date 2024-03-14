@@ -219,6 +219,19 @@ const routes = [
                         next()
                       }
             },
+
+            {
+                name: 'crearusuario',
+                path: '/dashboard/masivousuario',
+                component: () =>
+                    import ('../views/Usuario/MasivoUsuarioView.vue'),
+                    beforeEnter: (_, __, next) => {
+                        let rol =  store.getters.usuario.roles
+                        let found = rol.find((element) => element == 'Administrator');
+                        if (found == undefined) return next('/dashboard/welcome')
+                        next()
+                      }
+            },
             {
                 name: 'salida',
                 path: '/dashboard/salida',

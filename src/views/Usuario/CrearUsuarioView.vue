@@ -358,7 +358,7 @@ export default {
       items: ["DATOS PERSONALES", "INFORMACION CONTRATO","ROLES"],
       fini: false,
       ffin: false,
-      tipo : ['Prestacion de servicios','Planta'],
+      tipo : ['CONTRATISTA','CARRERA ADMINISTRATIVA'],
       centros : [],
       isInstructor : false,
       isAdmin : false,

@@ -88,6 +88,10 @@ let menu = [
               href: "/dashboard/listarusuario",
               title: "Listar",
             },
+            {
+              href: "/dashboard/masivousuario",
+              title: "Cargue Masivo",
+            },
             ],
         },
       ]
