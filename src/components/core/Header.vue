@@ -1,21 +1,23 @@
 <template>
-  <v-app-bar app elevate-on-scroll elevation="8" 
-  height="100px"
-  relative flat class="fondo">
-      <v-app-bar-nav-icon
+  <v-app-bar
+    app
+    elevate-on-scroll
+    elevation="8"
+    height="100px"
+    relative
+    flat
+    class="fondo"
+  >
+    <v-app-bar-nav-icon
       class="btn"
       dark
       @click="procesa()"
     ></v-app-bar-nav-icon>
 
-    <v-toolbar-title >
-      <div class="letra">
-        GESTION DE EVENTOS  
-      </div>
-      <div class="nombre">
-        Bienvenido : {{usuario}}
-      </div>
-       
+    <v-toolbar-title>
+      <!-- <img src="../../assets/images/titulo2.jpeg" alt="Evento" width="500px" /> -->
+      <div class="letra">GESTIÓN DE EVENTOS SENA</div>
+      <div class="nombre">Bienvenido : {{ usuario }}</div>
     </v-toolbar-title>
 
     <v-spacer></v-spacer>
@@ -30,14 +32,12 @@
       </template>
       <v-list dense>
         <v-list-item-group v-model="selectedItem" color="primary">
-          <v-list-item v-for="(item, i) in items" :key="i"
-           :to="item.link">
+          <v-list-item v-for="(item, i) in items" :key="i" :to="item.link">
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title 
-               v-text="item.text"></v-list-item-title>
+              <v-list-item-title v-text="item.text"></v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -51,36 +51,41 @@ export default {
   data() {
     return {
       items: [
-        { text: "Perfil", icon: "mdi-clock", link :''},
-        { text: "Salir", icon: "mdi-account",link : "/dashboard/salida" },
+        { text: "Perfil", icon: "mdi-clock", link: "" },
+        { text: "Salir", icon: "mdi-account", link: "/dashboard/salida" },
       ],
     };
   },
   computed: {
-    usuario(){
-        return `${this.$store.getters.usuario.nombre} ${this.$store.getters.usuario.apellido}`
-    }
+    usuario() {
+      return `${this.$store.getters.usuario.nombre} ${this.$store.getters.usuario.apellido}`;
+    },
   },
   methods: {
     procesa() {
       console.log("generado");
       this.$emit("handrawer");
     },
-    
   },
 };
 </script>
 <style lang="scss" scoped>
 .letra {
-  color:black;
+  // color: black;
+  // font-size: 40px;
+  // font-family: "Courier New", Courier, monospace;
+  // font-weight: 520;
+  // text-shadow: 2px 2px 3px gray;
+
+  color: #000;
   font-size: 40px;
-  font-family:'Courier New', Courier, monospace;
-  font-weight: 500;
-  text-shadow: 2px 2px 3px gray;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: 600;
+  text-shadow: 4px 4px 2px #58d64a;
 }
 
-.fondo{
-  background: linear-gradient(0deg, rgb(181, 238, 150) 2%, rgb(209, 235, 165) 100%); 
+.fondo {
+  background: linear-gradient(45deg, #c5ec9f 50%, #c5ec9f 100%);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-attachment: fixed;
@@ -89,7 +94,7 @@ export default {
   margin: 0;
 }
 
-.nombre{
-  margin-top: -10px ;
+.nombre {
+  margin-top: -10px;
 }
 </style>

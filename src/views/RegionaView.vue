@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="space-around">
-      <v-card width="600">
+      <v-card width="600" class="fondo2">
         <!-- Encabezado -->
         <v-app-bar flat color="rgb(52,188,52)">
           <v-toolbar-title class="text-h6 white--text pl-0">
@@ -366,4 +366,8 @@ export default {
   );
   color: #e66b1a;
 }
+
+/* .fondo2 {
+  background: #f !important;
+} */
 </style>

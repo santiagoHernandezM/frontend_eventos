@@ -96,30 +96,30 @@
                               item-color="black"
                               prepend-icon="map"
                             ></v-select>
-                            </v-col>
-                            </v-row>
-                            <v-row>
-                              <v-col cols="12">
-                                <v-select
-                                v-model="paquete.programas"
-                                :items="programas"
-                                item-value="_id"
-                                label="Asigne programas de formacion"
-                                multiple
-                               
-                              >
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col cols="12">
+                            <v-select
+                              v-model="paquete.programas"
+                              :items="programas"
+                              item-value="_id"
+                              label="Asigne programas de formacion"
+                              multiple
+                            >
                               <template v-slot:item="{ item }">
-                                {{ item.nivel }} {{ item.nombre }} Intensidad Horaria {{ item.intensidad_horaria }}
+                                {{ item.nivel }} {{ item.nombre }} Intensidad
+                                Horaria {{ item.intensidad_horaria }}
                               </template>
 
                               <template slot="selection" slot-scope="data">
-                                {{ data.item.nivel }} {{ data.item.nombre }} Intensidad Horaria {{ data.item.intensidad_horaria }}
+                                {{ data.item.nivel }}
+                                {{ data.item.nombre }} Intensidad Horaria
+                                {{ data.item.intensidad_horaria }}
                               </template>
-
                             </v-select>
-                                </v-col>
-                                </v-row>
-
+                          </v-col>
+                        </v-row>
                       </v-card-text>
                     </v-card>
                   </v-card-text>
@@ -226,7 +226,6 @@
                             ></v-select>
                           </v-col>
                         </v-row>
-                       
                       </v-card-text>
                     </v-card>
                   </v-col>
@@ -259,7 +258,6 @@
 import axios from "axios";
 import mensaje from "../../components/MensajesView.vue";
 
-
 export default {
   props: {
     datos: Object,
@@ -275,17 +273,17 @@ export default {
       items: ["DATOS PERSONALES", "INFORMACION CONTRATO"],
       fini: false,
       ffin: false,
-      tipo : ['Prestacion de servicios','Planta'],
-      sedes : null,
-      programas : null,
+      tipo: ["Prestacion de servicios", "Planta"],
+      sedes: null,
+      programas: null,
       paquete: {
         documento: null,
         nombre: null,
         apellido: null,
         correo: null,
         celular: null,
-        sede : null,
-        programas  : [],
+        sede: null,
+        programas: [],
         contrato: {
           numero: null,
           fechaInicio: null,
@@ -305,9 +303,6 @@ export default {
   },
 
   methods: {
-
-  
-
     async guardar() {
       var vm = this;
       if (this.$refs.form.validate()) {
@@ -336,15 +331,13 @@ export default {
     const tipos = await axios.get(`${url}/tipo-de-vinculacion`);
     const response = await axios.get(`${url}/sedes/`);
     const programas = await axios.get(`${url}/programas/`);
-    this.programas = programas.data
-    this.sedes = response.data
+    this.programas = programas.data;
+    this.sedes = response.data;
     this.tipovinculacion = tipos.data;
-
-    
   },
   computed: {
     combinedText() {
-      return this.options.map(item => ({
+      return this.options.map((item) => ({
         ...item,
         combinedText: `${item.nivel} ${item.nombre}`,
       }));
