@@ -245,6 +245,13 @@
                       </v-select>
                     </v-col>
                   </v-row>
+
+                  <listaprograma
+                  :programas="programas"
+                  v-if="mostrarprogramas"    
+                  @envioprogramas="cargarprograma"          
+                  
+                  ></listaprograma>
                 </v-container>
               </v-tab-item>
 
@@ -328,9 +335,11 @@
 <script>
 import axios from "axios";
 import mensaje from "../../components/MensajesView.vue";
+import listaprograma from "../../components/ListProgramas/ListaProgramas.vue"
 export default {
   components: {
     mensaje,
+    listaprograma,
   },
   data() {
     return {
@@ -376,11 +385,22 @@ export default {
     };
   },
 
+  computed: {
+    mostrarprogramas(){
+       return this.paquete.roles.includes('Coordinador');
+      
+    }
+  },
   methods: {
+    cargarprograma(lprograma){
+       this.paquete.programas = lprograma
+
+    },
     academia() {
       const admin = this.paquete.roles.find((rol) => rol == "Administrator");
       if (admin != undefined) {
         this.paquete.roles = [];
+        this.paquete.programas = []
         this.paquete.roles.push("Administrator");
         this.items = [
           "DATOS PERSONALES",
@@ -393,6 +413,7 @@ export default {
       } else {
         const result = this.paquete.roles.find((rol) => rol == "Instructor");
         if (result != undefined) {
+          this.paquete.programas = []
           this.items = [
             "DATOS PERSONALES",
             "INFORMACION CONTRATO",
@@ -482,6 +503,7 @@ export default {
     this.roles = resultado.data;
     const programas = await axios.get(`${this.api}/programas/`);
     this.programas = programas.data;
+    console.log(this.programas)
     const response = await axios.get(`${this.api}/centro/`);
     this.centros = response.data;
   },
