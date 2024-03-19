@@ -124,6 +124,22 @@ let menu = [
       },
     ],
   },
+  {
+    coordinador: [
+      {
+        header: true,
+        title: "MENU EVENTOS",
+        hiddenOnCollapse: false,
+      },
+      {
+        href: "/dashboard/programainstructor",
+        title: "Programas Instructor",
+        icon: "mdi mdi-calendar-clock",
+      },
+    ]
+  }
+
+
 ];
 
 module.exports = menu;

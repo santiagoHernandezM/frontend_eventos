@@ -464,6 +464,7 @@ export default {
 
         this.loading = true;
         try {
+          this.paquete.centro = this.$store.getters.usuario.centro
           const response = await axios.post(
             `${this.api}/user/crear`,
             this.paquete

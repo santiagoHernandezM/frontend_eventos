@@ -117,7 +117,10 @@ export default {
       this.menu = menut[0].admin;
     } else {
       const inst = rol.find((element) => element == "Instructor");
-      if (inst != undefined) this.menu = menut[1].instructor;
+      if (inst != undefined)
+       this.menu = menut[1].instructor
+      else
+      this.menu = menut[2].coordinador
     }
   },
 
