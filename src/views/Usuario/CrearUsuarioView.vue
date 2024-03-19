@@ -20,7 +20,7 @@
         </v-toolbar>
 
         <v-card-text>
-          <v-form>
+          <v-form ref="form">
             <v-tabs-items v-model="tab">
               <!-- Datos personales -->
               <v-tab-item>
@@ -110,7 +110,6 @@
                                   :type="show1 ? 'text' : 'password'"
                                   name="input-10-1"
                                   label="Contraseña"
-                                  hint="8 caracteres como minimo"
                                   counter
                                   @click:append="show1 = !show1"
                                   outlined
@@ -123,51 +122,6 @@
                       </v-card-text>
                     </v-card>
                   </v-row>
-
-                  <!-- <v-row>
-                    <v-card flat>
-                      <v-card-text>
-                        <v-card width="400">
-                          <v-row
-                            justify="center"
-                            class="mb-n6 titulo ml-1 mr-1"
-                          >
-                            <v-col cols="12">
-                              <h5>DATOS DE CONEXION</h5>
-                            </v-col>
-                          </v-row>
-                          <v-row class="mb-n10">
-                            <v-col class="mr-3 ml-4">
-                              <v-text-field
-                                label="Correo"
-                                prepend-icon="mdi-gmail"
-                                v-model="paquete.correo"
-                                :rules="emailRules"
-                                color="rgb(52,188,52)"
-                              ></v-text-field>
-                            </v-col>
-                          </v-row>
-                          <v-row>
-                            <v-col class="mr-3 ml-4">
-                              <v-text-field
-                                v-model="paquete.password"
-                                prepend-icon="mdi-lock"
-                                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                                :rules="[camposRules, min]"
-                                :type="show1 ? 'text' : 'password'"
-                                name="input-10-1"
-                                label="Password"
-                                hint="8 caracteres como minimo"
-                                counter
-                                @click:append="show1 = !show1"
-                                color="rgb(52,188,52)"
-                              ></v-text-field>
-                            </v-col>
-                          </v-row>
-                        </v-card>
-                      </v-card-text>
-                    </v-card>
-                  </v-row> -->
                 </v-container>
               </v-tab-item>
 
@@ -214,11 +168,11 @@
 
                     <v-col>
                       <v-text-field
+                        :rules="camposRules"
                         v-model="paquete.contrato.fechaTerminacion"
                         type="date"
                         label="Fecha de finalización"
                         outlined
-                        :rules="camposRules"
                         color="rgb(52,188,52)"
                       ></v-text-field>
                     </v-col>
@@ -246,12 +200,11 @@
                     </v-col>
                   </v-row>
 
-                  <listaprograma
-                  :programas="programas"
-                  v-if="mostrarprogramas"    
-                  @envioprogramas="cargarprograma"          
-                  
-                  ></listaprograma>
+                  <ListaPrograma
+                    :programas="programas"
+                    v-if="mostrarprogramas"
+                    @envioprogramas="cargarprograma"
+                  ></ListaPrograma>
                 </v-container>
               </v-tab-item>
 
@@ -325,21 +278,87 @@
             </v-tabs-items>
           </v-form>
         </v-card-text>
+
+        <!-- Acciones: Limpiar / Editar - Cancelar -->
+        <v-card-actions style="max-width: 95%; margin: auto">
+          <v-btn
+            :class="['ma-2', colorBtn]"
+            :style="{ color: '#fff' }"
+            @click="modoEdicion ? guardarEdicion() : guardar()"
+          >
+            {{ modoEdicion ? "Editar" : "Crear" }}
+          </v-btn>
+
+          <v-btn
+            class="ma-2 colorBtnLimpiar"
+            v-if="!modoEdicion"
+            @click="limpiarFormulario()"
+          >
+            Limpiar
+          </v-btn>
+
+          <v-spacer></v-spacer>
+
+          <v-btn
+            class="ma-2 white--text colorBtnEliminar"
+            v-if="modoEdicion"
+            @click="
+              limpiarFormulario();
+              modoEdicion = false;
+            "
+          >
+            Cancelar
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-row>
+
+    <!-- Cargando... -->
+    <Spinner :value="loading" />
+
+    <!-- Dialogo de creación -->
+    <Dialogo
+      :show="dialogoUsuarioCreado"
+      title="Registro creado con éxito"
+      text="Usuario creado"
+      @close-dialog="dialogoUsuarioCreado = $event"
+    />
+
+    <DialogError
+      :show="dialogoCamposVacios"
+      title="Faltan datos por diligenciar !"
+      text="Asegúrese de llenar todos los campos"
+      @close-dialog="dialogoCamposVacios = $event"
+    />
+
+    <!-- Programas vacios -->
+    <DialogError
+      :show="dialogoProgramasVacios"
+      title="No ha asignado ningún programa de formación !"
+      text="Debe seleccionar al menos un programa"
+      @close-dialog="dialogoProgramasVacios = $event"
+    />
 
     <pre>{{ $data }}</pre>
     <mensaje :mensaje="mensaje" :color="color" :show="show"> </mensaje>
   </v-container>
 </template>
+
 <script>
 import axios from "axios";
 import mensaje from "../../components/MensajesView.vue";
-import listaprograma from "../../components/ListProgramas/ListaProgramas.vue"
+import ListaPrograma from "../../components/ListProgramas/ListaProgramas.vue";
+import Dialogo from "../../components/Dialog.vue";
+import DialogError from "../../components/DialogError.vue";
+import Spinner from "../../components/Spinner.vue";
+
 export default {
   components: {
     mensaje,
-    listaprograma,
+    ListaPrograma,
+    Dialogo,
+    DialogError,
+    Spinner,
   },
   data() {
     return {
@@ -382,25 +401,23 @@ export default {
       min: (v) => v.length >= 8 || "Mínimo 8 caracteres",
       vrol: (v) => v.length > 0 || "Escoja un rol",
       show1: false,
+      loading: false,
+      modoEdicion: false,
+      dialogoCamposVacios: false,
+      dialogoProgramasVacios: false,
+      dialogoUsuarioCreado: false,
     };
   },
 
-  computed: {
-    mostrarprogramas(){
-       return this.paquete.roles.includes('Coordinador');
-      
-    }
-  },
   methods: {
-    cargarprograma(lprograma){
-       this.paquete.programas = lprograma
-
+    cargarprograma(lprograma) {
+      this.paquete.programas = lprograma;
     },
     academia() {
       const admin = this.paquete.roles.find((rol) => rol == "Administrator");
       if (admin != undefined) {
         this.paquete.roles = [];
-        this.paquete.programas = []
+        this.paquete.programas = [];
         this.paquete.roles.push("Administrator");
         this.items = [
           "DATOS PERSONALES",
@@ -413,7 +430,7 @@ export default {
       } else {
         const result = this.paquete.roles.find((rol) => rol == "Instructor");
         if (result != undefined) {
-          this.paquete.programas = []
+          this.paquete.programas = [];
           this.items = [
             "DATOS PERSONALES",
             "INFORMACION CONTRATO",
@@ -429,7 +446,44 @@ export default {
         }
       }
     },
-    guardar() {
+
+    async guardar() {
+      if (this.$refs.form.validate()) {
+        if (this.paquete.roles.includes("Administrator")) {
+          this.paquete.programas = [];
+        } else {
+          if (this.paquete.roles.includes("Coordinador")) {
+            if (this.paquete.programas.length == 0) {
+              this.dialogoProgramasVacios = true;
+              return;
+            }
+          } else {
+            this.paquete.programas = [];
+          }
+        }
+
+        this.loading = true;
+        try {
+          const response = await axios.post(
+            `${this.api}/user/crear`,
+            this.paquete
+          );
+
+          console.log(response);
+          this.loading = false;
+          this.limpiarFormulario();
+          this.dialogoUsuarioCreado = true;
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        this.dialogoCamposVacios = true;
+      }
+
+      // window.scrollTo(0, 0);
+    },
+
+    /*guardar() {
       let procesar = false;
       if (this.$refs.form.validate()) {
         if (this.paquete.roles.length > 0) {
@@ -445,10 +499,10 @@ export default {
           } else {
             const found = this.paquete.roles.find(
               (element) => element == "Instructor"
-            );
-            console.log(found);
-            if (found != undefined) {
-              this.paquete.centro = null;
+              );
+              console.log(found);
+              if (found != undefined) {
+                this.paquete.centro = null;
               if (this.paquete.programas.length == 0) {
                 this.mensaje = "Debe seleccionar uno o mas programas";
                 this.color = "red";
@@ -478,32 +532,70 @@ export default {
         this.procesarguardado();
         this.show = false;
       }
+    },*/
+
+    // async procesarguardado() {
+    //   let vm = this;
+    //   await axios
+    //     .post(`${this.api}/user/crear`, this.paquete)
+    //     .then(function () {
+    //       vm.mensaje = "Usuario guardado con exito ...";
+    //       vm.color = "green";
+    //       vm.show = true;
+    //     })
+    //     .catch(function (error) {
+    //       vm.mensaje = `Se ha producido un error : ${error.message}`;
+    //       vm.color = "red";
+    //       vm.show = true;
+    //     })
+    //     .finally(function () {});
+    // },
+
+    limpiarFormulario() {
+      this.$refs.form.resetValidation();
+
+      this.paquete = {
+        documento: null,
+        nombre: null,
+        apellido: null,
+        correo: null,
+        password: null,
+        celular: null,
+        centro: null,
+        programas: [],
+        roles: [],
+        contrato: {
+          numero: null,
+          fechaInicio: null,
+          fechaTerminacion: null,
+          tipoVinculacion: null,
+        },
+      };
+    },
+  },
+
+  computed: {
+    mostrarprogramas() {
+      return this.paquete.roles.includes("Coordinador");
     },
 
-    async procesarguardado() {
-      let vm = this;
-      await axios
-        .post(`${this.api}/user/crear`, this.paquete)
-        .then(function () {
-          vm.mensaje = "Usuario guardado con exito ...";
-          vm.color = "green";
-          vm.show = true;
-        })
-        .catch(function (error) {
-          vm.mensaje = `Se ha producido un error : ${error.message}`;
-          vm.color = "red";
-          vm.show = true;
-        })
-        .finally(function () {});
+    textColorBtn() {
+      return this.modoEdicion ? "#000" : "#fff";
+    },
+
+    colorBtn() {
+      return this.modoEdicion ? "colorBtnEditar" : "colorBtnCrear";
     },
   },
 
   async mounted() {
+    this.paquete.centro = this.$store.getters.usuario.centro;
+
     let resultado = await axios.get(`${this.api}/user/roles`);
     this.roles = resultado.data;
     const programas = await axios.get(`${this.api}/programas/`);
     this.programas = programas.data;
-    console.log(this.programas)
+    console.log(this.programas);
     const response = await axios.get(`${this.api}/centro/`);
     this.centros = response.data;
   },

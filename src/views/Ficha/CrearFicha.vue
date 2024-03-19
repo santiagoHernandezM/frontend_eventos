@@ -773,20 +773,9 @@ export default {
     const response = await axios.get(`${this.api}/jornada`);
     this.jornadas = response.data;
 
-    // obtener los ambientes
-    // this.paquete.centro = this.$store.getters.usuario.centro
-
-    // Creando sedes del centro con el id especificado (centro1), modificarlo
     const centro = this.$store.getters.usuario.centro;
-    console.log(centro);
     const responseSedes = await axios.get(`${this.api}/sedes/centro/${centro}`);
     this.sedes = responseSedes.data;
-
-    // Creando ambientes de la sede con el id especificado (sede1), modificarlo
-    const responseAmbientes = await axios.get(
-      `${this.api}/ambiente/sede/65e386914055ac8b84439867`
-    );
-    this.ambientes = responseAmbientes.data;
 
     const responseProgramas = await axios.get(`${this.api}/programas`);
     this.programas = responseProgramas.data;
