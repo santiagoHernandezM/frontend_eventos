@@ -464,7 +464,7 @@ export default {
 
         this.loading = true;
         try {
-          this.paquete.centro = this.$store.getters.usuario.centro
+          this.paquete.centro = this.$store.getters.usuario.centro;
           const response = await axios.post(
             `${this.api}/user/crear`,
             this.paquete
@@ -551,6 +551,11 @@ export default {
     //     })
     //     .finally(function () {});
     // },
+
+    convertToUppercase() {
+      this.paquete.nombre = this.paquete.nombre.toUpperCase();
+      this.paquete.apellido = this.paquete.apellido.toUpperCase();
+    },
 
     limpiarFormulario() {
       this.$refs.form.resetValidation();
