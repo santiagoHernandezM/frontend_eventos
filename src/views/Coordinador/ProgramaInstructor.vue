@@ -27,6 +27,7 @@
                   v-model="paquete.programa"
                   :rules="camposRules"
                   outlined
+                  @change="limpiarFormulario()"
                   color="rgb(52,188,52)"
                 ></v-select>
               </v-form>
@@ -268,7 +269,7 @@ export default {
 
   methods: {
     async asignar() {
-      if (this.$refs.form.validate()) {
+    /*  if (this.$refs.form.validate()) {
         this.loading = true;
 
         if (
@@ -278,20 +279,37 @@ export default {
           this.loading = false;
           this.dialogoCamposVacios = true;
           return;
-        }
+        }*/
 
+        axios.post(`${this.api}/user/asignarprogramas/instructores`,this.paquete)
+  .then(function (response) {
+    // handle success
+    console.log(response);
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .finally(function () {
+    // always executed
+  });
+        /*
         try {
-          console.log(
-            await axios.post(
+        
+            const response = await  axios.post(
               `${this.api}/user/asignarprogramas/instructores`,
               this.paquete
             )
-          );
 
+            console.log(response)
+         
           this.limpiarFormulario();
           this.loading = false;
           window.scrollTo(0, 0);
           this.dialogoAsignacionExitosa = true;
+
+
+
         } catch (error) {
           if (
             error.response.data.message.includes(
@@ -304,18 +322,17 @@ export default {
             this.dialogoProgramaRepetido = true;
             return;
           }
-        }
-      }
+        }*/
+
+    //  }
       window.scrollTo(0, 0);
     },
 
     limpiarFormulario() {
       this.$refs.form.resetValidation();
 
-      this.paquete = {
-        programa: null,
-        instructores: [],
-      };
+      this.paquete.instructores = []
+      
     },
   },
 
@@ -350,9 +367,8 @@ export default {
         instructores: ["instructor1", "instructor2"],
       }
     );*/
-    const responseProgramas = await axios.get(`${this.api}/programas`);
-    this.programas = responseProgramas.data;
-
+    this.programas = this.$store.getters.usuario.programas;
+    console.log(this.programas)
     const resultado = await axios.get(`${this.api}/user/instructor`);
     this.instructores = resultado.data;
 

@@ -136,6 +136,11 @@ let menu = [
         title: "Programas Instructor",
         icon: "mdi mdi-calendar-clock",
       },
+      {
+        href: "/dashboard/instructoresprograma",
+        title: "Instructores por Programa",
+        icon: "mdi mdi-calendar-clock",
+      },
     ]
   }
 
