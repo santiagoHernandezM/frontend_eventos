@@ -31,7 +31,7 @@
         </span>
       </template>
       <v-list dense>
-        <v-list-item-group v-model="selectedItem" color="primary">
+        <v-list-item-group color="primary">
           <v-list-item v-for="(item, i) in items" :key="i" :to="item.link">
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
