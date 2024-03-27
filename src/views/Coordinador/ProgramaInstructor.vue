@@ -123,6 +123,7 @@
                             <v-checkbox
                               :value="data._id"
                               v-model="paquete.instructores"
+                              @change="cambio(data)"
                               color="rgb(52,188,52)"
                             ></v-checkbox>
 
@@ -151,6 +152,7 @@
                             <v-checkbox
                               :value="data._id"
                               v-model="paquete.instructores"
+                              @change="cambio(data)"
                               color="rgb(52,188,52)"
                             ></v-checkbox>
 
@@ -178,6 +180,7 @@
                             <v-checkbox
                               :value="data._id"
                               v-model="paquete.instructores"
+                              @change="cambio(data)"
                               color="rgb(52,188,52)"
                             ></v-checkbox>
 
@@ -207,8 +210,8 @@
     <!-- Dialogo de asignación exitosa -->
     <Dialogo
       :show="dialogoAsignacionExitosa"
-      title="Asignación exitosa"
-      text="El programa ha sido asignado satisfactoriamente"
+      :title="title"
+      :text="mensaje"
       @close-dialog="dialogoAsignacionExitosa = $event"
     />
 
@@ -249,19 +252,65 @@ export default {
         programa: null,
         instructores: [],
       },
+      originales : [],
+      paraprocesar : [],
       programas: [],
       instructores: [],
+      
       nombres: [],
+      paquetecambio : null,
       camposRules: [(v) => !!v || "Requerido !"],
       loading: false,
       dialogoCamposVacios: false,
       dialogoAsignacionExitosa: false,
       dialogoProgramaRepetido: false,
       mensajeProgramaRepetido: null,
+      title : null,
+      mensaje : null,
     };
   },
 
   methods: {
+   cambio(data)
+   {
+    console.log(data)
+        const busqueda = this.originales.findIndex((e) => { return e == data._id} )
+        
+        if (busqueda != -1)
+         {
+           const obj = new Object();
+           obj.id = data._id
+           obj.operacion = 2
+           const r = this.paraprocesar.findIndex((e) => {return e.id == data._id})
+            if (r == -1)
+              {
+                this.paraprocesar.push(obj)
+              }
+            else
+              {
+                this.paraprocesar.splice(r,1)
+              }
+          }
+        else
+          {
+            const obj = new Object();
+            obj.id = data._id
+            obj.operacion = 1
+            const r = this.paraprocesar.findIndex((e) => {return e.id == data._id})
+            if (r == -1)
+              {
+                this.paraprocesar.push(obj)
+              }
+            else
+              {
+                this.paraprocesar.splice(r,1)
+              }
+          }
+
+
+   },
+
+    
     remove(item) {
       this.paquete.instructores.splice(
         this.paquete.instructores.indexOf(item),
@@ -283,6 +332,7 @@ export default {
         }
 
         try {
+          this.paquete.instructores = this.paraprocesar;
           const response = await axios.post(
             `${this.api}/users/asignarprogramas/instructores`,
             this.paquete
@@ -293,6 +343,8 @@ export default {
           this.limpiarFormulario();
           this.loading = false;
           window.scrollTo(0, 0);
+          this.title = response.data[0].title
+          this.mensaje = response.data[0].mensaje
           this.dialogoAsignacionExitosa = true;
         } catch (error) {
           console.log(error);
@@ -319,6 +371,7 @@ export default {
 
       try {
         this.paquete.instructores = [];
+        this.paraprocesar = []
         const response = await axios.get(
           `${this.api}/users/instructores/programa/${this.paquete.programa}/centro/${centro}`
         );
@@ -330,6 +383,7 @@ export default {
             (instructor) => instructor._id
           );
 
+          this.originales = JSON.parse(JSON.stringify(idsIntructores))
           this.paquete.instructores = idsIntructores;
 
           this.loading = false;
@@ -349,6 +403,7 @@ export default {
 
       this.paquete.programa = null;
       this.paquete.instructores = [];
+      this.paraprocesar = [];
     },
   },
 
@@ -361,6 +416,7 @@ export default {
         );
       },
     },
+    
   },
 
   computed: {
@@ -375,18 +431,7 @@ export default {
 
   async mounted() {
     this.loading = true;
-    //this.programas = this.$store.getters.usuario.programas;
-    /*const responseProgramas = await axios.post(
-      `${this.api}user/asignarprogramas/instructores`,
-      {
-        programa: "programa1",
-        instructores: ["instructor1", "instructor2"],
-      }
-    );*/
     this.programas = this.$store.getters.usuario.programas;
-
-    console.log(this.programas);
-
     const centro = this.$store.getters.usuario.centro;
     const resultado = await axios.get(
       `${this.api}/users/instructores/centro/${centro}`
