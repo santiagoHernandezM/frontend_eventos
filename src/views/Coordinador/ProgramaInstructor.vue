@@ -210,9 +210,8 @@
     <!-- Dialogo de asignación exitosa -->
     <Dialogo
       :show="dialogoAsignacionExitosa"
-      :title="title"
-      :text="mensaje"
-      @close-dialog="dialogoAsignacionExitosa = $event"
+      :listado="resultado"
+       @close-dialog="dialogoAsignacionExitosa = $event"
     />
 
     <DialogError
@@ -236,7 +235,7 @@
 import axios from "axios";
 import Spinner from "../../components/Spinner.vue";
 import DialogError from "../../components/DialogError.vue";
-import Dialogo from "../../components/Dialog.vue";
+import Dialogo from "../../components/DialogLista.vue";
 
 export default {
   components: {
@@ -258,6 +257,7 @@ export default {
       instructores: [],
       
       nombres: [],
+      resultado: [],
       paquetecambio : null,
       camposRules: [(v) => !!v || "Requerido !"],
       loading: false,
@@ -343,8 +343,7 @@ export default {
           this.limpiarFormulario();
           this.loading = false;
           window.scrollTo(0, 0);
-          this.title = response.data[0].title
-          this.mensaje = response.data[0].mensaje
+          this.resultado = response.data
           this.dialogoAsignacionExitosa = true;
         } catch (error) {
           console.log(error);
