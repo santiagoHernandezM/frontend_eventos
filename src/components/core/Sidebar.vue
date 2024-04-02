@@ -9,36 +9,34 @@
     <vuescroll :ops="ops">
       <!-- <div style="margin-left: 10px; margin-top: 10px">
         <label class="letra" for="">Servicio Nacional De Aprendizaje</label>
-      </div> --> 
-      <br>
-      
-      <div class="centrar"
-         
-        >
-        <img src="../../assets/images/Titulo1.png" alt="Evento" width="250px" />
-      </div>
-      <div class="centrar">
-        <div
-         
-        >
-          <img src="../../assets/logos/LogoNuevo.png" alt="Evento" width="140px" />
-        </div>
-      </div>
+      </div> -->
+
       <router-link to="/dashboard/welcome">
-        <div 
+        <div
           style="
-            /*background-color: #5c805c;
-            /*padding: 10px;
-            /*margin: 10px;
-            /*margin-right: 21px;
-            /*border-radius: 10px;
-            /*border: 5px solid #445e44;
+            background-color: #5c805c;
+            padding: 10px;
+            margin: 10px;
+            margin-right: 21px;
+            border-radius: 10px;
+            border: 5px solid #445e44;
           "
         >
-          <label class="letra" for="">{{ centro.nombre }}</label>
+          <label class="letra2" for="">{{ centro.nombre }}</label>
         </div>
       </router-link>
-      
+      <div class="centrar">
+        <div
+          style="
+            background-color: #517551;
+            border-radius: 50%;
+            margin-top: 5px;
+            border: 5px solid #445e44;
+          "
+        >
+          <img src="../../assets/logos/Diseno.png" alt="Evento" width="120px" />
+        </div>
+      </div>
       <div class="app-sidebar-content">
         <sidebar-menu showOneChild :menu="menu" />
       </div>
@@ -119,7 +117,10 @@ export default {
       this.menu = menut[0].admin;
     } else {
       const inst = rol.find((element) => element == "Instructor");
-      if (inst != undefined) this.menu = menut[1].instructor;
+      if (inst != undefined)
+       this.menu = menut[1].instructor
+      else
+      this.menu = menut[2].coordinador
     }
   },
 
@@ -149,21 +150,19 @@ export default {
 }
 .letra {
   color: black;
-  font-size: 20px;
+  font-size: 40px;
   font-family: "Courier New", Courier, monospace;
   font-weight: 400;
- 
-  text-align: center;
+  text-shadow: 2px 2px 3px rgb(88, 214, 74);
 }
 
 .letra2 {
-  color: #000000;
+  color: #eee;
   font-size: 20px;
   font-family: "Courier New", Courier, monospace;
   font-weight: 800;
-  margin-top: -20px;
+  text-shadow: 2px 2px 10px rgb(88, 214, 74);
 }
-
 
 .centrar {
   display: flex;
@@ -203,12 +202,14 @@ export default {
 }
 
 #fondo {
-  background-image: url('../../assets/images/fondot.png'); /* Corregido: Cambié 'src' por 'url' */
+  background: linear-gradient(0deg, #c5ec9f 20%, #a2c58e 100%);
+  /* background: #517551; */
   background-repeat: no-repeat;
-  background-size: cover; /* Cambiado a 'cover' para ajustar el tamaño de la imagen al contenedor */
+  background-size: 100% 100%;
   background-attachment: fixed;
   width: 100%;
   height: 100%;
   margin: 0;
+  color: #5c805c;
 }
 </style>
