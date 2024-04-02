@@ -15,9 +15,9 @@
     ></v-app-bar-nav-icon>
 
     <v-toolbar-title>
-      <!-- <img src="../../assets/images/titulo2.jpeg" alt="Evento" width="500px" /> -->
-      <div class="letra">GESTIÓN DE EVENTOS SENA</div>
-      <div class="nombre">Bienvenido : {{ usuario }}</div>
+      <img src="../../assets/images/titulo2.png" alt="Evento" width="450px" />
+      <!-- <div class="letra">GESTIÓN DE EVENTOS SENA</div> -->
+      <div class="letra2">Bienvenido : {{ usuario }}</div>
     </v-toolbar-title>
 
     <v-spacer></v-spacer>
@@ -84,15 +84,24 @@ export default {
   text-shadow: 4px 4px 2px #58d64a;
 }
 
+.letra2 {
+  color: #000000;
+  font-size: 20px;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: 800;
+  margin-top: -10px;
+}
+
 .fondo {
-  background: linear-gradient(45deg, #c5ec9f 50%, #c5ec9f 100%);
+  background-image: url('../../assets/images/Fondofijo.png'); /* Corregido: Cambié 'src' por 'url' */
   background-repeat: no-repeat;
-  background-size: 100% 100%;
+  background-size: cover; /* Cambiado a 'cover' para ajustar el tamaño de la imagen al contenedor */
   background-attachment: fixed;
   width: 100%;
   height: 100%;
   margin: 0;
-}
+
+}   
 
 .nombre {
   margin-top: -10px;
