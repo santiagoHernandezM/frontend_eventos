@@ -41,9 +41,19 @@ let menu = [
         ],
       },
       {
-        href: "/dashboard/crearprograma",
         title: "Programa",
         icon: "mdi mdi-school",
+        child: [
+          {
+            href: "/dashboard/crearprograma",
+            title: "Crear programa",
+          },
+          {
+            href: "/dashboard/carguemasivoprograma",
+            title: "Cargue Masivo",
+          },
+        ]
+
       },
       {
         href: "/dashboard/crearficha",

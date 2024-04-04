@@ -112,6 +112,18 @@ const routes = [
                       }
             },
             {
+                name: 'carguemasivoprograma',
+                path: '/dashboard/carguemasivoprograma',
+                component: () =>
+                    import ('../views/programa/CargueMasivoPrograma.vue'),
+                    beforeEnter: (_, __, next) => {
+                        let rol =  store.getters.usuario.roles
+                        let found = rol.find((element) => element == 'Administrator');
+                        if (found == undefined) return next('/dashboard/welcome')
+                        next()
+                      }
+            },
+            {
                 name: 'crearcompetencia',
                 path: '/dashboard/crearcompetencia',
                 component: () =>

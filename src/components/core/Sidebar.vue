@@ -24,7 +24,7 @@
       </div>
 
       <router-link to="/dashboard/welcome">
-        <div
+        <div class="centrar"
           
         >
           <label class="letra" for="">{{ centro.nombre }}</label>
@@ -143,7 +143,7 @@ export default {
 }
 .letra {
   color: black;
-  font-size: 20px;
+  font-size: 10px;
   font-family: "Courier New", Courier, monospace;
   font-weight: 400;
  
