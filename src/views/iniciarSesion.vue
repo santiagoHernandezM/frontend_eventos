@@ -257,8 +257,9 @@ export default {
             vm.$router.push("dashboard/welcome");
           }
         })
-        .catch(function () {
+        .catch(function (error) {
           {
+            console.log(error);
             vm.msg = "Usuario / contraseña Invalidos";
             vm.isBusy = true;
           }

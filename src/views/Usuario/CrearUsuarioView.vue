@@ -466,7 +466,7 @@ export default {
         try {
           this.paquete.centro = this.$store.getters.usuario.centro;
           const response = await axios.post(
-            `${this.api}/user/crear`,
+            `${this.api}/users/crear`,
             this.paquete
           );
 
@@ -538,7 +538,7 @@ export default {
     // async procesarguardado() {
     //   let vm = this;
     //   await axios
-    //     .post(`${this.api}/user/crear`, this.paquete)
+    //     .post(`${this.api}/users/crear`, this.paquete)
     //     .then(function () {
     //       vm.mensaje = "Usuario guardado con exito ...";
     //       vm.color = "green";
@@ -597,7 +597,7 @@ export default {
   async mounted() {
     this.paquete.centro = this.$store.getters.usuario.centro;
 
-    let resultado = await axios.get(`${this.api}/user/roles`);
+    let resultado = await axios.get(`${this.api}/users/roles`);
     this.roles = resultado.data;
     const programas = await axios.get(`${this.api}/programas/`);
     this.programas = programas.data;

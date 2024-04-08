@@ -531,7 +531,7 @@ export default {
       //const instructoresResponse = await axios.get(`${this.api}/instructor/programa/${this.paquete.programa}/sede/${this.paquete.sede}`);
       let centro = this.$store.getters.usuario.centro;
       const instructoresResponse = await axios.get(
-        `${this.api}/user/programa/centro/${programa}/${centro}`
+        `${this.api}/users/programa/centro/${programa}/${centro}`
       );
       console.log(instructoresResponse.data);
       this.instructores = instructoresResponse.data;

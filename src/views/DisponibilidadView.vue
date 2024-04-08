@@ -192,7 +192,7 @@ export default {
             if (evento.afternoon != null)
             {
               
-              const response = await axios.get(`${this.api}/user/instructor/${evento.afternoon.instructor}`);
+              const response = await axios.get(`${this.api}/users/instructor/${evento.afternoon.instructor}`);
               this.paquete.instructor = `${response.data.nombre} ${response.data.apellido}`
               this.paquete.programa = evento.afternoon.programa
               this.paquete.ficha = evento.afternoon.ficha
