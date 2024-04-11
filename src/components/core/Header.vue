@@ -97,7 +97,7 @@ export default {
 }
 
 .fondo {
-  background-image: url('../../assets/images/Fondofijo.png'); /* Corregido: Cambié 'src' por 'url' */
+  background-image: url('../../assets/images/fondofijo1.png'); /* Corregido: Cambié 'src' por 'url' */
   background-repeat: no-repeat;
   background-size: cover; /* Cambiado a 'cover' para ajustar el tamaño de la imagen al contenedor */
   background-attachment: fixed;
