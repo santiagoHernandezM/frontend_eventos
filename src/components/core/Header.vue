@@ -3,21 +3,25 @@
     app
     elevate-on-scroll
     elevation="8"
-    height="100px"
+    height="130px"
     relative
     flat
     class="fondo"
   >
     <v-app-bar-nav-icon
       class="btn"
+      color="black"
       dark
       @click="procesa()"
     ></v-app-bar-nav-icon>
 
     <v-toolbar-title>
       <img src="../../assets/images/titulo2.png" alt="Evento" width="450px" />
+      <br>
+      <br>
+      
       <!-- <div class="letra">GESTIÓN DE EVENTOS SENA</div> -->
-      <div class="letra2">Bienvenido : {{ usuario }}</div>
+      <div class="letra2" >Bienvenido : {{ usuario }}</div>
     </v-toolbar-title>
 
     <v-spacer></v-spacer>

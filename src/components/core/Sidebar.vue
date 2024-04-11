@@ -143,7 +143,7 @@ export default {
 }
 .letra {
   color: black;
-  font-size: 10px;
+  font-size: 15px;
   font-family: "Courier New", Courier, monospace;
   font-weight: 400;
  
