@@ -34,11 +34,11 @@
 
         <v-file-input
         :rules="rules"
-        placeholder="csv file"
-        accept=".csv"
+        placeholder="xlsx file"
+        accept=".xlsx"
         v-model="file"
         prepend-icon="mdi-camera"
-        label="CSV"
+        label="XLSX"
       ></v-file-input>
       <v-btn
       class="ma-2"
