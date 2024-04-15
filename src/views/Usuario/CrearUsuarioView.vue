@@ -133,8 +133,7 @@
                       <v-text-field
                         label="Número de contrato"
                         append-icon="mdi-key"
-                        v-model="paquete.contrato.numero"
-                        type="number"
+                        v-model="paquete.contrato.numero" 
                         :rules="camposRules"
                         outlined
                         color="rgb(52,188,52)"
@@ -313,6 +312,14 @@
       </v-card>
     </v-row>
 
+    <!-- Tabla -->
+    <Tabla
+      :items="usuarios"
+      :cabecera="cabeceraTabla"
+      :metodoEliminar="eliminarRegistro"
+      :metodoEditar="editarRegistro"
+    />
+
     <!-- Cargando... -->
     <Spinner :value="loading" />
 
@@ -322,6 +329,29 @@
       title="Registro creado con éxito"
       text="Usuario creado"
       @close-dialog="dialogoUsuarioCreado = $event"
+    />
+
+     <!-- Dialogo de actualización -->
+    <Dialogo
+      :show="dialogoUsuarioActualizado"
+      title="Registro actualizado con éxito"
+      text="Usuario actualizado"
+      @close-dialog="dialogoUsuarioActualizado = $event"
+    />
+
+   <!-- Dialogos de eliminación -->
+    <Dialogo_confirm_delete
+      :show="dialogo1EliminarUsuario"
+      title="Realmente quieres eliminar este usuario?"
+      :confirmDeleteMethod="confirmarEliminacion"
+      @close-dialog="dialogo1EliminarUsuario = $event"
+    />
+
+    <Dialogo
+      :show="dialogo2EliminarUsuario"
+      title="Registro eliminado con éxito"
+      text="Programa eliminado"
+      @close-dialog="dialogo2EliminarUsuario = $event"
     />
 
     <DialogError
@@ -351,13 +381,17 @@ import ListaPrograma from "../../components/ListProgramas/ListaProgramas.vue";
 import Dialogo from "../../components/Dialog.vue";
 import DialogError from "../../components/DialogError.vue";
 import Spinner from "../../components/Spinner.vue";
+import Dialogo_confirm_delete from "../../components/Dialog-confirm-delete.vue";
+import Tabla from "../../components/Tabla.vue";
 
 export default {
   components: {
+    Tabla,
     mensaje,
     ListaPrograma,
     Dialogo,
     DialogError,
+    Dialogo_confirm_delete,
     Spinner,
   },
   data() {
@@ -380,6 +414,16 @@ export default {
           tipoVinculacion: null,
         },
       },
+      usuarios: [],
+      cabeceraTabla: [
+        { text: "Documento", value: "documento" },
+        { text: "Nombre", value: "nombre" },
+        { text: "Apellido", value: "apellido" },
+        { text: "Correo", value: "correo" },
+        { text: "Celular", value: "celular" },
+        { text: "Roles", value: "roles" },
+        { text: "Acciones", value: "actions" },
+      ],
       tab: null,
       items: ["DATOS PERSONALES", "INFORMACION CONTRATO", "ROLES"],
       fini: false,
@@ -406,10 +450,23 @@ export default {
       dialogoCamposVacios: false,
       dialogoProgramasVacios: false,
       dialogoUsuarioCreado: false,
+      Dialogo_confirm_delete: false,
+      dialogoUsuarioActualizado: false,
+      dialogo1EliminarUsuario: false,
+      dialogo2EliminarUsuario: false,
     };
   },
 
   methods: {
+    async cargarUsuarios() {
+      try {
+        const response = await axios.get(`${this.api}/users`);
+        this.usuarios = response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
     cargarprograma(lprograma) {
       this.paquete.programas = lprograma;
     },
@@ -557,6 +614,60 @@ export default {
       this.paquete.apellido = this.paquete.apellido.toUpperCase();
     },
 
+    async guardarEdicion() {
+      if (this.$refs.form.validate()) {
+        this.loading = true;
+        console.log(this.paquete);
+        try {
+          await axios.put(`${this.api}/users/actualizar`, this.paquete);
+
+          await this.cargarUsuarios();
+          this.limpiarFormulario();
+          this.modoEdicion = false;
+          this.loading = false;
+          this.dialogoUsuarioActualizado = true;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      window.scrollTo(0, 0);
+    },
+
+    editarRegistro(item) {
+      window.scrollTo(0, 0);
+
+      const {
+        _id,
+        documento,
+        nombre,
+        apellido,
+        correo,
+        celular,
+        contrato,
+        numero,
+        programas,
+        centro,
+        roles,
+      } = item;
+
+      this.paquete = {
+        id: _id,
+        documento,
+        nombre,
+        apellido,
+        correo,
+        celular,
+        contrato,
+        numero,
+        programas,
+        centro,
+        roles,
+      };
+
+      this.modoEdicion = true;
+    },
+
     limpiarFormulario() {
       this.$refs.form.resetValidation();
 
@@ -595,7 +706,10 @@ export default {
   },
 
   async mounted() {
+    this.loading = true;
     this.paquete.centro = this.$store.getters.usuario.centro;
+
+    await this.cargarUsuarios();
 
     let resultado = await axios.get(`${this.api}/users/roles`);
     this.roles = resultado.data;
@@ -604,6 +718,8 @@ export default {
     console.log(this.programas);
     const response = await axios.get(`${this.api}/centro/`);
     this.centros = response.data;
+
+    this.loading = false;
   },
 };
 </script>
