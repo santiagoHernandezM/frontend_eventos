@@ -112,7 +112,7 @@
                     </template>
 
                     <template slot="selection" slot-scope="data">
-                      {{ data.item.nivel }} - {{ data.item.nombre }}
+                      {{ data.item.nivel }} - {{ data.item.nombre }}- IH : {{ item.intensidad_horaria }}
                     </template>
                   </v-select>
                 </v-col>
@@ -768,17 +768,23 @@ export default {
 
     await this.cargarFichas();
 
-    // obtenemos las jornadas
-
     const response = await axios.get(`${this.api}/jornada`);
     this.jornadas = response.data;
 
     const centro = this.$store.getters.usuario.centro;
+    
     const responseSedes = await axios.get(`${this.api}/sedes/centro/${centro}`);
     this.sedes = responseSedes.data;
 
-    const responseProgramas = await axios.get(`${this.api}/programas`);
-    this.programas = responseProgramas.data;
+    
+    let found = this.$store.getters.usuario.roles.find((element) => element == 'Coordinador');
+    if (found)
+      this.programas = this.$store.getters.usuario.programas
+    else
+     {
+      const responseProgramas = await axios.get(`${this.api}/programas`);
+      this.programas = responseProgramas.data;
+     }
 
     // obtener los programas
     // const programasResponse = await axios.get(`${this.api}/programas/`);

@@ -178,7 +178,7 @@ const routes = [
                     import ('../views/Ficha/CrearFicha.vue'),
                     beforeEnter: (_, __, next) => {
                         let rol =  store.getters.usuario.roles
-                        let found = rol.find((element) => element == 'Administrator');
+                        let found = rol.find((element) => element == 'Administrator' || element == 'Coordinador' );
                         if (found == undefined) return next('/dashboard/welcome')
                         next()
                       }
