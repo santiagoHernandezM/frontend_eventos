@@ -263,14 +263,19 @@
           >
             <!-- Buscador -->
             <template v-slot:top>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Buscar"
-                @input="convertToUpperCase"
-                class="mx-4"
-                color="rgb(52,188,52)"
-              ></v-text-field>
+              <v-select
+              :items="programas"
+              item-text="nombre"
+              item-value="_id"
+              label="Buscar"
+              v-model="paquete.programa"
+              append-icon="mdi mdi-school"
+              @change="cargarFichasProgramas(paquete.programa)"
+              :rules="camposRules"
+              outlined
+              color="rgb(52,188,52)"
+                
+              ></v-select>
             </template>
 
             <template v-slot:body="{ items }">
@@ -512,6 +517,11 @@ export default {
   methods: {
     async cargarFichas() {
       const fichasResponse = await axios.get(`${this.api}/ficha`);
+      this.fichas = fichasResponse.data;
+      console.log(this.fichas);
+    },
+    async cargarFichasProgramas(programa) {
+      const fichasResponse = await axios.get(`${this.api}/ficha/programas/${programa}`);
       this.fichas = fichasResponse.data;
       console.log(this.fichas);
     },
@@ -766,7 +776,7 @@ export default {
   async mounted() {
     this.loading = true;
 
-    await this.cargarFichas();
+    // await this.cargarFichas();
 
     // obtenemos las jornadas
 

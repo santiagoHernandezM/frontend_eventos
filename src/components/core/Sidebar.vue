@@ -19,7 +19,7 @@
       
       <div class="centrar">
         <div>
-          <img src="../../assets/logos/LogoNuevo.png" alt="Evento" width="140px" />
+          <img src="../../assets/images/LogoNuevo.png" alt="Evento" width="140px" />
         </div>
       </div>
 
