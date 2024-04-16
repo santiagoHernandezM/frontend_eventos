@@ -151,6 +151,11 @@ let menu = [
         title: "Instructores por Programa",
         icon: "mdi mdi-calendar-clock",
       },
+      {
+        href: "/dashboard/crearficha",
+        title: "Ficha",
+        icon: "mdi mdi-newspaper-variant-multiple-outline",
+      },
     ]
   }
 
