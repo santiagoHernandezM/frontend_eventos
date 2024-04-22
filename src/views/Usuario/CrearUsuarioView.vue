@@ -316,7 +316,7 @@
     <Tabla
       :items="usuarios"
       :cabecera="cabeceraTabla"
-      :metodoEliminar="eliminarRegistro"
+      @eliminar="eliminaregistro"
       :metodoEditar="editarRegistro"
     />
 
@@ -458,6 +458,19 @@ export default {
   },
 
   methods: {
+   async eliminaregistro(item){
+    const response = await axios.delete(`${this.api}/users/eliminar/${item._id}`);
+    if (response.status == 200)
+     {
+      alert('registro eliminado exitosamente ..')
+     }
+    else
+     {
+       alert('se ha producido un error')
+     }
+    await this.cargarUsuarios();
+    
+  },
     async cargarUsuarios() {
       try {
         const response = await axios.get(`${this.api}/users`);

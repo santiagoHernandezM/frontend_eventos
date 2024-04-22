@@ -33,7 +33,7 @@
               <v-icon id="icono-editar">mdi-pencil</v-icon>
             </v-btn>
 
-            <v-btn icon @click="metodoEliminar(item)" id="btn-eliminar">
+            <v-btn icon @click="eliminar(item)" id="btn-eliminar">
               <v-icon id="icono-eliminar">mdi-delete</v-icon>
             </v-btn>
           </v-card-actions>
@@ -45,7 +45,7 @@
 
 <script>
 export default {
-  props: ["items", "cabecera", "metodoEditar", "metodoEliminar"],
+  props: ["items", "cabecera", "metodoEditar"],
   data() {
     return {
       mostrarTooltip: false,
@@ -53,6 +53,11 @@ export default {
     };
   },
   methods: {
+    eliminar(item)
+    {
+       this.$emit("eliminar",item)
+    },
+
     filterOnlyCapsText(value, search) {
       return (
         value != null &&
