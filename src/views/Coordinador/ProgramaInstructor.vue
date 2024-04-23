@@ -324,7 +324,8 @@ export default {
 
         if (
           this.paquete.programa === null ||
-          this.paquete.instructores.length === 0
+          //this.paquete.instructores.length === 0
+          this.paraprocesar.length === 0
         ) {
           this.loading = false;
           this.dialogoCamposVacios = true;

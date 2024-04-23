@@ -73,10 +73,10 @@ let menu = [
             href: "/dashboard/listarcompetencia",
             title: "Listar",
           },
-          {
+       /*   {
             href: "/dashboard/crearresultadoaprendizaje",
             title: "Resultados de Aprendizaje",
-          },
+          },*/
           {
             href: "/dashboard/carguemasivocompetencias",
             title: "Cargue Masivo",
@@ -93,10 +93,10 @@ let menu = [
             href: "/dashboard/crearusuario",
             title: "Crear",
           },
-          {
+         /* {
             href: "/dashboard/listarusuario",
             title: "Listar",
-          },
+          },*/
           {
             href: "/dashboard/masivousuario",
             title: "Cargue Masivo",
