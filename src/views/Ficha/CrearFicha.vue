@@ -106,14 +106,14 @@
                     outlined
                     color="rgb(52,188,52)"
                   >
-                    <template v-slot:item="{ item }">
+                <!--   <template v-slot:item="{ item }">
                       {{ item.nivel }} - {{ item.nombre }} - Intensidad horaria
                       : {{ item.intensidad_horaria }}
                     </template>
 
                     <template slot="selection" slot-scope="data">
                       {{ data.item.nivel }} - {{ data.item.nombre }}- IH : {{ item.intensidad_horaria }}
-                    </template>
+                    </template>-->
                   </v-select>
                 </v-col>
               </v-row>

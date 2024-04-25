@@ -19,7 +19,7 @@
         <v-card-text>
           <v-form>
             <v-container>
-              <v-row align="end" class="mb-n10" >
+              <v-row align="end" class="mb-n1" >
                 <v-col cols="4">
                   <spam>Mes: <spam>{{fechactual.mesNum}}</spam> {{fechactual.mes}}</spam>
                 </v-col>
@@ -28,7 +28,20 @@
                 </v-col>
 
                 </v-row>
-              
+              <v-row  align="end" mb-n5 mt-n10>
+                <v-col>
+                  <v-select class="pt-0 mt-0"
+                  label="Programas"
+                  :items="programas"
+                  item-text="nombre"
+                  item-value="_id"
+                   v-model="paquete.programa.id"
+                  :rules="camposRules"
+                  @change="cargarfichas()"
+                  >
+                  </v-select>
+                </v-col>
+              </v-row>
               <v-row align="end" class="row-height mb-n10 mt-n5" >
                 <v-col cols="2">
                    <v-select class="pt-0 mt-0"
@@ -44,15 +57,7 @@
                     </v-select
                   >
                 </v-col>
-                 <v-col cols="4">
-                  <v-text-field
-                  class="ml-2"
-                  v-model="paquete.programa.nombre"
-                  label="Programa"
-                  readonly
-                ></v-text-field>
-
-                 </v-col>
+                 
                  <v-col cols="2">
                   <v-text-field
                   class="ml-2"
@@ -355,31 +360,32 @@ export default {
       competencias : [],
       resultados : [],
       dia : null,
+      programas : [],
       
       diase : null,
       diasemana : [
         {
-         dia : "Lunes",
+         dia : "LUNES",
          ndia : 1
         },
         {
-         dia : "Martes",
+         dia : "MARTES",
          ndia : 2
         },
         {
-         dia : "Miercoles",
+         dia : "MIERCOLES",
          ndia : 3
         },
         {
-         dia : "Jueves",
+         dia : "JUEVES",
          ndia : 4
         },
         {
-         dia : "Viernes",
+         dia : "VIERNES",
          ndia : 5
        },
        {
-         dia : "Sabado",
+         dia : "SABADO",
          ndia : 6
       },
 
@@ -391,6 +397,22 @@ export default {
   },
 
   methods: {
+    async cargarfichas(){
+   alert('llamado')
+    let centro = this.$store.getters.usuario.centro
+   const sedes  = await axios.get(`${this.api}/sedes/centro/${centro}`);
+      for (let sed of sedes.data)
+       {
+          const fichas  = await axios.get(`${this.api}/ficha/programa/${this.paquete.programa.id}/sede/${sed._id}`);
+          for (let x of fichas.data)
+           {
+            this.fichas.push(x)
+           }
+      }
+     
+
+  },
+
     cargaambiente(){
       let amb = this.ambientes.filter(e => e._id == this.paquete.ambiente.id)
       this.paquete.ambiente.ambiente = amb[0].bloque.nomenclatura + '-' + amb[0].codigo
@@ -487,14 +509,19 @@ export default {
     },
 
     horario(){
+     
       const res = this.fichas.filter(e => e._id === this.paquete.ficha.ficha)
-      const j =  res[0].jornadas.filter(e => e.dia == this.paquete.dia);
+        const j =  res[0].jornadas.filter(e => e.dia == this.paquete.dia);
+        
+        if (j.length > 0)
+        {
       this.paquete.horario = `${j[0].horaInicio}-${j[0].horaFin}`
       this.horajornada = (parseInt(j[0].horaFin) - parseInt(j[0].horaInicio)) + 2
       let r = this.diasemana.filter(e => e.dia == this.paquete.dia)
       this.diase = r[0].ndia
       this.paqdiasmes.diastrabajados = []
       this.paquete.horas = 0
+        }
      },
 
     async cargadatos(){
@@ -675,10 +702,14 @@ export default {
       return ciudades;
     },
   },
+
+ 
+
   async mounted() {
   
     this.limpieza = JSON.parse(JSON.stringify(this.paquete))
     let instructor = this.$store.getters.usuario.id
+   
     const fecha = await axios.get(`${this.api}/date/`);
     this.fechactual = fecha.data;
     this.evento.mes = this.fechactual.mesNum
@@ -690,21 +721,10 @@ export default {
    // const inst = await axios.get(`${this.api}/instructor/${instructor}`);
    // this.instructor = inst.data
    
-   let programas = this.$store.getters.usuario.programas
-   let centro = this.$store.getters.usuario.centro
-   const sedes  = await axios.get(`${this.api}/sedes/centro/${centro}`);
-   console.log(sedes)
-    for (let data of programas)
-     {
-      for (let sed of sedes.data)
-       {
-          const fichas  = await axios.get(`${this.api}/ficha/programa/${data}/sede/${sed._id}`);
-          for (let x of fichas.data)
-           {
-            this.fichas.push(x)
-           }
-      }
-     } 
+   this.programas = this.$store.getters.usuario.programas
+  
+  
+    
  },
  watch: {
    saveeventos(){
