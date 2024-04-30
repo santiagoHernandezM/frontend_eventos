@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="space-around">
-      <v-card width="800">
+      <v-card width="600">
         <!-- Encabezado -->
         <v-app-bar flat color="rgb(52,188,52)">
           <v-toolbar-title class="text-h6 white--text pl-0">
@@ -19,7 +19,7 @@
                 <v-col cols="6">
                   <v-text-field
                     label="Código"
-                    prepend-inner-icon="mdi mdi-key-variant"
+                    append-icon="mdi mdi-key-variant"
                     v-model="paquete.codigo"
                     :rules="camposRules"
                     outlined
@@ -106,7 +106,7 @@
                     outlined
                     color="rgb(52,188,52)"
                   >
-                <!--   <template v-slot:item="{ item }">
+                    <!--   <template v-slot:item="{ item }">
                       {{ item.nivel }} - {{ item.nombre }} - Intensidad horaria
                       : {{ item.intensidad_horaria }}
                     </template>
@@ -264,17 +264,16 @@
             <!-- Buscador -->
             <template v-slot:top>
               <v-select
-              :items="programas"
-              item-text="nombre"
-              item-value="_id"
-              label="Buscar"
-              v-model="paquete.programa"
-              append-icon="mdi mdi-school"
-              @change="cargarFichasProgramas(paquete.programa)"
-              :rules="camposRules"
-              outlined
-              color="rgb(52,188,52)"
-                
+                :items="programas"
+                item-text="nombre"
+                item-value="_id"
+                label="Buscar"
+                v-model="paquete.programa"
+                append-icon="mdi mdi-school"
+                @change="cargarFichasProgramas(paquete.programa)"
+                :rules="camposRules"
+                outlined
+                color="rgb(52,188,52)"
               ></v-select>
             </template>
 
@@ -521,7 +520,9 @@ export default {
       console.log(this.fichas);
     },
     async cargarFichasProgramas(programa) {
-      const fichasResponse = await axios.get(`${this.api}/ficha/programas/${programa}`);
+      const fichasResponse = await axios.get(
+        `${this.api}/ficha/programas/${programa}`
+      );
       this.fichas = fichasResponse.data;
       console.log(this.fichas);
     },
@@ -782,19 +783,18 @@ export default {
     this.jornadas = response.data;
 
     const centro = this.$store.getters.usuario.centro;
-    
+
     const responseSedes = await axios.get(`${this.api}/sedes/centro/${centro}`);
     this.sedes = responseSedes.data;
 
-    
-    let found = this.$store.getters.usuario.roles.find((element) => element == 'Coordinador');
-    if (found)
-      this.programas = this.$store.getters.usuario.programas
-    else
-     {
+    let found = this.$store.getters.usuario.roles.find(
+      (element) => element == "Coordinador"
+    );
+    if (found) this.programas = this.$store.getters.usuario.programas;
+    else {
       const responseProgramas = await axios.get(`${this.api}/programas`);
       this.programas = responseProgramas.data;
-     }
+    }
 
     // obtener los programas
     // const programasResponse = await axios.get(`${this.api}/programas/`);

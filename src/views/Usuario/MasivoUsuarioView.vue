@@ -5,7 +5,7 @@
         <!-- Encabezado -->
         <v-app-bar flat color="rgb(52,188,52)">
           <v-toolbar-title class="text-h6 white--text pl-0">
-            MASIVO USUARIO
+            CARGUE MASIVO DE USUARIOS
           </v-toolbar-title>
         </v-app-bar>
 
@@ -46,52 +46,52 @@
       style="border: 1px solid red;"
     /> -->
     <template>
-    <v-row justify="space-around">
-      <v-card max-width="900" class="mt-12 px-10 py-10">
-        <v-data-table
-          :items="usuarios"
-          :headers="cabeceraTabla"
-          class="elevation-1"
-          :search="search"
-          :custom-filter="filterOnlyCapsText"
-        >
-          <!-- Buscador -->
-          <template v-slot:top>
-            <v-text-field
-              v-model="search"
-              append-icon="mdi-magnify"
-              label="Buscar"
-              @input="convertToUpperCase"
-              class="mx-4"
-              color="rgb(52,188,52)"
-            ></v-text-field>
-          </template>
+      <v-row justify="space-around">
+        <v-card max-width="900" class="mt-12 px-10 py-10">
+          <v-data-table
+            :items="usuarios"
+            :headers="cabeceraTabla"
+            class="elevation-1"
+            :search="search"
+            :custom-filter="filterOnlyCapsText"
+          >
+            <!-- Buscador -->
+            <template v-slot:top>
+              <v-text-field
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Buscar"
+                @input="convertToUpperCase"
+                class="mx-4"
+                color="rgb(52,188,52)"
+              ></v-text-field>
+            </template>
 
-          <!-- Listado -->
-          <template v-slot:item.actions="{ item }">
-            <v-card-actions style="padding: 0">
-              <v-btn
-                icon
-                @click="metodoEditar(item)"
-                @mouseover="mostrarTooltip = true"
-                @mouseleave="mostrarTooltip = false"
-                id="btn-editar"
-              >
-                <v-icon id="icono-editar">mdi-pencil</v-icon>
-              </v-btn>
+            <!-- Listado -->
+            <template v-slot:item.actions="{ item }">
+              <v-card-actions style="padding: 0">
+                <v-btn
+                  icon
+                  @click="metodoEditar(item)"
+                  @mouseover="mostrarTooltip = true"
+                  @mouseleave="mostrarTooltip = false"
+                  id="btn-editar"
+                >
+                  <v-icon id="icono-editar">mdi-pencil</v-icon>
+                </v-btn>
 
-              <v-btn icon @click="metodoEliminar(item)" id="btn-eliminar">
-                <v-icon id="icono-eliminar">mdi-delete</v-icon>
-              </v-btn>
-            </v-card-actions>
-          </template>
-        </v-data-table>
-      </v-card>
-    </v-row>
-  </template>
+                <v-btn icon @click="metodoEliminar(item)" id="btn-eliminar">
+                  <v-icon id="icono-eliminar">mdi-delete</v-icon>
+                </v-btn>
+              </v-card-actions>
+            </template>
+          </v-data-table>
+        </v-card>
+      </v-row>
+    </template>
 
     <!-- Cargando... -->
-    <!-- <Spinner :value="loading" /> -->
+    <Spinner :value="loading" />
 
     <pre>{{ $data }}</pre>
   </v-container>
@@ -99,9 +99,10 @@
 <script>
 import axios from "axios";
 // import Tabla from "../../components/Tabla.vue"
+import Spinner from "../../components/Spinner.vue";
 
 export default {
-  // components: { Tabla },
+  components: { Spinner },
   data() {
     return {
       api: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
@@ -126,27 +127,31 @@ export default {
       ],
 
       search: "",
+      loading: false,
     };
   },
 
   methods: {
     async cargarCSV() {
-      this.loading = true;
       if (this.file != null) {
+        this.loading = true;
         let centro = this.$store.getters.usuario.centro;
         const formData = new FormData();
         formData.append("file", this.file);
         formData.append("centro", centro);
 
         try {
-          const response = await axios.post(`${this.api}/carguemasivocompetencias/cargarinstructor/`, formData)
-          console.log(response)
-          this.usuarios = response.data
-
+          const response = await axios.post(
+            `${this.api}/carguemasivocompetencias/cargarinstructor/`,
+            formData
+          );
+          console.log(response);
+          this.usuarios = response.data;
         } catch (error) {
-          console.log(error)
+          console.log(error);
         }
 
+        this.loading = false;
         // await axios
         //   .post(
         //     `${this.api}/carguemasivocompetencias/c  argarinstructor/`,
@@ -161,7 +166,6 @@ export default {
         //     }
         //   });
       }
-      this.loading = false;
     },
 
     // Create an array the length of our items

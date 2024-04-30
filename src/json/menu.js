@@ -52,8 +52,7 @@ let menu = [
             href: "/dashboard/carguemasivoprograma",
             title: "Cargue Masivo",
           },
-        ]
-
+        ],
       },
       {
         href: "/dashboard/crearficha",
@@ -73,7 +72,7 @@ let menu = [
             href: "/dashboard/listarcompetencia",
             title: "Listar",
           },
-       /*   {
+          /*   {
             href: "/dashboard/crearresultadoaprendizaje",
             title: "Resultados de Aprendizaje",
           },*/
@@ -93,7 +92,7 @@ let menu = [
             href: "/dashboard/crearusuario",
             title: "Crear",
           },
-         /* {
+          /* {
             href: "/dashboard/listarusuario",
             title: "Listar",
           },*/
@@ -102,6 +101,11 @@ let menu = [
             title: "Cargue Masivo",
           },
         ],
+      },
+      {
+        href: "/dashboard/salida",
+        title: "Salir",
+        icon: "mdi mdi-exit-to-app",
       },
     ],
   },
@@ -130,7 +134,7 @@ let menu = [
       {
         href: "/dashboard/salida",
         title: "Salir",
-        icon: "mdi mdi-chart-histogram",
+        icon: "mdi mdi-exit-to-app",
       },
     ],
   },
@@ -156,10 +160,13 @@ let menu = [
         title: "Ficha",
         icon: "mdi mdi-newspaper-variant-multiple-outline",
       },
-    ]
-  }
-
-
+      {
+        href: "/dashboard/salida",
+        title: "Salir",
+        icon: "mdi mdi-exit-to-app",
+      },
+    ],
+  },
 ];
 
 module.exports = menu;

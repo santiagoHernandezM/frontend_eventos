@@ -2,17 +2,10 @@
   <v-app>
     <v-app-bar app dark class="fondo">
       <v-divider></v-divider>
-      <v-btn
-        style="
-          background-color: #278d16;
-          color: white;
-          font-size: 16px;
-          font-weight: bold;
-        "
-        @click="dialog = true"
+      <v-btn id="btn-iniciar-sesion" @click="dialogoLogin = true"
         >Iniciar Sesión</v-btn
       >
-      <a href="">
+      <!-- <a href="">
         <b-icon
           icon="question"
           style="
@@ -23,17 +16,20 @@
           "
           font-scale="3"
         ></b-icon
-      ></a>
+      ></a> -->
     </v-app-bar>
-    <v-dialog v-model="dialog" max-width="350" height="400">
+
+    <v-dialog v-model="dialogoLogin" max-width="350" height="400">
       <div class="container h-60">
         <div class="d-flex justify-content-center h-50">
           <div class="user_card">
+            <!-- LOGO -->
             <div class="d-flex justify-content-center">
               <div class="brand_logo_container">
                 <img src="/animation.svg" class="brand_logo" alt="Logo" />
               </div>
             </div>
+
             <div class="d-flex justify-content-center form_container">
               <form v-on:submit.prevent>
                 <div class="input-group mb-3">
@@ -43,13 +39,14 @@
                     ></span>
                   </div>
                   <input
-                    v-model="users.correo"
+                    v-model="user.correo"
                     type="text"
                     name=""
                     class="form-control input_user"
-                    placeholder="Username"
+                    placeholder="Correo"
                   />
                 </div>
+
                 <div class="input-group mb-2">
                   <div class="input-group-append">
                     <span class="input-group-text"
@@ -57,13 +54,16 @@
                     ></span>
                   </div>
                   <input
-                    v-model="users.password"
+                    v-model="user.password"
                     type="password"
                     name=""
                     class="form-control input_pass"
-                    placeholder="Password"
+                    placeholder="Contraseña"
                   />
                 </div>
+
+                <a href="#" @click="changePassword()">Olvidó su contraseña?</a>
+
                 <div
                   class="d-flex justify-content-center mt-3 login_container"
                   v-if="prueba == 0"
@@ -71,14 +71,6 @@
                   <vs-button dark class="btn login_btn" @click="login"
                     >Iniciar Sesión</vs-button
                   >
-                </div>
-                <div
-                  class="d-flex justify-content-center mt-3 login_container"
-                  v-if="prueba == 1"
-                >
-                  <vs-button class="btn login_btn" loading dark>
-                    Iniciar Sesión
-                  </vs-button>
                 </div>
 
                 <v-snackbar
@@ -106,6 +98,88 @@
             <i class='bx bx-border-top' ></i>
           </vs-button>-->
     </v-dialog>
+
+    <v-dialog v-model="dialogoSolitarCorreo" max-width="350" height="400">
+      <div class="container h-60">
+        <div class="d-flex justify-content-center h-50">
+          <div class="user_card">
+            <!-- LOGO -->
+            <div class="d-flex justify-content-center">
+              <div class="brand_logo_container">
+                <img src="/animation.svg" class="brand_logo" alt="Logo" />
+              </div>
+            </div>
+
+            <!-- <h2 style="color: #fff" class="mt-3">Cambiar contraseña</h2> -->
+            <div class="d-flex justify-content-center form_container">
+              <form v-on:submit.prevent>
+                <div class="input-group mb-3">
+                  <div class="input-group-append">
+                    <span class="input-group-text"
+                      ><i class="fas fa-user"></i
+                    ></span>
+                  </div>
+                  <input
+                    v-model="email"
+                    type="text"
+                    name=""
+                    class="form-control input_user"
+                    placeholder="Correo"
+                  />
+                </div>
+
+                <div
+                  class="d-flex justify-content-center mt-3 login_container"
+                  v-if="prueba == 0"
+                >
+                  <vs-button dark class="btn login_btn" @click="enviarCorreo()"
+                    >Enviar</vs-button
+                  >
+                </div>
+
+                <!-- <div
+                  class="d-flex justify-content-center mt-3 login_container"
+                  v-if="prueba == 1"
+                >
+                  <vs-button class="btn login_btn" loading dark>
+                    Iniciar Sesiónaaaa
+                  </vs-button>
+                </div> -->
+
+                <v-snackbar
+                  v-model="isBusy"
+                  :timeout="2000"
+                  absolute
+                  bottom
+                  color="red"
+                >
+                  {{ msg }}
+                </v-snackbar>
+              </form>
+            </div>
+
+            <div class="mt-4">
+              <div class="d-flex justify-content-center links">
+                <a href="#" style="color: black">¿olvidaste tu contraseña?</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--  <vs-button flat color="#7d33ff" icon
+            @click="openNotification('top-center', '#7d33ff')">
+            <i class='bx bx-border-top' ></i>
+          </vs-button>-->
+    </v-dialog>
+
+    <Spinner :value="loading" />
+
+    <Dialogo
+      :show="dialogoCorreoEnviado"
+      title="Correo enviado con éxito!"
+      text="Revice su bandeja de correo"
+      @close-dialog="dialogoCorreoEnviado = $event"
+    />
 
     <v-main>
       <v-row justify="end">
@@ -152,21 +226,30 @@
     </v-main>
   </v-app>
 </template>
+
 <script>
 import axios from "axios";
+import Dialogo from "../components/Dialog.vue";
+import Spinner from "../components/Spinner.vue";
 
 export default {
+  components: { Dialogo, Spinner },
   name: "App",
   data: () => ({
     api: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
     entorno: process.env,
     active: "home",
-    dialog: false,
+    dialogoLogin: false,
+    dialogoSolitarCorreo: false,
+    dialogoCorreoEnviado: false,
+    loading: false,
 
-    users: {
+    user: {
       correo: null,
       password: null,
     },
+
+    email: null,
 
     noti: null,
 
@@ -247,23 +330,43 @@ export default {
     },
 
     async login() {
-      let vm = this;
-      await axios
-        .post(`${this.api}/auth/login`, this.users)
-        .then(function (response) {
-          console.log(response);
-          if (response.status == 200) {
-            vm.$store.commit("setusuario", response.data);
-            vm.$router.push("dashboard/welcome");
-          }
-        })
-        .catch(function (error) {
-          {
-            console.log(error);
-            vm.msg = "Usuario / contraseña Invalidos";
-            vm.isBusy = true;
-          }
-        });
+      try {
+        const response = await axios.post(`${this.api}/auth/login`, this.user);
+
+        if (response.status == 200) {
+          this.$store.commit("setusuario", response.data);
+          this.$router.push("dashboard/welcome");
+        }
+      } catch (error) {
+        console.log(error);
+        this.msg = "Usuario / contraseña Invalidos";
+        this.isBusy = true;
+      }
+    },
+
+    changePassword() {
+      this.dialogoLogin = false;
+      this.dialogoSolitarCorreo = true;
+    },
+
+    async enviarCorreo() {
+      this.loading = true;
+      this.dialogoSolitarCorreo = false;
+
+      let correo = this.email;
+      correo = { email: correo };
+      try {
+        const response = await axios.post(
+          `${this.api}/users/forgot-password`,
+          correo
+        );
+        console.log(response);
+        console.log({ correo });
+        this.loading = false;
+        this.dialogoCorreoEnviado = true;
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };
@@ -282,6 +385,13 @@ export default {
   background-size: 100% 100%;
   background-attachment: fixed;
   margin: 0;
+}
+
+#btn-iniciar-sesion {
+  background-color: #278d16;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .letras {

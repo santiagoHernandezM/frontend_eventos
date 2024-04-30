@@ -3,25 +3,25 @@
     app
     elevate-on-scroll
     elevation="8"
-    height="130px"
+    height="90px"
     relative
     flat
     class="fondo"
   >
     <v-app-bar-nav-icon
       class="btn"
-      color="black"
+      color="white"
       dark
       @click="procesa()"
     ></v-app-bar-nav-icon>
 
     <v-toolbar-title>
       <img src="../../assets/images/titulo2.png" alt="Evento" width="450px" />
-      <br>
-      <br>
-      
+
       <!-- <div class="letra">GESTIÓN DE EVENTOS SENA</div> -->
-      <div class="letra2" >Bienvenido : {{ usuario }}</div>
+      <div style="margin-top: 5px" class="letra2">
+        Bienvenido : {{ usuario }}
+      </div>
     </v-toolbar-title>
 
     <v-spacer></v-spacer>
@@ -97,15 +97,14 @@ export default {
 }
 
 .fondo {
-  background-image: url('../../assets/images/fondofijo1.png'); /* Corregido: Cambié 'src' por 'url' */
+  background-image: url("../../assets/images/fondofijo1.png"); /* Corregido: Cambié 'src' por 'url' */
   background-repeat: no-repeat;
   background-size: cover; /* Cambiado a 'cover' para ajustar el tamaño de la imagen al contenedor */
   background-attachment: fixed;
   width: 100%;
   height: 100%;
   margin: 0;
-
-}   
+}
 
 .nombre {
   margin-top: -10px;
