@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="space-around">
-      <v-card width="600">
+      <v-card width="100%">
         <!-- Encabezado -->
         <v-app-bar flat color="rgb(52,188,52)">
           <v-toolbar-title class="text-h6 white--text pl-0">
@@ -14,6 +14,14 @@
         <v-card-text>
           <v-form>
             <v-container>
+              <v-row align="end">
+                <v-col cols="3">
+                  <spam class="font-weight-bold text-md-h6">Año: <spam class="font-weight-bold text-md-h6 blue--text">{{fechactual.year}}</spam></spam>
+                </v-col>
+                <v-col cols="3">
+                  <spam class="font-weight-bold text-md-h6">Mes: <spam class="font-weight-bold text-md-h6 blue--text">{{fechactual.mesNum}} {{fechactual.mes}}</spam></spam>
+                </v-col>
+               </v-row>
               <!-- <v-row align="end" class="mb-n1">
                 <v-col cols="4">
                   <spam
@@ -27,7 +35,7 @@
                   >
                 </v-col>
               </v-row> -->
-              <v-row>
+              <v-row class="mb-n10">
                 <v-col cols="12">
                   <v-select
                     class="pt-0 mt-0"
@@ -45,8 +53,8 @@
                 </v-col>
               </v-row>
 
-              <v-row>
-                <v-col cols="6">
+              <v-row class="mb-n10">
+                <v-col cols="3">
                   <v-select
                     label="Ficha"
                     :items="fichas"
@@ -61,7 +69,7 @@
                   </v-select>
                 </v-col>
 
-                <v-col cols="6">
+                <v-col cols="3">
                   <v-text-field
                     v-model="paquete.nivel"
                     label="Nivel"
@@ -70,10 +78,8 @@
                     outlined
                   ></v-text-field>
                 </v-col>
-              </v-row>
 
-              <v-row>
-                <v-col cols="6">
+                <v-col cols="3">
                   <v-text-field
                     v-model="paquete.municipio"
                     label="Municipio"
@@ -82,8 +88,7 @@
                     outlined
                   ></v-text-field>
                 </v-col>
-
-                <v-col cols="6">
+                <v-col cols="3">
                   <v-select
                     :items="ambientes"
                     item-text="codigo"
@@ -106,8 +111,9 @@
                   </v-select>
                 </v-col>
               </v-row>
-              <v-row>
-                <v-col cols="6">
+
+               <v-row class="mb-n10">
+                <v-col cols="4">
                   <v-select
                     v-model="paquete.dia"
                     item-text="dia"
@@ -120,7 +126,7 @@
                   >
                   </v-select>
                 </v-col>
-                <v-col cols="6">
+                <v-col cols="4">
                   <v-text-field
                     v-model="paquete.horario"
                     label="Horario"
@@ -129,15 +135,17 @@
                     outlined
                   ></v-text-field>
                 </v-col>
-              </v-row>
 
-              <semanas
+                <semanas
                 :dia="diase"
                 :mes="fechactual.mesNum"
                 :year="fechactual.year"
                 @dias="diast"
               ></semanas>
-              <v-row>
+              </v-row>
+
+             
+              <v-row class="mb-n10">
                 <!-- <v-col cols="6">
                 </v-col> -->
 
@@ -161,26 +169,37 @@
                 </v-col>
               </v-row>
 
-              <v-row>
+              <v-row class="mb-n15">
                 <v-col cols="12">
                   <v-select
                     v-model="paquete.resultado"
                     :items="resultados"
-                    multiple
                     label="Resultado aprendizaje"
+                    multiple
                     outlined
                   >
-                    <template v-slot:item="slotProps">
+               
+                  <template v-slot:item="slotProps">             
+                  <!--
+                    <template v-slot:item,index="slotProps">
+                       <v-checkbox color="primary"
+                        :label="`${slotProps.item.duracion}/${slotProps.item.acumulado} : ${slotProps.item.descripcion}`"
+                       >
+                     </v-checkbox>
+                    -->
+                   
                       {{ slotProps.item.duracion }}/{{
                         slotProps.item.acumulado
                       }}
                       : {{ slotProps.item.descripcion }}
-                    </template>
+                       </template>
+                    
+                   
 
                     <template slot="selection" slot-scope="data">
-                      <v-chip>
+                      <p>
                         {{ data.item.descripcion }}
-                      </v-chip>
+                      </p>
                     </template>
                   </v-select>
                   <!-- 
@@ -202,9 +221,9 @@
           </v-form>
         </v-card-text>
 
-        <v-card-actions style="max-width: 95%; margin: auto">
+        <v-card-actions class="" style="max-width: 95%; margin: auto">
           <v-btn
-            class="ma-2 colorBtnCrear"
+            class="colorBtnCrear"
             style="color: #fff"
             outlined
             @click="validador()"
@@ -286,10 +305,7 @@
       </template>
     </v-snackbar>
 
-    <pre>
-        {{ $data }}
-      </pre
-    >
+    
   </v-container>
 </template>
 <script>
@@ -377,8 +393,8 @@ export default {
           ndia: 2,
         },
         {
-          dia: "MIERCOLES",
           ndia: 3,
+          dia: "MIÉRCOLES",
         },
         {
           dia: "JUEVES",
@@ -484,6 +500,7 @@ export default {
       this.paquete.resultado.orden = r[0].orden;
     },
     cargaresultados() {
+      this.paquete.resultado = []
       let r = this.competencias.filter(
         (e) => e.nombre == this.paquete.competencia.competencia
       );

@@ -1,6 +1,6 @@
 <template>
-  <v-row>
-    <v-col cols="12">
+  
+    <v-col cols="4">
       <v-select
         v-model="paquete.diastrabajados"
         :items="diastrabajados"
@@ -29,7 +29,7 @@
       ></v-select>
       -->
     </v-col>
-  </v-row>
+  
 </template>
 <script>
 const fc = require("festivos-colombia");
