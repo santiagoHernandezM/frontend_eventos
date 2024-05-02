@@ -430,6 +430,14 @@
       @close-dialog="dialogoJornadasVacias = $event"
     />
 
+    <v-snackbar
+      v-model="show"
+      :timeout="timeout"
+    >
+      {{ text }}
+    
+    </v-snackbar>
+
     <pre>{{ $data }}</pre>
   </v-container>
 </template>
@@ -507,6 +515,9 @@ export default {
       dialogoHorarioRepetido: false,
       itemEliminar: null,
       jornadas: [],
+      show : false,
+      text : null,
+      timeout: 3000,
 
       mostrarTooltip: false,
       search: "",
@@ -530,24 +541,48 @@ export default {
     async cargarAmbientes(sede) {
       // obtener los ambientes por sede
       this.loading = true;
+
       const ambientesResponse = await axios.get(
         `${this.api}/ambiente/sede/${sede}`
       );
+
+        if (ambientesResponse.data.length == 0)
+         {
+           this.text = "No existen ambientes asociados a la sede ..."
+           this.show = true
+           this.loading = false
+         } 
       this.ambientes = ambientesResponse.data;
       this.loading = false;
     },
 
     async instructoresPrograma(programa) {
       this.loading = true;
+      const vm = this
+      this.paquete.instructor = null
+      this.instructores = []
       //const instructoresResponse = await axios.get(`${this.api}/instructor/programa/${this.paquete.programa}/sede/${this.paquete.sede}`);
       let centro = this.$store.getters.usuario.centro;
-      const instructoresResponse = await axios.get(
+    /*  const instructoresResponse = await axios.get(
         `${this.api}/users/instructores/programa/${programa}/centro/${centro}`
-      );
-      console.log(instructoresResponse.data);
-      this.instructores = instructoresResponse.data;
+      );*/
+      axios.get( `${this.api}/users/instructores/programa/${programa}/centro/${centro}`)
+         .then(function (response) {
+           vm.instructores = response.data;
+        })
+      .catch(function () {
+          vm.text = "No existen instructores asociados al programa"
+          vm.show = true
+         
+       })
+  .finally(function () {
+      
+       vm.loading = false;
+  });
 
-      this.loading = false;
+
+    
+      
     },
 
     async guardar() {
