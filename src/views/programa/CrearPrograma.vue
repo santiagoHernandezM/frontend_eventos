@@ -140,7 +140,7 @@
     <Tabla
       :items="programas"
       :cabecera="cabeceraTabla"
-      :metodoEliminar="eliminarRegistro"
+      @eliminar="eliminarRegistro"
       :metodoEditar="editarRegistro"
     />
 

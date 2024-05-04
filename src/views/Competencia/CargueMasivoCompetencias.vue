@@ -21,7 +21,7 @@
                     label="Programa de formación"
                     v-model="programa"
                     append-icon="mdi mdi-school"
-                    @change="instructoresPrograma(paquete.programa)"
+                    @change="CompetenciaPrograma()"
                     :rules="camposRules"
                     outlined
                     color="rgb(52,188,52)"
@@ -42,12 +42,13 @@
               <v-row>
                 <v-col cols="12" style="padding-bottom: 0">
                   <v-file-input
-                    :rules="rules"
+                  :rules="camposRules"
                     accept=".xlsx"
                     v-model="file"
                     append-icon="mdi mdi-file-excel"
                     label="Archivo de excel"
                     outlined
+                    :disabled="estado"
                     color="rgb(52,188,52)"
                   ></v-file-input>
                 </v-col>
@@ -66,6 +67,14 @@
       </v-card>
     </v-row>
 
+    <v-snackbar
+    v-model="show"
+    :timeout="timeout"
+  >
+    {{ text }}
+
+   
+  </v-snackbar>
     <!-- Cargando... -->
     <Spinner :value="loading" />
   </v-container>
@@ -82,11 +91,15 @@ export default {
       file: null,
       programa: null,
       programas: [],
-      rules: [
-        (value) =>
-          !value ||
-          value.size < 2000000 ||
-          "Avatar size should be less than 2 MB!",
+      estado : true,
+      show : false,
+      text : null,
+      timeout : 3000,
+      camposRules: [
+        v => !!v || 'Campo requerido',
+      ],
+      filerules: [
+        v => v.size < 2000000 || "File size should be less than 2 MB!",
       ],
       loading: false,
     };
@@ -94,11 +107,21 @@ export default {
 
   async mounted() {
     const programasResponse = await axios.get(`${this.api}/programas/`);
-    this.programas = programasResponse.data;
+    this.programas = programasResponse.data
+   
   },
   methods: {
+      async CompetenciaPrograma(){
+          const programasResponse = await axios.get(`${this.api}/competencia/programa/${this.programa}`);
+            if (programasResponse.data.length > 0)
+            this.estado = true
+          else
+            this.estado = false
+        
+       },
     async cargarCSV() {
-      if (this.file != null) {
+      if (this.$refs.form.validate())
+        {
         this.loading = true;
         const formData = new FormData();
         formData.append("file", this.file);
@@ -109,9 +132,17 @@ export default {
             `${this.api}/carguemasivocompetencias/cargar/`,
             formData
           );
-          console.log(response.data);
+          
+              this.file = null,
+              this.estado = true
+              this.text = "Cargue competencias y resultado de programa con existo ..."
+              this.show = true
+              console.log(response)
+          
+
         } catch (error) {
-          console.log(error);
+          this.text = "Se ha producido un error ..."
+              this.show = true
         }
         this.loading = false;
       }
