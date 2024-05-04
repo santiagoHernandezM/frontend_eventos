@@ -182,8 +182,8 @@
     />
 
     <v-main>
-      <v-row justify="end">
-        <v-col cols="6" style="background-color: rgb(0, 0, 0)">
+      <v-row justify="end" style="background-color: #e7ebe5">
+        <v-col cols="6">
           <div class="card">
             <div class="header">
               <img
@@ -212,7 +212,7 @@
             </div>
           </div>
         </v-col>
-        <v-col cols="6" style="background-color: black">
+        <v-col cols="6">
           <template>
             <object
               data="/animation.svg"
@@ -263,38 +263,38 @@ export default {
       {
         text: `El software de eventos, es un software desarrollado para el control y la gestión del resporte de horas 
          dadas por los instructores del Sena. Sus principales caracteristicas :\r`,
-        delay: 1,
+        delay: 500,
         marginBottom: 20,
       }, // Primer párrafo aparece después de 1 segundo
       {
         text: `* Controlar el reporte de horas sobre una
           competencia o sobre un resultado de aprenziaje.`,
-        delay: 12000,
+        delay: 6000,
         marginBottom: 20,
       }, // Segundo párrafo aparece después de 2 segundos
       {
         text: `* Gestionar que todos los resultados de aprendizaje de una competencia le sean reportadas sus horas.`,
-        delay: 22000,
+        delay: 8000,
         marginBottom: 20,
       }, // Tercer párrafo aparece después de 3 segundos
       {
         text: `* Disminuye el error humano al momento de diligenciar los eventos.`,
-        delay: 30000,
+        delay: 10000,
         marginBottom: 20,
       },
       {
         text: `* Monitorear el avance de las fichas de formación.`,
-        delay: 35000,
+        delay: 12000,
         marginBottom: 20,
       }, // Tercer párrafo aparece después de 3 segundos
       {
         text: `* Administrar la disponibilidad de los ambientes de las sedes.`,
-        delay: 40000,
+        delay: 140000,
         marginBottom: 20,
       },
       {
         text: `* Disponibilidad de los horarios de los instructores.`,
-        delay: 45000,
+        delay: 160000,
         marginBottom: 20,
       },
     ],
@@ -320,7 +320,7 @@ export default {
             charIndex++;
 
             if (charIndex < text.length) {
-              setTimeout(type, 50); // Velocidad de animación entre caracteres
+              setTimeout(type, 15); // Velocidad de animación entre caracteres
             }
           };
 
@@ -373,8 +373,8 @@ export default {
 </script>
 <style scoped>
 .fondo {
-  background-image: url(../assets/imagen8.jpg);
-  background-size: 100% 100%;
+  background-image: url(../assets/images/Fondofijo.png);
+  background-size: cover;
   background-attachment: fixed;
   width: 100%;
   margin: 0;
@@ -513,7 +513,8 @@ body {
   margin: 50px auto;
   margin-right: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 10px 0 rgba(76, 250, 7, 0.2), 0 80px 50px 0 rgba(53, 237, 21, 0.19);
+
 }
 
 .header {
@@ -526,7 +527,7 @@ body {
   top: -30px;
   border-radius: 12px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  background-image: linear-gradient(to right, #078138, #30b05f);
+  background-image: linear-gradient(to right, #34BC34, #3AE35E);
 }
 
 .texto {
@@ -535,6 +536,7 @@ body {
   top: 20px;
   font-size: x-large;
   color: white;
+  font-weight: bold;
 }
 
 .texto2 {
@@ -676,7 +678,7 @@ i {
   width: 95%;
   margin: 0 auto;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  background-image: linear-gradient(to right, #078138, #30b05f);
+  background-image: linear-gradient(to right, #34BC34, #3AE35E);
 }
 
 .footer ul {
@@ -740,6 +742,6 @@ i {
   /* white-space: nowrap;*/
   margin: 0;
   letter-spacing: 0.15em;
-  animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+  animation: typing 1s steps(40, end), blink-caret 0.75s step-end infinite;
 }
 </style>
