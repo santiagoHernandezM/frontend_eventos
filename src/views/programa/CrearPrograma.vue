@@ -251,8 +251,9 @@ export default {
   methods: {
     async cargarProgramas() {
       try {
-        const response = await axios.get(`${this.api}/programas`);
+        const response = await axios.get(`${this.api}/programas/programacompetencia`);
         this.programas = response.data;
+        console.log(this.programas)
       } catch (error) {
         console.error(error);
       }

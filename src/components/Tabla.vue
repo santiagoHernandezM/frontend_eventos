@@ -36,6 +36,14 @@
             <v-btn icon @click="eliminar(item)" id="btn-eliminar">
               <v-icon id="icono-eliminar">mdi-delete</v-icon>
             </v-btn>
+
+            <v-btn
+            color="yellow"
+            v-if="item.competencia" icon id="btn-eliminar">
+              <v-icon  >mdi-eye</v-icon>
+            
+            </v-btn>
+
           </v-card-actions>
         </template>
       </v-data-table>
