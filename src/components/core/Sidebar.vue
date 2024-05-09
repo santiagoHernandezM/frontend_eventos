@@ -14,12 +14,12 @@
       <div class="centrar"
          
         >
-        <img src="../../assets/images/Titu1.png" alt="Evento" width="250px" />
+        <img src="../../assets/images/letras2.png" alt="Evento" width="250px" />
       </div>
       
       <div class="centrar">
         <div>
-          <img src="../../assets/images/LogoNuevo.png" alt="Evento" width="140px" />
+          <img src="../../assets/images/logomasverde.png" alt="Evento" width="140px" />
         </div>
       </div>
 
@@ -196,7 +196,7 @@ export default {
 }
 
 #fondo {
-  background-image: url('../../assets/images/fondot.png'); /* Corregido: Cambié 'src' por 'url' */
+  background-image: url('../../assets/images/fondocuadros.png'); /* Corregido: Cambié 'src' por 'url' */
   background-repeat: no-repeat;
   background-size: cover; /* Cambiado a 'cover' para ajustar el tamaño de la imagen al contenedor */
   background-attachment: fixed;
