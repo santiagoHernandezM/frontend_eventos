@@ -174,6 +174,7 @@ const routes = [
           next();
         },
       },
+      
       {
         name: "crearficha",
         path: "/dashboard/crearficha",

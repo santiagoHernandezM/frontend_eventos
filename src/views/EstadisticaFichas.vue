@@ -163,6 +163,7 @@
 
       graficaresultados(){
         var labelsAux = [];
+        this.chartDataresultados = []
         labelsAux.push('Duracion');
         labelsAux.push('Acumulado');
        for(let data of this.nombrecompetencia.resultados){
