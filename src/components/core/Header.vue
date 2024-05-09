@@ -3,20 +3,20 @@
     app
     elevate-on-scroll
     elevation="8"
-    height="90px"
+    height="130px"
     relative
     flat
     class="fondo"
   >
     <v-app-bar-nav-icon
       class="btn"
-      color="white"
+      color="black"
       dark
       @click="procesa()"
     ></v-app-bar-nav-icon>
 
     <v-toolbar-title>
-      <img src="../../assets/images/titulo2.png" alt="Evento" width="450px" />
+      <img src="../../assets/images/letras1.png" alt="Evento" width="450px" />
 
       <!-- <div class="letra">GESTIÓN DE EVENTOS SENA</div> -->
       <div style="margin-top: 5px" class="letra2">
@@ -30,7 +30,7 @@
       <template v-slot:activator="{ on, attrs }">
         <span v-bind="attrs" v-on="on" style="cursor: point" class="mx-5 mr-10">
           <v-avatar size="40">
-            <img src="https://randomuser.me/api/portraits/women/80.jpg" />
+            <img src="../../assets/images/img.png" />
           </v-avatar>
         </span>
       </template>
@@ -97,7 +97,7 @@ export default {
 }
 
 .fondo {
-  background-image: url("../../assets/images/fondofijo1.png"); /* Corregido: Cambié 'src' por 'url' */
+  background-image: url("../../assets/images/fondocuadros2.png"); /* Corregido: Cambié 'src' por 'url' */
   background-repeat: no-repeat;
   background-size: cover; /* Cambiado a 'cover' para ajustar el tamaño de la imagen al contenedor */
   background-attachment: fixed;

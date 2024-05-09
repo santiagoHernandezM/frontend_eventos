@@ -316,7 +316,7 @@
     <Tabla
       :items="usuarios"
       :cabecera="cabeceraTabla"
-      @eliminar="eliminaregistro"
+      @eliminar="eliminaregistro "
       :metodoEditar="editarRegistro"
     />
 

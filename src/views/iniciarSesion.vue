@@ -205,7 +205,7 @@
             </div>
             <div class="footer">
               <img
-                src="https://www.opinioncaribe.com/wp-content/uploads/2017/08/sena.jpg"
+                src="https://senacertificados.co/wp-content/uploads/2021/10/logo-de-SENA-png-Negro-300x300-1.png"
                 width="70px"
                 height="70px"
               />
@@ -216,8 +216,8 @@
           <template>
             <object
               data="/animation.svg"
-              width="720"
-              height="600"
+              width="100%"
+              height="100%"
               type="image/svg+xml"
             ></object>
           </template>
@@ -373,7 +373,7 @@ export default {
 </script>
 <style scoped>
 .fondo {
-  background-image: url(../assets/images/Fondofijo.png);
+  background-image: url(../assets/images/fondocuadros2.png);
   background-size: cover;
   background-attachment: fixed;
   width: 100%;
