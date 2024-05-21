@@ -257,6 +257,20 @@ const routes = [
       },
 
       {
+        name: 'eventomes',
+        path: '/dashboard/eventosmes',
+        component: () =>
+            import ('../views/EventosMesview/EventosMes.vue'),
+        beforeEnter: (_, __, next) => {
+          let rol = store.getters.usuario.roles;
+          let found = rol.find((element) => element == "Coordinador");
+          if (found == undefined) return next("/dashboard/welcome");
+          next();
+        },
+            
+    },
+
+      {
         name: "salida",
         path: "/dashboard/salida",
         component: () => import("../views/Usuario/ListarUsuarioView.vue"),

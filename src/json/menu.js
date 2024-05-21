@@ -157,6 +157,12 @@ let menu = [
         icon: "mdi mdi-newspaper-variant-multiple-outline",
       },
       {
+        href: "/dashboard/eventosmes",
+        title: "Descargar Eventos Mes",
+        icon: "mdi mdi-newspaper-variant-multiple-outline",
+      },
+
+      {
         href: "/dashboard/salida",
         title: "Salir",
         icon: "mdi mdi-exit-to-app",
