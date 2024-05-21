@@ -161,6 +161,11 @@ let menu = [
         title: "Descargar Eventos Mes",
         icon: "mdi mdi-newspaper-variant-multiple-outline",
       },
+      {
+        href: "/dashboard/resumen",
+        title: "Avance Ficha",
+        icon: "mdi mdi-newspaper-variant-multiple-outline",
+      },
 
       {
         href: "/dashboard/salida",

@@ -270,6 +270,19 @@ const routes = [
             
     },
 
+    {
+      name: 'resumen',
+      path: '/dashboard/resumen',
+      component: () =>
+          import ('../views/ResumenFicha.vue'),
+      beforeEnter: (_, __, next) => {
+        let rol = store.getters.usuario.roles;
+        let found = rol.find((element) => element == "Coordinador");
+        if (found == undefined) return next("/dashboard/welcome");
+        next();
+      },
+  },
+
       {
         name: "salida",
         path: "/dashboard/salida",
