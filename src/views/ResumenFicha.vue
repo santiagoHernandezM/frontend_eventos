@@ -50,18 +50,19 @@
                   <v-col>
                     <v-chip
                      color="red"
-                     class="mr-5"
+                     class="mr-5  white--text font-weight-black"
                      >
                     0% > &lt;= 40%
                   </v-chip>
                   <v-chip
                      color="yellow"
-                     class="mr-5"
+                     class="mr-5  black--text font-weight-black"
                      >
                     40% > &lt;= 80%
                   </v-chip>
                   <v-chip
                   color="green"
+                  class="white--text font-weight-black"
                   >
                  80% > &lt;= 100%
                </v-chip>

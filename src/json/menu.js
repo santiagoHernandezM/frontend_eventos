@@ -148,7 +148,7 @@ let menu = [
       {
         href: "/dashboard/programainstructor",
         title: "Programas Instructor",
-        icon: "mdi mdi-calendar-clock",
+        icon: "mdi mdi-account-box-outline",
       },
       
       {
@@ -159,12 +159,12 @@ let menu = [
       {
         href: "/dashboard/eventosmes",
         title: "Descargar Eventos Mes",
-        icon: "mdi mdi-newspaper-variant-multiple-outline",
+        icon: "mdi mdi-cloud-download",
       },
       {
         href: "/dashboard/resumen",
         title: "Avance Ficha",
-        icon: "mdi mdi-newspaper-variant-multiple-outline",
+        icon: "mdi mdi-trending-up",
       },
 
       {
