@@ -24,14 +24,72 @@
         <div class="d-flex justify-content-center h-50">
           <div class="user_card">
             <!-- LOGO -->
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center" style="margin-bottom: 150px;">
               <div class="brand_logo_container">
-                <img src="/animation.svg" class="brand_logo" alt="Logo" />
+                <!-- src="../../assets/images/logomasverde.png" -->
+                <img src="../assets/images/logomasverde.png" class="brand_logo" alt="Logo" />
               </div>
             </div>
 
-            <div class="d-flex justify-content-center form_container">
-              <form v-on:submit.prevent>
+            <div class="d-flex justify-content-center">
+              <v-form v-on:submit.prevent>
+                <v-container>
+                  <v-row>
+                    <v-col class="mr-3 ml-4">
+                      <v-text-field
+                        label="Correo"
+                        v-model="user.correo"
+                        append-icon="mdi-gmail"
+                        :rules="emailRules"
+                        outlined
+                        type="email"
+                        color="rgb(52,188,52)"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+
+                  <v-row>
+                    <v-col class="mr-3 ml-4">
+                      <v-text-field
+                        v-model="user.password"
+                        :append-icon="
+                          show1 ? 'mdi-eye' : 'mdi-eye-off'
+                        "
+                        :rules="[camposRules, min]"
+                        :type="show1 ? 'text' : 'password'"
+                        
+                        label="Contraseña"
+                        
+                        @click:append="show1 = !show1"
+                        outlined
+                        color="rgb(52,188,52)"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+
+                  <a href="#" @click="changePassword()">Olvidó su contraseña?</a>
+
+                <div
+                  class="d-flex justify-content-center mt-3 login_container"
+                  v-if="prueba == 0"
+                >
+                  <vs-button dark class="btn login_btn" @click="login"
+                    >Iniciar Sesión</vs-button
+                  >
+                </div>
+
+                <v-snackbar
+                  v-model="isBusy"
+                  :timeout="2000"
+                  absolute
+                  bottom
+                  color="red"
+                >
+                  {{ msg }}
+                </v-snackbar>
+                </v-container>
+              </v-form>
+              <!-- <form v-on:submit.prevent>
                 <div class="input-group mb-3">
                   <div class="input-group-append">
                     <span class="input-group-text"
@@ -82,14 +140,9 @@
                 >
                   {{ msg }}
                 </v-snackbar>
-              </form>
+              </form> -->
             </div>
 
-            <div class="mt-4">
-              <div class="d-flex justify-content-center links">
-                <a href="#" style="color: black">¿olvidaste tu contraseña?</a>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -106,13 +159,49 @@
             <!-- LOGO -->
             <div class="d-flex justify-content-center">
               <div class="brand_logo_container">
-                <img src="/animation.svg" class="brand_logo" alt="Logo" />
+                <img src="../assets/images/logomasverde.png" class="brand_logo" alt="Logo" />
               </div>
             </div>
 
             <!-- <h2 style="color: #fff" class="mt-3">Cambiar contraseña</h2> -->
             <div class="d-flex justify-content-center form_container">
-              <form v-on:submit.prevent>
+              <v-form v-on:submit.prevent>
+                <v-container>
+                  <v-row>
+                    <v-col class="mr-3 ml-4">
+                      <v-text-field
+                        label="Correo"
+                        v-model="email"
+                        append-icon="mdi-gmail"
+                        :rules="emailRules"
+                        outlined
+                        type="email"
+                        color="rgb(52,188,52)"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+
+                <div
+                  class="d-flex justify-content-center mt-3 login_container"
+                  v-if="prueba == 0"
+                >
+                  <vs-button dark class="btn login_btn" @click="enviarCorreo()"
+                    >Enviar</vs-button
+                  >
+                </div>
+
+                <v-snackbar
+                  v-model="isBusy"
+                  :timeout="2000"
+                  absolute
+                  bottom
+                  color="red"
+                >
+                  {{ msg }}
+                </v-snackbar>
+                </v-container>
+              </v-form>
+              <!-- <form v-on:submit.prevent>
                 <div class="input-group mb-3">
                   <div class="input-group-append">
                     <span class="input-group-text"
@@ -137,15 +226,6 @@
                   >
                 </div>
 
-                <!-- <div
-                  class="d-flex justify-content-center mt-3 login_container"
-                  v-if="prueba == 1"
-                >
-                  <vs-button class="btn login_btn" loading dark>
-                    Iniciar Sesiónaaaa
-                  </vs-button>
-                </div> -->
-
                 <v-snackbar
                   v-model="isBusy"
                   :timeout="2000"
@@ -155,13 +235,7 @@
                 >
                   {{ msg }}
                 </v-snackbar>
-              </form>
-            </div>
-
-            <div class="mt-4">
-              <div class="d-flex justify-content-center links">
-                <a href="#" style="color: black">¿olvidaste tu contraseña?</a>
-              </div>
+              </form> -->
             </div>
           </div>
         </div>
@@ -259,6 +333,14 @@ export default {
     prueba: 0,
     array: [],
     rolMenu: [],
+
+    show1: false,
+    camposRules: [(v) => !!v || "Requerido !"],
+    emailRules: [
+      (v) => !!v || "E-mail es requerido",
+      (v) => /.+@.+\..+/.test(v) || "Debe ser un E-mail válido",
+    ],
+    min: (v) => v.length >= 8 || "Mínimo 8 caracteres",
     paragraphs: [
       {
         text: `El software de eventos, es un software desarrollado para el control y la gestión del resporte de horas 
@@ -420,7 +502,7 @@ export default {
   width: 450px;
   margin-top: auto;
   margin-bottom: auto;
-  background: #060606b9;
+  background: #e7ebe5;
   position: relative;
   display: flex;
   justify-content: center;
@@ -450,7 +532,7 @@ export default {
   height: 150px;
   width: 150px;
   border-radius: 50%;
-  border: 2px solid white;
+  border: 2px solid rgb(148, 165, 157);
   margin-top: 16px;
 }
 
