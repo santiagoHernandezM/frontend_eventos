@@ -30,7 +30,7 @@
               @mouseleave="mostrarTooltip = false"
               id="btn-editar"
             >
-              <v-icon id="icono-editar">mdi-pencil</v-icon>
+              <v-icon @click="editar(item)" id="icono-editar">mdi-pencil</v-icon>
             </v-btn>
 
             <v-btn icon @click="eliminar(item)" id="btn-eliminar">
@@ -53,7 +53,7 @@
 
 <script>
 export default {
-  props: ["items", "cabecera", "metodoEditar"],
+  props: ["items", "cabecera"],
   data() {
     return {
       mostrarTooltip: false,
@@ -61,9 +61,12 @@ export default {
     };
   },
   methods: {
-    eliminar(item)
-    {
-       this.$emit("eliminar",item)
+    eliminar(item){
+      this.$emit("eliminar",item)
+    },
+
+    editar(item){
+      this.$emit("editar", item)
     },
 
     filterOnlyCapsText(value, search) {

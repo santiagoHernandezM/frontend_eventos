@@ -96,8 +96,8 @@
     <Tabla
       :items="bloques"
       :cabecera="cabeceraTabla"
-      :metodoEditar="editarRegistro"
-      :metodoEliminar="eliminarRegistro"
+      @eliminar="eliminarRegistro"
+      @editar="editarRegistro"
     />
 
     <!-- Cargando... -->

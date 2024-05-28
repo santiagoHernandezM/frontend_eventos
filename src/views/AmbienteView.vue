@@ -114,8 +114,8 @@
     <Tabla
       :items="ambientes"
       :cabecera="cabeceraTabla"
-      :metodoEditar="editarRegistro"
-      :metodoEliminar="eliminarRegistro"
+      @eliminar="eliminarRegistro"
+      @editar="editarRegistro"
     />
 
     <!-- Cargando... -->

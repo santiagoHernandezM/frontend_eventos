@@ -141,7 +141,7 @@
       :items="programas"
       :cabecera="cabeceraTabla"
       @eliminar="eliminarRegistro"
-      :metodoEditar="editarRegistro"
+      @editar="editarRegistro"
     />
 
     <!-- Cargando... -->

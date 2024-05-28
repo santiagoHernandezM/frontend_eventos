@@ -123,8 +123,8 @@
     <Tabla
       :items="sedes"
       :cabecera="cabeceraTabla"
-      :metodoEditar="editarRegistro"
-      :metodoEliminar="eliminarRegistro"
+      @eliminar="eliminarRegistro"
+      @editar="editarRegistro"
     />
 
     <!-- Cargando... -->
