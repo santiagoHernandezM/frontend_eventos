@@ -16,12 +16,22 @@
             <v-container>
               <v-row align="end">
                 <v-col cols="3">
-                  <spam class="font-weight-bold text-md-h6">Año: <spam class="font-weight-bold text-md-h6 blue--text">{{fechactual.year}}</spam></spam>
+                  <spam class="font-weight-bold text-md-h6"
+                    >Año:
+                    <spam class="font-weight-bold text-md-h6 blue--text">{{
+                      fechactual.year
+                    }}</spam></spam
+                  >
                 </v-col>
                 <v-col cols="3">
-                  <spam class="font-weight-bold text-md-h6">Mes: <spam class="font-weight-bold text-md-h6 blue--text">{{fechactual.mesNum}} {{fechactual.mes}}</spam></spam>
+                  <spam class="font-weight-bold text-md-h6"
+                    >Mes:
+                    <spam class="font-weight-bold text-md-h6 blue--text"
+                      >{{ fechactual.mesNum }} {{ fechactual.mes }}</spam
+                    ></spam
+                  >
                 </v-col>
-               </v-row>
+              </v-row>
               <!-- <v-row align="end" class="mb-n1">
                 <v-col cols="4">
                   <spam
@@ -112,7 +122,7 @@
                 </v-col>
               </v-row>
 
-               <v-row class="mb-n10">
+              <v-row class="mb-n10">
                 <v-col cols="4">
                   <v-select
                     v-model="paquete.dia"
@@ -137,14 +147,13 @@
                 </v-col>
 
                 <semanas
-                :dia="diase"
-                :mes="fechactual.mesNum"
-                :year="fechactual.year"
-                @dias="diast"
-              ></semanas>
+                  :dia="diase"
+                  :mes="fechactual.mesNum"
+                  :year="fechactual.year"
+                  @dias="diast"
+                ></semanas>
               </v-row>
 
-             
               <v-row class="mb-n10">
                 <!-- <v-col cols="6">
                 </v-col> -->
@@ -171,41 +180,17 @@
 
               <v-row class="mb-n15">
                 <v-col cols="12">
-                  <v-select
-                    v-model="paquete.resultado"
+                  <v-select v-model="paquete.resultado"
                     :items="resultados"
                     label="Resultado aprendizaje"
                     multiple
-                    outlined
-                  >
-               
-                  <template v-slot:item="slotProps">             
-                  <!--
-                    <template v-slot:item,index="slotProps">
-                       <v-checkbox color="primary"
-                        :label="`${slotProps.item.duracion}/${slotProps.item.acumulado} : ${slotProps.item.descripcion}`"
-                       >
-                     </v-checkbox>
-                    -->
-                   
-                      {{ slotProps.item.duracion }}/{{
-                        slotProps.item.acumulado
-                      }}
-                      : {{ slotProps.item.descripcion }}
-                       </template>
-                    
-                   
-
-                    <template slot="selection" slot-scope="data">
-                      <p>
-                        {{ data.item.descripcion }}
-                      </p>
-                    </template>
+                    :item-value="(item) => item"
+                    :item-text="
+                      (item) => {
+                        return `${item.duracion}/${item.acumulado}: ${item.descripcion}`;
+                      }
+                    " outlined>
                   </v-select>
-                  <!-- 
-                     
-                      item-value="descripcion" 
-                    @change="actualizaorden()" -->
                 </v-col>
               </v-row>
 
@@ -304,8 +289,6 @@
         </v-btn>
       </template>
     </v-snackbar>
-
-    
   </v-container>
 </template>
 <script>
@@ -360,7 +343,7 @@ export default {
         horario: null,
 
         horas: null,
-        diastrabajados: null,
+        diastrabajados: [],
         competencia: {
           competencia: null,
           codigo: null,
@@ -500,7 +483,7 @@ export default {
       this.paquete.resultado.orden = r[0].orden;
     },
     cargaresultados() {
-      this.paquete.resultado = []
+      this.paquete.resultado = [];
       let r = this.competencias.filter(
         (e) => e.nombre == this.paquete.competencia.competencia
       );

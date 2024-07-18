@@ -65,3 +65,56 @@ export default {
   font-weight: 500;
 }
 </style>
+
+<style>
+@media (max-width: 575px) {
+  .col-xs-1 {
+    flex: 0 0 8.3333333333% !important;
+    max-width: 8.3333333333% !important;
+  }
+  .col-xs-2 {
+    flex: 0 0 16.6666666667% !important;
+    max-width: 16.6666666667% !important;
+  }
+  .col-xs-3 {
+    flex: 0 0 25% !important;
+    max-width: 25% !important;
+  }
+  .col-xs-4 {
+    flex: 0 0 33.3333333333% !important;
+    max-width: 33.3333333333% !important;
+  }
+  .col-xs-5 {
+    flex: 0 0 41.6666666667% !important;
+    max-width: 41.6666666667% !important;
+  }
+  .col-xs-6 {
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+  }
+  .col-xs-7 {
+    flex: 0 0 58.3333333333% !important;
+    max-width: 58.3333333333% !important;
+  }
+  .col-xs-8 {
+    flex: 0 0 66.6666666667% !important;
+    max-width: 66.6666666667% !important;
+  }
+  .col-xs-9 {
+    flex: 0 0 75% !important;
+    max-width: 75% !important;
+  }
+  .col-xs-10 {
+    flex: 0 0 83.3333333333% !important;
+    max-width: 83.3333333333% !important;
+  }
+  .col-xs-11 {
+    flex: 0 0 91.6666666667% !important;
+    max-width: 91.6666666667% !important;
+  }
+  .col-xs-12 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+}
+</style>
