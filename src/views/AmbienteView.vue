@@ -169,7 +169,7 @@ export default {
   components: { Tabla, Dialogo, Dialogo_confirm_delete, Spinner },
   data() {
     return {
-      api: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+      api: `${process.env.VUE_APP_API_URL}`,
       paquete: {
         codigo: null,
         bloque: null,

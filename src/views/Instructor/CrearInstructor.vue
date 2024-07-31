@@ -327,7 +327,7 @@ export default {
   },
 
   async mounted() {
-    let url = `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`;
+    let url = `${process.env.VUE_APP_API_URL}`;
     const tipos = await axios.get(`${url}/tipo-de-vinculacion`);
     const response = await axios.get(`${url}/sedes/`);
     const programas = await axios.get(`${url}/programas/`);

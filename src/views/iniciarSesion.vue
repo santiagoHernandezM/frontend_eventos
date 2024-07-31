@@ -310,7 +310,7 @@ export default {
   components: { Dialogo, Spinner },
   name: "App",
   data: () => ({
-    api: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+    api: `${process.env.VUE_APP_API_URL}`,
     entorno: process.env,
     active: "home",
     dialogoLogin: false,

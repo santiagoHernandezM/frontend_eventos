@@ -55,7 +55,7 @@ export default {
   components: { Spinner },
   data() {
     return {
-      api: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+      api: `${process.env.VUE_APP_API_URL}`,
       file: null,
       rules: [
         (value) =>

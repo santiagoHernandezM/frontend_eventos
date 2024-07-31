@@ -55,7 +55,7 @@ export default {
   props: ["drawer"],
   data: () => ({
     centro: null,
-    api: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+    api: `${process.env.VUE_APP_API_URL}`,
     ops: {
       scrollPanel: {
         initialScrollY: false,

@@ -196,7 +196,7 @@ import axios from "axios";
 export default {
   name: "AdministrarInstructores",
   data: () => ({
-    API: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+    API: `${process.env.VUE_APP_API_URL}`,
     token: {
       headers: {
         Authorization: null,

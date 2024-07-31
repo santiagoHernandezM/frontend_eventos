@@ -79,7 +79,7 @@ export default {
   components: { Dialogo, Spinner },
   data() {
     return {
-      api: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+      api: `${process.env.VUE_APP_API_URL}`,
       password1: null,
       password2: null,
       showPassword1: false,

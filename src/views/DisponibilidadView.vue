@@ -156,7 +156,7 @@ import  axios  from 'axios';
 export default {
     data() {
         return {
-            api : `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+            api : `${process.env.VUE_APP_API_URL}`,
             ambsedes : [],
             mode: 'stack',
             events : [],

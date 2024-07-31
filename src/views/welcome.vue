@@ -100,7 +100,7 @@ export default {
       eventcalendar : [],
       mes : null,
       year : null,
-      api : `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+      api : `${process.env.VUE_APP_API_URL}`,
       today : null,
       focus: '',
       type: 'week',

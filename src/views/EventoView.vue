@@ -311,7 +311,7 @@ export default {
       snackbar: false,
       text: "",
       horajornada: 0,
-      api: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+      api: `${process.env.VUE_APP_API_URL}`,
       paqdiasmes: null,
       totalhoras: 0,
       saveeventos: [],
