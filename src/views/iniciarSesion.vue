@@ -146,10 +146,7 @@
           </div>
         </div>
       </div>
-      <!--  <vs-button flat color="#7d33ff" icon
-            @click="openNotification('top-center', '#7d33ff')">
-            <i class='bx bx-border-top' ></i>
-          </vs-button>-->
+
     </v-dialog>
 
     <v-dialog v-model="dialogoSolitarCorreo" max-width="350" height="400">
@@ -201,41 +198,7 @@
                 </v-snackbar>
                 </v-container>
               </v-form>
-              <!-- <form v-on:submit.prevent>
-                <div class="input-group mb-3">
-                  <div class="input-group-append">
-                    <span class="input-group-text"
-                      ><i class="fas fa-user"></i
-                    ></span>
-                  </div>
-                  <input
-                    v-model="email"
-                    type="text"
-                    name=""
-                    class="form-control input_user"
-                    placeholder="Correo"
-                  />
-                </div>
 
-                <div
-                  class="d-flex justify-content-center mt-3 login_container"
-                  v-if="prueba == 0"
-                >
-                  <vs-button dark class="btn login_btn" @click="enviarCorreo()"
-                    >Enviar</vs-button
-                  >
-                </div>
-
-                <v-snackbar
-                  v-model="isBusy"
-                  :timeout="2000"
-                  absolute
-                  bottom
-                  color="red"
-                >
-                  {{ msg }}
-                </v-snackbar>
-              </form> -->
             </div>
           </div>
         </div>
@@ -245,6 +208,13 @@
             <i class='bx bx-border-top' ></i>
           </vs-button>-->
     </v-dialog>
+
+    <DialogError
+      :show="dialogoUsuarioSinAcceso"
+      title="Sin acceso al sistema"
+      text="El usuario no cuenta con acceso al sistema, comunicarse con soporte"
+      @close-dialog="dialogoUsuarioSinAcceso = $event"
+    />
 
     <Spinner :value="loading" />
 
@@ -304,10 +274,11 @@
 <script>
 import axios from "axios";
 import Dialogo from "../components/Dialog.vue";
+import DialogError from "../components/DialogError.vue";
 import Spinner from "../components/Spinner.vue";
 
 export default {
-  components: { Dialogo, Spinner },
+  components: { Dialogo, Spinner, DialogError },
   name: "App",
   data: () => ({
     api: `${process.env.VUE_APP_API_URL}`,
@@ -316,6 +287,7 @@ export default {
     dialogoLogin: false,
     dialogoSolitarCorreo: false,
     dialogoCorreoEnviado: false,
+    dialogoUsuarioSinAcceso: false,
     loading: false,
 
     user: {
@@ -420,8 +392,13 @@ export default {
           this.$router.push("dashboard/welcome");
         }
       } catch (error) {
-        console.log(error);
-        this.msg = "Usuario / contraseña Invalidos";
+
+        if (error.response.data.message === 'Usuario inactivo'){
+          
+          this.msg = "Sin acceso al sistema";
+        }else {
+          this.msg = "Usuario o contraseña inválida";
+        }
         this.isBusy = true;
       }
     },
@@ -436,14 +413,21 @@ export default {
       this.dialogoSolitarCorreo = false;
 
       let correo = this.email;
-      correo = { email: correo };
       try {
-        const response = await axios.post(
+
+        const response = await axios.get(`${this.api}/users/correo/${correo}`)
+
+        if (!response.data.activo){
+          this.loading = false;
+          this.dialogoUsuarioSinAcceso = true
+          return
+        }
+
+        await axios.post(
           `${this.api}/users/forgot-password`,
-          correo
+          { email: correo }
         );
-        console.log(response);
-        console.log({ correo });
+
         this.loading = false;
         this.dialogoCorreoEnviado = true;
       } catch (error) {
