@@ -19,6 +19,7 @@
                 item.programas.flatMap((programa) => programa.nombre).join(", ")
               }}
             </template>
+            
             <template v-slot:item.actions="{ item }">
               <v-row justify="center" class="gap-2 g-2" style="gap: 9px">
                 <v-tooltip top>
@@ -74,6 +75,7 @@
           </v-data-table>
         </v-card-text>
       </v-card>
+      <pre>{{ $data }}</pre>
     </v-col>
     <v-row justify="center">
       <v-dialog v-model="dialog" persistent max-width="600px">

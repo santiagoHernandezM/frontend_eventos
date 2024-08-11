@@ -1,6 +1,6 @@
 <template>
   <v-row justify="space-around">
-    <v-card max-width="900" class="mt-12 px-10 py-10">
+    <v-card class="mt-12 px-10 py-10">
       <v-data-table
         :items="items"
         :headers="cabecera"
@@ -22,8 +22,44 @@
 
         <!-- Listado -->
         <template v-slot:item.actions="{ item }">
+
+          <v-row justify="center" class="gap-2 g-2" style="gap: 9px; flex-wrap: nowrap;">
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="blue"
+                  v-bind="attrs"
+                  v-on="on"
+                  fab
+                  x-small
+                  dark
+                  @click="editar(item)"
+                >
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+              </template>
+              <span>Editar</span>
+            </v-tooltip>
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="black"
+                  v-bind="attrs"
+                  v-on="on"
+                  fab
+                  x-small
+                  dark
+                  @click="eliminar(item)"
+                >
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </template>
+              <span>Eliminar</span>
+            </v-tooltip>
+          </v-row>
+
           <v-card-actions style="padding: 0">
-            <v-btn
+            <!-- <v-btn
               icon
               @click="metodoEditar(item)"
               @mouseover="mostrarTooltip = true"
@@ -31,8 +67,9 @@
               id="btn-editar"
             >
               <v-icon @click="editar(item)" id="icono-editar">mdi-pencil</v-icon>
-            </v-btn>
+            </v-btn> -->
 
+<!-- 
             <v-btn icon @click="eliminar(item)" id="btn-eliminar">
               <v-icon id="icono-eliminar">mdi-delete</v-icon>
             </v-btn>
@@ -42,7 +79,7 @@
             v-if="item.competencia" icon id="btn-eliminar">
               <v-icon  >mdi-eye</v-icon>
             
-            </v-btn>
+            </v-btn> -->
 
           </v-card-actions>
         </template>

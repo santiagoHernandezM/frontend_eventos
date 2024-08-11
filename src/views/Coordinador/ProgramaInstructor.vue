@@ -15,7 +15,7 @@
           <v-spacer></v-spacer>
         </v-app-bar>
 
-        <v-card-text style="border: 1px solid red">
+        <v-card-text>
           <v-container style="padding-bottom: 0">
             <v-row>
               <v-col cols="12">

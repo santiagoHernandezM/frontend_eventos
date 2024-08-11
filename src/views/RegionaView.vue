@@ -76,6 +76,7 @@
 
         <!-- Acciones: Limpiar / Editar - Cancelar -->
         <v-card-actions style="max-width: 95%; margin: auto">
+
           <v-btn
             :class="['ma-2', colorBtn]"
             :style="{ color: '#fff' }"
@@ -103,7 +104,7 @@
             "
           >
             Cancelar
-          </v-btn>
+          </v-btn>  
         </v-card-actions>
       </v-card>
     </v-row>

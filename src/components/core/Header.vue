@@ -3,7 +3,7 @@
     app
     elevate-on-scroll
     elevation="8"
-    height="130px"
+    height="95px"
     relative
     flat
     class="fondo"

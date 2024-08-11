@@ -313,12 +313,112 @@
     </v-row>
 
     <!-- Tabla -->
-    <Tabla
+    <!-- <Tabla
       :items="usuarios"
       :cabecera="cabeceraTabla"
-      @eliminar="eliminaregistro "
-      :metodoEditar="editarRegistro"
-    />
+      @eliminar="eliminarRegistro "
+      @editar="editarRegistro"
+    /> -->
+
+
+    <template>
+      <v-row justify="space-around">
+        <v-card class="mt-12 px-10 py-10">
+          <v-data-table
+            :items="usuarios"
+            :headers="cabeceraTabla"
+            class="elevation-1"
+            :search="search"
+            :custom-filter="filterOnlyCapsText"
+          >
+            <!-- Buscador -->
+            <template v-slot:top>
+              <v-text-field
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Buscar"
+                @input="convertToUpperCaseTabla"
+                class="mx-4"
+                color="rgb(52,188,52)"
+              ></v-text-field>
+            </template>
+
+            <!-- Listado -->
+            <template v-slot:item.actions="{ item }">
+              <v-row justify="center" style="gap: 9px; flex-wrap: nowrap;x">
+              
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      color="blue"
+                      v-bind="attrs"
+                      v-on="on"
+                      fab
+                      x-small
+                      dark
+                      @click="editarRegistro(item)"
+                    >
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Editar</span>
+                </v-tooltip>
+
+                <v-tooltip top v-if="item.activo">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      color="red"
+                      v-bind="attrs"
+                      v-on="on"
+                      fab
+                      x-small
+                      dark
+                      @click="cambiarEstadoUsuario(item._id, false)"
+                    >
+                      <v-icon>mdi mdi-account-lock-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Desactivar usuario</span>
+                </v-tooltip>
+
+                <v-tooltip top v-else>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      color="green"
+                      v-bind="attrs"
+                      v-on="on"
+                      fab
+                      x-small
+                      dark
+                      @click="cambiarEstadoUsuario(item._id, true)"
+                    >
+                      <v-icon>mdi mdi-account-lock-open-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Activar usuario</span>
+                </v-tooltip>
+              </v-row>
+            </template>
+          </v-data-table>
+        </v-card>
+      </v-row>
+    </template>
+
+    <v-snackbar v-model="info_snackbar.show" :timeout="info_snackbar.timeout">
+      {{ info_snackbar.text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="green"
+          text
+          v-bind="attrs"
+          @click="info_snackbar.show = false"
+        >
+          Cerrar
+        </v-btn>
+      </template>
+    </v-snackbar>
+
+
 
     <!-- Cargando... -->
     <Spinner :value="loading" />
@@ -350,7 +450,7 @@
     <Dialogo
       :show="dialogo2EliminarUsuario"
       title="Registro eliminado con éxito"
-      text="Programa eliminado"
+      text="Usuario eliminado"
       @close-dialog="dialogo2EliminarUsuario = $event"
     />
 
@@ -382,11 +482,11 @@ import Dialogo from "../../components/Dialog.vue";
 import DialogError from "../../components/DialogError.vue";
 import Spinner from "../../components/Spinner.vue";
 import Dialogo_confirm_delete from "../../components/Dialog-confirm-delete.vue";
-import Tabla from "../../components/Tabla.vue";
+// import Tabla from "../../components/Tabla.vue";
 
 export default {
   components: {
-    Tabla,
+    // Tabla,
     mensaje,
     ListaPrograma,
     Dialogo,
@@ -397,6 +497,11 @@ export default {
   data() {
     return {
       api: `${process.env.VUE_APP_API_URL}`,
+      token: {
+        headers: {
+          Authorization: null,
+        },
+      },
       paquete: {
         documento: null,
         nombre: null,
@@ -454,21 +559,44 @@ export default {
       dialogoUsuarioActualizado: false,
       dialogo1EliminarUsuario: false,
       dialogo2EliminarUsuario: false,
+
+      mostrarTooltip: false,
+      search: "",
+
+      itemEliminar: null,
+
+      info_snackbar: {
+        show: false,
+        text: "",
+        color: null,
+        timeout: 1600,
+      }
     };
   },
 
   methods: {
-   async eliminaregistro(item){
-    const response = await axios.delete(`${this.api}/users/eliminar/${item._id}`);
-    if (response.status == 200)
-     {
-      alert('registro eliminado exitosamente ..')
-     }
-    else
-     {
-       alert('se ha producido un error')
-     }
-    await this.cargarUsuarios();
+
+    eliminarRegistro(item) {
+      this.itemEliminar = item;
+      this.dialogo1EliminarUsuario = true;
+    },
+
+   async confirmarEliminacion(){
+
+    this.dialogo1EliminarUsuario = false;
+    this.loading = true;
+
+    try {
+      await axios.delete(`${this.api}/users/eliminar/${this.itemEliminar._id}`)
+
+      await this.cargarUsuarios();
+      this.itemEliminar = null;
+      this.loading = false;
+      this.dialogo2EliminarUsuario = true
+
+    } catch (error) {
+      console.log(error)
+    }
     
   },
     async cargarUsuarios() {
@@ -627,6 +755,10 @@ export default {
       this.paquete.apellido = this.paquete.apellido.toUpperCase();
     },
 
+    convertToUpperCaseTabla() {
+      this.search = this.search.toUpperCase();
+    },
+
     async guardarEdicion() {
       if (this.$refs.form.validate()) {
         this.loading = true;
@@ -702,6 +834,33 @@ export default {
         },
       };
     },
+
+    filterOnlyCapsText(value, search) {
+      return (
+        value != null &&
+        search != null &&
+        typeof value === "string" &&
+        value.toString().toLocaleUpperCase().indexOf(search) !== -1
+      );
+    },
+
+    async cambiarEstadoUsuario(usuario = null, estado = false) {
+      if (usuario != null) {
+        await axios
+          .put(
+            `${this.api}/users/${usuario}/nuevo_estado/${estado}`,
+            {},
+            this.token
+          )
+          .then((resp) => {
+            if (!resp.data.error) {
+              this.cargarUsuarios();
+            }
+            this.info_snackbar.text = resp.data.message;
+            this.info_snackbar.show = true;
+          });
+      }
+    },
   },
 
   computed: {
@@ -731,6 +890,9 @@ export default {
     console.log(this.programas);
     const response = await axios.get(`${this.api}/centro/`);
     this.centros = response.data;
+
+    this.token.headers.Authorization = `Bearer ${this.$store.getters.usuario.access_token}`;
+
 
     this.loading = false;
   },
