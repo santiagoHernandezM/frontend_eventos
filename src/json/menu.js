@@ -153,6 +153,9 @@ let menu = [{
                     {
                         href: "/dashboard/reporteHoras",
                         title: "Reporte Horas",
+                    }, {
+                        href: "/dashboard/fichas-tiempos",
+                        title: "Tiempo Fichas"
                     }
                 ]
             },

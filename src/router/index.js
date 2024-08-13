@@ -343,6 +343,20 @@ const routes = [{
                     }
                     next('/');
                 }
+            }, {
+                name: "FichasTiempo",
+                path: "/dashboard/fichas-tiempos",
+                component: () =>
+                    import ("../views/Ficha/TiempoFichas.vue"),
+                beforeEnter: (to, from, next) => {
+                    const usuario = store.getters.usuario;
+                    if (usuario != null) {
+                        const roles = usuario.roles;
+                        let found = roles.find((element) => element == "Coordinador");
+                        return found !== null ? next() : next(from);
+                    }
+                    next('/');
+                }
             }
         ],
         beforeEnter: (_, __, next) => {
