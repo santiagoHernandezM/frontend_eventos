@@ -220,11 +220,21 @@ export default {
           let res = comp.resultados.map((resu) => {
             return { ...resu, acumulado: parseInt(resu.acumulado) };
           });
-          return { ...comp, resultados: res };
+          //Debo actualizar el acumulado de la competencia
+          const acum_comp = comp.resultados.reduce(
+            (acum, res) => acum + parseInt(res.acumulado),
+            0
+          );
+          return { ...comp, resultados: res, acumulado: parseInt(acum_comp) };
         });
+
         const paquete = {
           ficha: this.gestor.ficha,
           competencias: competenciasInt,
+          acumulado_ficha: competenciasInt.reduce(
+            (acum, comp) => acum + parseInt(comp.acumulado),
+            0
+          ),
         };
         await axios
           .put(`${this.API}/gestor-t`, paquete, this.token)
