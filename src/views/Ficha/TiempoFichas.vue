@@ -36,7 +36,7 @@
       </v-card>
     </v-col>
     <v-col cols="12" v-if="gestor != null">
-      <v-card>
+      <v-card style="overflow: auto">
         <v-card-title
           class="font-weight-bold text-center justify-content-center headline"
           >COMPETENCIAS</v-card-title
@@ -71,8 +71,9 @@
                         <v-list-item
                           v-for="(resultado, index2) in competencia.resultados"
                           :key="index2"
+                          class="resultado-aprendizaje"
                         >
-                          <v-list-item-content>
+                          <v-list-item-content style="width: 70%">
                             <v-list-item-title
                               style="white-space: break-spaces !important"
                             >
@@ -80,14 +81,35 @@
                             </v-list-item-title>
                           </v-list-item-content>
 
-                          <v-list-item-action class="list-action-input">
-                            <v-text-field
-                              label="Duración"
-                              type="number"
-                              min="0"
-                              v-model="resultado.duracion"
-                              :rules="[camposRules, intensidadRules]"
-                            />
+                          <v-list-item-action
+                            class="list-action-input"
+                            style="width: 30%"
+                          >
+                            <v-row
+                              no-gutters
+                              class="justify-end align-end"
+                              style="width: max-content !important; gap: 10px"
+                            >
+                              <v-col cols="5">
+                                <v-text-field
+                                  label="Acumulado"
+                                  type="number"
+                                  min="0"
+                                  v-model="resultado.acumulado"
+                                  :rules="[camposRules, intensidadRules]"
+                                />
+                              </v-col>
+                              <v-col cols="5">
+                                <v-text-field
+                                  label="Duración"
+                                  type="number"
+                                  disabled
+                                  min="0"
+                                  v-model="resultado.duracion"
+                                  :rules="[camposRules, intensidadRules]"
+                                />
+                              </v-col>
+                            </v-row>
                           </v-list-item-action>
                         </v-list-item>
                       </v-list>
@@ -135,7 +157,13 @@ export default {
       title: null,
       text: null,
     },
-    camposRules: (v) => !!v || "Valor requerido",
+    camposRules: (v) => {
+      if (isNaN(v)) {
+        return "Valor requerido";
+      } else {
+        return parseInt(v) >= 0 ? true : "No puede ser negativo";
+      }
+    },
     ficha: null,
     fichas: [],
     gestor: null,
@@ -171,20 +199,18 @@ export default {
         //Validamos que la duración de los resultados no sobrepase la duración de la competencia
         const competenciasInvalid = this.gestor.competencias.filter(
           (competencia) => {
-            let duracion_resultados = competencia.resultados.reduce(
-              (acum, resultado) =>
-                acum +
-                parseInt(isNaN(resultado.duracion) ? "0" : resultado.duracion),
-              0
+            //Comprobamos si algún resultado tiene más acumulado que su duración
+            return competencia.resultados.some(
+              (resultado) =>
+                parseInt(resultado.acumulado) > parseInt(resultado.duracion)
             );
-            return duracion_resultados > competencia.duracion;
           }
         );
         if (competenciasInvalid.length > 0) {
           this.dialog.title = "Actualizar tiempos ficha";
-          this.dialog.text = `La duración de los resultados de las competencias ${competenciasInvalid
+          this.dialog.text = `El acumulado de los resultados de las competencias ${competenciasInvalid
             .flatMap((competencia) => competencia.codigo)
-            .join(", ")} sobrepasan la duración de la competencia`;
+            .join(", ")} sobrepasan su duración`;
           this.dialog.show = true;
           return;
         }
@@ -192,7 +218,7 @@ export default {
         this.btnActualizar = true;
         const competenciasInt = this.gestor.competencias.map((comp) => {
           let res = comp.resultados.map((resu) => {
-            return { ...resu, duracion: parseInt(resu.duracion) };
+            return { ...resu, acumulado: parseInt(resu.acumulado) };
           });
           return { ...comp, resultados: res };
         });
@@ -225,11 +251,29 @@ export default {
 </script>
 <style>
 .list-action-input
+  > .row
+  > .col
   > .v-input
   > .v-input__control
   > .v-text-field__details
   > .v-messages {
   display: block !important;
   margin-top: 3px;
+}
+
+@media (max-width: 690px) {
+  .resultado-aprendizaje {
+    flex-direction: column !important;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .resultado-aprendizaje > * {
+    width: 100% !important;
+  }
+
+  .resultado-aprendizaje > .v-list-item__action > .row {
+    justify-content: center !important;
+  }
 }
 </style>
