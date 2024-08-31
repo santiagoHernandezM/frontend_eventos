@@ -252,7 +252,7 @@ const routes = [{
             },
 
             {
-                name: "crearusuario",
+                name: "masivousuario",
                 path: "/dashboard/masivousuario",
                 component: () =>
                     import ("../views/Usuario/MasivoUsuarioView.vue"),

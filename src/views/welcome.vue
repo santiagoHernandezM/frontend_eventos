@@ -67,6 +67,7 @@ export default {
   data() {
     return {
       eventos: [],
+      mode:"column",
       eventcalendar: [],
       weekday: [1, 2, 3, 4, 5, 6, 0],
       mes: null,

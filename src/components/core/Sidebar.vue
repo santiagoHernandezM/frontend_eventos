@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer
-    v-model="drawer"
+    v-model="nav_drawer"
     color="white"
     app
     id="fondo"
@@ -10,23 +10,23 @@
       <!-- <div style="margin-left: 10px; margin-top: 10px">
         <label class="letra" for="">Servicio Nacional De Aprendizaje</label>
       </div> -->
-      <br>
-      <div class="centrar"
-         
-        >
+      <br />
+      <div class="centrar">
         <img src="../../assets/images/letras2.png" alt="Evento" width="250px" />
       </div>
-      
+
       <div class="centrar">
         <div>
-          <img src="../../assets/images/logomasverde.png" alt="Evento" width="140px" />
+          <img
+            src="../../assets/images/logomasverde.png"
+            alt="Evento"
+            width="140px"
+          />
         </div>
       </div>
 
       <router-link to="/dashboard/welcome">
-        <div class="centrar"
-          
-        >
+        <div class="centrar">
           <label class="letra" for="">{{ centro.nombre }}</label>
         </div>
       </router-link>
@@ -54,7 +54,11 @@ export default {
 
   props: ["drawer"],
   data: () => ({
-    centro: null,
+    nav_drawer: true,
+    centro: {
+      nombre: "",
+      logo: "",
+    },
     api: `${process.env.VUE_APP_API_URL}`,
     ops: {
       scrollPanel: {
@@ -98,11 +102,15 @@ export default {
 
     menu: [],
   }),
+  watch: {
+    drawer(newValue) {
+      this.nav_drawer = newValue;
+    },
+  },
   async mounted() {
     let rol = this.$store.getters.usuario.roles;
     let centro = this.$store.getters.usuario.centro;
     const response = await axios.get(`${this.api}/centro/${centro}`);
-    console.log(`centro ${response}`);
     this.centro = response.data;
 
     const found = rol.find((element) => element == "Administrator");
@@ -110,17 +118,9 @@ export default {
       this.menu = menut[0].admin;
     } else {
       const inst = rol.find((element) => element == "Instructor");
-      if (inst != undefined)
-       this.menu = menut[1].instructor
-      else
-      this.menu = menut[2].coordinador
+      if (inst != undefined) this.menu = menut[1].instructor;
+      else this.menu = menut[2].coordinador;
     }
-  },
-
-  methods: {
-    inicio() {
-      this.$router.push("/dashboard/welcome");
-    },
   },
 };
 </script>
@@ -146,7 +146,7 @@ export default {
   font-size: 15px;
   font-family: "Courier New", Courier, monospace;
   font-weight: 400;
- 
+
   text-align: center;
 }
 
@@ -196,7 +196,7 @@ export default {
 }
 
 #fondo {
-  background-image: url('../../assets/images/fondocuadros.png'); /* Corregido: Cambié 'src' por 'url' */
+  background-image: url("../../assets/images/fondocuadros.png"); /* Corregido: Cambié 'src' por 'url' */
   background-repeat: no-repeat;
   background-size: cover; /* Cambiado a 'cover' para ajustar el tamaño de la imagen al contenedor */
   background-attachment: fixed;

@@ -4,22 +4,14 @@
       <v-row justify="space-around">
         <v-card width="100%">
           <v-app-bar flat color="rgb(52,188,52)">
-            <v-app-bar-nav-icon color="white"></v-app-bar-nav-icon>
-
             <v-toolbar-title class="text-h6 white--text pl-0">
               Estadisticas
             </v-toolbar-title>
-
-            <v-spacer></v-spacer>
-
-            <v-btn color="white" icon>
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
           </v-app-bar>
           <v-card-text>
             <v-row>
               <v-col>
-                <v-select
+                <v-autocomplete
                   :items="programas"
                   item-text="nombre"
                   item-value="_id"
@@ -34,22 +26,22 @@
                   <template slot="selection" slot-scope="data">
                     {{ data.item.nivel }} - {{ data.item.nombre }}
                   </template>
-                </v-select>
+                </v-autocomplete>
               </v-col>
               <v-col>
-                <v-select
+                <v-autocomplete
                   :items="fichas"
                   item-text="codigo"
                   item-value="_id"
                   v-model="ficha"
                   label="Fichas"
                 >
-                </v-select>
+                </v-autocomplete>
               </v-col>
             </v-row>
             <v-row>
               <v-col>
-                <v-select
+                <v-autocomplete
                   ref="lcompetencia"
                   :items="comptenciasr"
                   item-text="nombre"
@@ -58,7 +50,7 @@
                   @change="graficacompetencia()"
                   label="Competencias"
                 >
-                </v-select>
+                </v-autocomplete>
               </v-col>
             </v-row>
           </v-card-text>
@@ -100,7 +92,7 @@
   </v-app>
 </template>
 
-    <script>
+<script>
 import axios from "axios";
 import BarChart from "../components/graficas/grafica.vue";
 
@@ -223,11 +215,11 @@ export default {
           datasetFill: false,
         });
     },
-  }
+  },
 };
 </script>
 
-    <style scoped>
+<style scoped>
 .multi-line-chip {
   white-space: normal;
   display: block;

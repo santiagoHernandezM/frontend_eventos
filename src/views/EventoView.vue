@@ -400,7 +400,6 @@ export default {
 
   methods: {
     async cargarfichas() {
-      alert("llamado");
       let centro = this.$store.getters.usuario.centro;
       const sedes = await axios.get(`${this.api}/sedes/centro/${centro}`);
       for (let sed of sedes.data) {

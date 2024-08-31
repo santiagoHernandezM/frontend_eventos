@@ -5,18 +5,6 @@
       <v-btn id="btn-iniciar-sesion" @click="dialogoLogin = true"
         >Iniciar Sesión</v-btn
       >
-      <!-- <a href="">
-        <b-icon
-          icon="question"
-          style="
-            background-color: #278d16;
-            border-radius: 20px;
-            color: white;
-            margin-left: 30px;
-          "
-          font-scale="3"
-        ></b-icon
-      ></a> -->
     </v-app-bar>
 
     <v-dialog v-model="dialogoLogin" max-width="350" height="400">
@@ -24,10 +12,17 @@
         <div class="d-flex justify-content-center h-50">
           <div class="user_card">
             <!-- LOGO -->
-            <div class="d-flex justify-content-center" style="margin-bottom: 150px;">
+            <div
+              class="d-flex justify-content-center"
+              style="margin-bottom: 150px"
+            >
               <div class="brand_logo_container">
                 <!-- src="../../assets/images/logomasverde.png" -->
-                <img src="../assets/images/logomasverde.png" class="brand_logo" alt="Logo" />
+                <img
+                  src="../assets/images/logomasverde.png"
+                  class="brand_logo"
+                  alt="Logo"
+                />
               </div>
             </div>
 
@@ -52,14 +47,10 @@
                     <v-col class="mr-3 ml-4">
                       <v-text-field
                         v-model="user.password"
-                        :append-icon="
-                          show1 ? 'mdi-eye' : 'mdi-eye-off'
-                        "
+                        :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                         :rules="[camposRules, min]"
                         :type="show1 ? 'text' : 'password'"
-                        
                         label="Contraseña"
-                        
                         @click:append="show1 = !show1"
                         outlined
                         color="rgb(52,188,52)"
@@ -67,26 +58,28 @@
                     </v-col>
                   </v-row>
 
-                  <a href="#" @click="changePassword()">Olvidó su contraseña?</a>
-
-                <div
-                  class="d-flex justify-content-center mt-3 login_container"
-                  v-if="prueba == 0"
-                >
-                  <vs-button dark class="btn login_btn" @click="login"
-                    >Iniciar Sesión</vs-button
+                  <a href="#" @click="changePassword()"
+                    >Olvidó su contraseña?</a
                   >
-                </div>
 
-                <v-snackbar
-                  v-model="isBusy"
-                  :timeout="2000"
-                  absolute
-                  bottom
-                  color="red"
-                >
-                  {{ msg }}
-                </v-snackbar>
+                  <div
+                    class="d-flex justify-content-center mt-3 login_container"
+                    v-if="prueba == 0"
+                  >
+                    <vs-button dark class="btn login_btn" @click="login"
+                      >Iniciar Sesión</vs-button
+                    >
+                  </div>
+
+                  <v-snackbar
+                    v-model="isBusy"
+                    :timeout="2000"
+                    absolute
+                    bottom
+                    color="red"
+                  >
+                    {{ msg }}
+                  </v-snackbar>
                 </v-container>
               </v-form>
               <!-- <form v-on:submit.prevent>
@@ -142,11 +135,9 @@
                 </v-snackbar>
               </form> -->
             </div>
-
           </div>
         </div>
       </div>
-
     </v-dialog>
 
     <v-dialog v-model="dialogoSolitarCorreo" max-width="350" height="400">
@@ -156,7 +147,11 @@
             <!-- LOGO -->
             <div class="d-flex justify-content-center">
               <div class="brand_logo_container">
-                <img src="../assets/images/logomasverde.png" class="brand_logo" alt="Logo" />
+                <img
+                  src="../assets/images/logomasverde.png"
+                  class="brand_logo"
+                  alt="Logo"
+                />
               </div>
             </div>
 
@@ -178,27 +173,29 @@
                     </v-col>
                   </v-row>
 
-                <div
-                  class="d-flex justify-content-center mt-3 login_container"
-                  v-if="prueba == 0"
-                >
-                  <vs-button dark class="btn login_btn" @click="enviarCorreo()"
-                    >Enviar</vs-button
+                  <div
+                    class="d-flex justify-content-center mt-3 login_container"
+                    v-if="prueba == 0"
                   >
-                </div>
+                    <vs-button
+                      dark
+                      class="btn login_btn"
+                      @click="enviarCorreo()"
+                      >Enviar</vs-button
+                    >
+                  </div>
 
-                <v-snackbar
-                  v-model="isBusy"
-                  :timeout="2000"
-                  absolute
-                  bottom
-                  color="red"
-                >
-                  {{ msg }}
-                </v-snackbar>
+                  <v-snackbar
+                    v-model="isBusy"
+                    :timeout="2000"
+                    absolute
+                    bottom
+                    color="red"
+                  >
+                    {{ msg }}
+                  </v-snackbar>
                 </v-container>
               </v-form>
-
             </div>
           </div>
         </div>
@@ -226,7 +223,11 @@
     />
 
     <v-main>
-      <v-row justify="end" style="background-color: #e7ebe5">
+      <v-row
+        no-gutters
+        class="flex-wrap justify-lg-end info-sistema"
+        style="background-color: #e7ebe5"
+      >
         <v-col cols="6">
           <div class="card">
             <div class="header">
@@ -343,12 +344,12 @@ export default {
       }, // Tercer párrafo aparece después de 3 segundos
       {
         text: `* Administrar la disponibilidad de los ambientes de las sedes.`,
-        delay: 140000,
+        delay: 14000,
         marginBottom: 20,
       },
       {
         text: `* Disponibilidad de los horarios de los instructores.`,
-        delay: 160000,
+        delay: 16000,
         marginBottom: 20,
       },
     ],
@@ -392,11 +393,9 @@ export default {
           this.$router.push("dashboard/welcome");
         }
       } catch (error) {
-
-        if (error.response.data.message === 'Usuario inactivo'){
-          
+        if (error.response.data.message === "Usuario inactivo") {
           this.msg = "Sin acceso al sistema";
-        }else {
+        } else {
           this.msg = "Usuario o contraseña inválida";
         }
         this.isBusy = true;
@@ -414,19 +413,17 @@ export default {
 
       let correo = this.email;
       try {
+        const response = await axios.get(`${this.api}/users/correo/${correo}`);
 
-        const response = await axios.get(`${this.api}/users/correo/${correo}`)
-
-        if (!response.data.activo){
+        if (!response.data.activo) {
           this.loading = false;
-          this.dialogoUsuarioSinAcceso = true
-          return
+          this.dialogoUsuarioSinAcceso = true;
+          return;
         }
 
-        await axios.post(
-          `${this.api}/users/forgot-password`,
-          { email: correo }
-        );
+        await axios.post(`${this.api}/users/forgot-password`, {
+          email: correo,
+        });
 
         this.loading = false;
         this.dialogoCorreoEnviado = true;
@@ -579,8 +576,8 @@ body {
   margin: 50px auto;
   margin-right: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 10px 0 rgba(76, 250, 7, 0.2), 0 80px 50px 0 rgba(53, 237, 21, 0.19);
-
+  box-shadow: 0 4px 10px 0 rgba(76, 250, 7, 0.2),
+    0 80px 50px 0 rgba(53, 237, 21, 0.19);
 }
 
 .header {
@@ -593,7 +590,7 @@ body {
   top: -30px;
   border-radius: 12px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  background-image: linear-gradient(to right, #34BC34, #3AE35E);
+  background-image: linear-gradient(to right, #34bc34, #3ae35e);
 }
 
 .texto {
@@ -744,7 +741,7 @@ i {
   width: 95%;
   margin: 0 auto;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  background-image: linear-gradient(to right, #34BC34, #3AE35E);
+  background-image: linear-gradient(to right, #34bc34, #3ae35e);
 }
 
 .footer ul {
@@ -809,5 +806,73 @@ i {
   margin: 0;
   letter-spacing: 0.15em;
   animation: typing 1s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+
+@media (max-width: 822px) {
+  .info-sistema {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .info-sistema > * {
+    flex: 0 0 66.6666666667%;
+    max-width: 66.6666666667%;
+  }
+
+  .info-sistema > div.col:first-child {
+    order: 1;
+    margin-bottom: 50px;
+  }
+
+  .info-sistema > div.col:first-child > .card {
+    margin: 0 auto;
+  }
+
+  .info-sistema > div.col:last-child {
+    order: 0;
+  }
+}
+
+@media (max-width: 596px) {
+  .info-sistema > div.col:first-child > .card {
+    height: 600px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 475px) {
+  .info-sistema > * {
+    flex: 0 0 91.6666666667%;
+    max-width: 91.6666666667%;
+  }
+
+  .info-sistema > div.col:first-child > .card {
+    height: 600px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 350px) {
+  .info-sistema > div.col:first-child > .card {
+    height: 670px;
+    width: 100%;
+  }
+
+  .info-sistema > div.col:first-child > .card > .header > img {
+    left: 20px;
+  }
+
+  .info-sistema > div.col:first-child > .card > .header > .texto,
+  .info-sistema > div.col:first-child > .card > .header > .texto2 {
+    left: 100px;
+  }
+}
+
+@media (max-width: 270px) {
+  .info-sistema > div.col:first-child > .card {
+    height: 730px;
+    width: 100%;
+  }
 }
 </style>
