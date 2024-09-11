@@ -1,18 +1,17 @@
 <template>
-  
-    <v-col cols="4">
-      <v-select
-        v-model="paquete.diastrabajados"
-        :items="diastrabajados"
-        @change="enviar()"
-        attach
-        chips
-        label="Dias trabajados"
-        multiple
-        outlined
-      ></v-select>
+  <v-col cols="4">
+    <v-select
+      v-model="paquete.diastrabajados"
+      :items="diastrabajados"
+      @change="enviar()"
+      attach
+      chips
+      label="Dias trabajados"
+      multiple
+      outlined
+    ></v-select>
 
-      <!-- <v-select
+    <!-- <v-select
       :items="diastrabajados"
       v-model="paquete.diaIni"
       label="Dia Inicial"
@@ -28,8 +27,7 @@
         @change="chequeo()"
       ></v-select>
       -->
-    </v-col>
-  
+  </v-col>
 </template>
 <script>
 const fc = require("festivos-colombia");
@@ -42,7 +40,7 @@ export default {
       festivosmes: [],
       diastrabajados: [],
       paquete: {
-        diastrabajados: null,
+        diastrabajados: [],
       },
     };
   },
@@ -77,8 +75,13 @@ export default {
       this.dias = [];
       const diasmes = this.$moment(`${this.year}-${this.mes}`).daysInMonth();
       for (let dias = 1; dias <= diasmes; dias++) {
-        const fecha = this.$moment(`${this.year}-${this.mes}-${dias}`);
-        if (fecha.day() === parseInt(this.dia)) {
+        const fecha = this.$moment(
+          `${this.year}-${this.mes}-${dias.toString().padStart(2, "0")}`
+        );
+        if (
+          fecha.day() === parseInt(this.dia) &&
+          fecha.month() === parseInt(this.mes) - 1
+        ) {
           this.dias.push(dias);
         }
       }
@@ -86,7 +89,6 @@ export default {
 
     filtrar() {
       for (let obj of this.festivos) {
-        console.log(obj.mes);
         if (obj.mes == this.mes) this.festivosmes.push(obj.dia);
       }
       this.diastrabajados = this.dias.filter(
@@ -96,6 +98,10 @@ export default {
   },
   watch: {
     dia() {
+      this.diasmes();
+      this.filtrar();
+    },
+    mes() {
       this.diasmes();
       this.filtrar();
     },

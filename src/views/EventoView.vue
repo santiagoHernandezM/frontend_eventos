@@ -15,36 +15,46 @@
           <v-form>
             <v-container>
               <v-row align="end">
-                <v-col cols="3">
-                  <spam class="font-weight-bold text-md-h6"
-                    >Año:
-                    <spam class="font-weight-bold text-md-h6 blue--text">{{
-                      fechactual.year
-                    }}</spam></spam
+                <v-col cols="6">
+                  <v-row
+                    justify="start"
+                    style="gap: 30px"
+                    align="center"
+                    no-gutters
                   >
+                    <span class="font-weight-bold text-md-h6">
+                      Año:
+                      <span class="font-weight-bold text-md-h6 blue--text">
+                        {{ fechactual.year }}
+                      </span>
+                    </span>
+
+                    <span class="font-weight-bold text-md-h6">
+                      Mes:
+                      <span class="font-weight-bold text-md-h6 blue--text">
+                        {{
+                          mesesEvento[indexMesActual].value
+                            .toString()
+                            .padStart(2, "0")
+                        }}
+                        {{ mesesEvento[indexMesActual].title }}
+                      </span>
+                    </span>
+                  </v-row>
                 </v-col>
-                <v-col cols="3">
-                  <spam class="font-weight-bold text-md-h6"
-                    >Mes:
-                    <spam class="font-weight-bold text-md-h6 blue--text"
-                      >{{ fechactual.mesNum }} {{ fechactual.mes }}</spam
-                    ></spam
-                  >
+                <v-col cols="12">
+                  <v-select
+                    label="Mes"
+                    :items="mesesEvento"
+                    item-text="title"
+                    item-value="value"
+                    v-model="paquete.mes"
+                    :rules="camposRules"
+                    append-icon="mdi mdi-calendar-month-outline"
+                    outlined
+                  />
                 </v-col>
               </v-row>
-              <!-- <v-row align="end" class="mb-n1">
-                <v-col cols="4">
-                  <spam
-                    >Mes: <spam>{{ fechactual.mesNum }}</spam>
-                    {{ fechactual.mes }}</spam
-                  >
-                </v-col>
-                <v-col cols="4">
-                  <spam
-                    >Año: <spam>{{ fechactual.year }}</spam></spam
-                  >
-                </v-col>
-              </v-row> -->
               <v-row class="mb-n10">
                 <v-col cols="12">
                   <v-select
@@ -148,7 +158,7 @@
 
                 <semanas
                   :dia="diase"
-                  :mes="fechactual.mesNum"
+                  :mes="paquete.mes"
                   :year="fechactual.year"
                   @dias="diast"
                 ></semanas>
@@ -180,7 +190,8 @@
 
               <v-row class="mb-n15">
                 <v-col cols="12">
-                  <v-select v-model="paquete.resultado"
+                  <v-select
+                    v-model="paquete.resultado"
                     :items="resultados"
                     label="Resultado aprendizaje"
                     multiple
@@ -189,7 +200,9 @@
                       (item) => {
                         return `${item.duracion}/${item.acumulado}: ${item.descripcion}`;
                       }
-                    " outlined>
+                    "
+                    outlined
+                  >
                   </v-select>
                 </v-col>
               </v-row>
@@ -259,18 +272,42 @@
       <v-expansion-panels>
         <v-expansion-panel>
           <v-expansion-panel-header>
-            <v-app-bar flat color="rgb(52,188,52)">
+            <v-app-bar
+              flat
+              color="rgb(52,188,52)"
+              class="app-bar-eventos-reportados"
+            >
               <v-toolbar-title class="text-h6 white--text pl-0">
                 Eventos Reportados en el MES
               </v-toolbar-title>
-              <v-divider></v-divider>
-              <h5 class="white--text">Total horas reportadas</h5>
-              <v-chip class="ma-2" color="yellow" outlined>
-                {{ totalhoras }}
-              </v-chip>
+              <div class="info-horas">
+                <v-row
+                  no-gutters
+                  justify="start"
+                  align="center"
+                  style="gap: 10px"
+                >
+                  <h5 class="white--text m-0">Total horas reportadas</h5>
+                  <v-chip color="yellow" outlined>
+                    {{ totalhoras }}
+                  </v-chip>
+                </v-row>
+              </div>
             </v-app-bar>
           </v-expansion-panel-header>
           <v-expansion-panel-content>
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="mesShowEventos"
+                @change="bdeventos"
+                :items="mesesEvento"
+                item-text="title"
+                item-value="value"
+                filled
+                label="Meses"
+                append-icon="mdi mdi-calendar-month-outline"
+              />
+            </v-col>
             <LeventoView
               :evento="saveeventos"
               tipo="2"
@@ -285,7 +322,7 @@
       {{ text }}
       <template v-slot:action="{ attrs }">
         <v-btn color="red" text v-bind="attrs" @click="snackbar = false">
-          Close
+          Cerrar
         </v-btn>
       </template>
     </v-snackbar>
@@ -315,16 +352,15 @@ export default {
       paqdiasmes: null,
       totalhoras: 0,
       saveeventos: [],
-
+      mesShowEventos: null,
       evento: {
-        mes: null,
-        year: null,
         instructor: null,
         eventos: [],
       },
-
+      indexMesActual: 0,
       limpieza: null,
       paquete: {
+        mes: null,
         ficha: {
           ficha: null,
           codigo: null,
@@ -341,7 +377,6 @@ export default {
         },
         dia: null,
         horario: null,
-
         horas: null,
         diastrabajados: [],
         competencia: {
@@ -355,8 +390,11 @@ export default {
         } */ conflict: false,
       },
       centros: null, //Aquí se cargan todos los centros que están en la bd
-
-      fechactual: null,
+      fechactual: {
+        mes: null,
+        mesNum: 0,
+        year: 0,
+      },
       instructor: null,
       fichas: [],
       ambientes: [],
@@ -364,7 +402,6 @@ export default {
       resultados: [],
       dia: null,
       programas: [],
-
       diase: null,
       diasemana: [
         {
@@ -388,9 +425,23 @@ export default {
           ndia: 5,
         },
         {
-          dia: "SABADO",
+          dia: "SÁBADO",
           ndia: 6,
         },
+      ],
+      mesesEvento: [
+        { title: "Enero", value: 1 },
+        { title: "Febrero", value: 2 },
+        { title: "Marzo", value: 3 },
+        { title: "Abril", value: 4 },
+        { title: "Mayo", value: 5 },
+        { title: "Junio", value: 6 },
+        { title: "Julio", value: 7 },
+        { title: "Agosto", value: 8 },
+        { title: "Septiembre", value: 9 },
+        { title: "Octubre", value: 10 },
+        { title: "Noviembre", value: 11 },
+        { title: "Diciembre", value: 12 },
       ],
       error: null,
       departamentos: colombia,
@@ -424,12 +475,13 @@ export default {
       const paq = {
         instructor: usuario,
         evento: this.saveeventos[pos],
+        mes: parseInt(this.saveeventos[pos].mes),
+        year: parseInt(this.saveeventos[pos].year),
         eventIndex: pos,
       };
       await axios
         .post(`${this.api}/evento/eliminar/especifico`, paq)
-        .then(function (response) {
-          console.log(response);
+        .then(function () {
           vm.bdeventos();
         });
     },
@@ -439,20 +491,35 @@ export default {
     },
 
     async bdeventos() {
-      var wd = this;
+      let context = this;
       await axios
         .get(
-          `${this.api}/evento/especificos/${this.evento.mes}/${this.evento.year}/instructor/${this.evento.instructor}`
+          `${this.api}/evento/especificos/${context.mesShowEventos}/${context.fechactual.year}/instructor/${this.evento.instructor}`
         )
         .then(function (response) {
-          console.log(response);
-          wd.saveeventos = response.data[0].eventos;
-        })
+          const e = response.data.length > 0 ? response.data[0].eventos : [];
 
+          context.saveeventos = e.map((ev) => {
+            return {
+              ...ev,
+              mes: context.mesShowEventos,
+              year: context.fechactual.year,
+            };
+          });
+        })
         .catch((error) => {
-          {
-            console.log(error.response);
+          console.log(error.response);
+          switch (error.response.data.statusCode) {
+            case 400:
+              this.text = "No se encontraron eventos para este mes";
+              break;
+
+            default:
+              this.text = "Sucedió un error buscando";
+              break;
           }
+          context.saveeventos = [];
+          this.snackbar = true;
         });
     },
     async enviareventos() {
@@ -550,7 +617,7 @@ export default {
       if (this.paquete.diastrabajados.length < this.paquete.resultado.length) {
         (this.snackbar = true),
           (this.text = `El numero de dias trabajados no es suficiente para el numero de
-                        resultados de aprenizajes a reportar`);
+                        resultados de aprendizajes a reportar`);
         return false;
       } else {
         if (total < this.paquete.horas) {
@@ -593,6 +660,7 @@ export default {
                   newpaquete.diastrabajados.push(diast[ele]);
                   ele += 1;
                 }
+                console.log(this.paquete.resultado[presul]);
 
                 const { descripcion, orden } = this.paquete.resultado[presul];
                 var obj = new Object();
@@ -628,7 +696,7 @@ export default {
       const p = JSON.parse(JSON.stringify(paquete));
 
       if (this.evento.eventos.length == 0) {
-        this.evento.eventos.push(p);
+        this.evento.eventos.push({ ...p, year: this.fechactual.year });
         // this.paquete = JSON.parse(JSON.stringify(this.limpieza))
         this.diase = null;
         this.paqdiasmes.diastrabajados = [];
@@ -643,14 +711,15 @@ export default {
 
         let r = this.evento.eventos.filter(
           (e) =>
+            e.mes == p.mes &&
             e.dia == p.dia &&
             e.ambiente.ambiente == p.ambiente.ambiente &&
             e.horario == p.horario &&
             comun.length > 0
         );
-        if (r.length > 0) alert("igual");
+        if (r.length > 0) alert("Ya tiene el mismo evento registrado");
         else {
-          this.evento.eventos.push(p);
+          this.evento.eventos.push({ ...p, year: this.fechactual.year });
           //  this.paquete = JSON.parse(JSON.stringify(this.limpieza))
           this.paqdiasmes.diastrabajados = [];
         }
@@ -676,11 +745,23 @@ export default {
 
     const fecha = await axios.get(`${this.api}/date/`);
     this.fechactual = fecha.data;
-    this.evento.mes = this.fechactual.mesNum;
-    this.evento.year = this.fechactual.year;
-    this.evento.instructor = instructor;
+    //Encuentro el index para recortar
+    this.indexMesActual = this.mesesEvento.findIndex(
+      (mes) => mes.value == this.fechactual.mesNum
+    );
+    this.mesesEvento = this.mesesEvento.slice(
+      this.indexMesActual,
+      this.mesesEvento.length
+    );
+    //Guardo el index actualizado al corte
+    this.indexMesActual = this.mesesEvento.findIndex(
+      (mes) => mes.value == this.fechactual.mesNum
+    );
 
-    this.bdeventos();
+    this.paquete.mes = this.fechactual.mesNum;
+    this.evento.instructor = instructor;
+    this.mesShowEventos = this.fechactual.mesNum;
+    await this.bdeventos();
 
     // const inst = await axios.get(`${this.api}/instructor/${instructor}`);
     // this.instructor = inst.data
@@ -693,6 +774,15 @@ export default {
         (accumulator, currentValue) => accumulator + currentValue.horas,
         0
       );
+    },
+    "paquete.mes"(mes, oldValue) {
+      if (mes != null) {
+        this.indexMesActual = this.mesesEvento.findIndex((m) => m.value == mes);
+      } else {
+        this.indexMesActual = this.mesesEvento.findIndex(
+          (m) => m.value == oldValue
+        );
+      }
     },
   },
 };
@@ -720,5 +810,9 @@ export default {
 }
 .row-height {
   height: 150px; /* Ajusta la altura según tus necesidades */
+}
+
+.app-bar-eventos-reportados .v-toolbar__content {
+  justify-content: space-between !important;
 }
 </style>

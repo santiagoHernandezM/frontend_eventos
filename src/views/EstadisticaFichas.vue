@@ -81,7 +81,11 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="6" v-for="data in chartDataresultados" :key="data">
+        <v-col
+          cols="6"
+          v-for="(data, index) in chartDataresultados"
+          :key="index"
+        >
           <v-chip class="ma-2 multi-line-chip" color="#CCF19E">
             {{ data.resultado }}
           </v-chip>

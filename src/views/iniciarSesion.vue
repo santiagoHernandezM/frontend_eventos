@@ -48,7 +48,7 @@
                       <v-text-field
                         v-model="user.password"
                         :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                        :rules="[camposRules, min]"
+                        :rules="min"
                         :type="show1 ? 'text' : 'password'"
                         label="Contraseña"
                         @click:append="show1 = !show1"
@@ -290,16 +290,12 @@ export default {
     dialogoCorreoEnviado: false,
     dialogoUsuarioSinAcceso: false,
     loading: false,
-
     user: {
       correo: null,
       password: null,
     },
-
     email: null,
-
     noti: null,
-
     error: false,
     msg: "",
     isBusy: false,
@@ -308,12 +304,19 @@ export default {
     rolMenu: [],
 
     show1: false,
-    camposRules: [(v) => !!v || "Requerido !"],
     emailRules: [
       (v) => !!v || "E-mail es requerido",
       (v) => /.+@.+\..+/.test(v) || "Debe ser un E-mail válido",
     ],
-    min: (v) => v.length >= 8 || "Mínimo 8 caracteres",
+    min: [
+      (v) => !!v || "Requerido !",
+      (v) => {
+        if (v != null) {
+          return v.length >= 8 || "Mínimo 8 caracteres";
+        }
+        return false;
+      },
+    ],
     paragraphs: [
       {
         text: `El software de eventos, es un software desarrollado para el control y la gestión del resporte de horas 
