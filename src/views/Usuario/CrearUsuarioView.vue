@@ -468,8 +468,6 @@
       text="Debe seleccionar al menos un programa"
       @close-dialog="dialogoProgramasVacios = $event"
     />
-
-    <pre>{{ $data }}</pre>
     <mensaje :mensaje="mensaje" :color="color" :show="show"> </mensaje>
   </v-container>
 </template>

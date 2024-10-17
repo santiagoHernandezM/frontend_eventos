@@ -92,8 +92,6 @@
 
     <!-- Cargando... -->
     <Spinner :value="loading" />
-
-    <pre>{{ $data }}</pre>
   </v-container>
 </template>
 <script>
