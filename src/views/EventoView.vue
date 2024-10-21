@@ -165,8 +165,6 @@
               </v-row>
 
               <v-row class="mb-n10">
-                <!-- <v-col cols="6">
-                </v-col> -->
 
                 <v-col cols="12">
                   <v-select
@@ -592,7 +590,6 @@ export default {
       );
       this.ambientes = ambientesResponse.data;
 
-      console.log(this.ambientes);
       let amb = this.ambientes.filter((e) => e._id == this.paquete.ambiente.id);
       this.paquete.ambiente.ambiente =
         amb[0].bloque.nomenclatura + "-" + amb[0].codigo;
@@ -600,7 +597,7 @@ export default {
       const competenciasgestor = await axios.get(
         `${this.api}/gestor-t/${this.paquete.ficha.ficha}/`
       );
-      console.log(competenciasgestor.data);
+      
       this.competencias = competenciasgestor.data[0].competencias;
 
       //const competencias = await axios.get(`${this.api}/competencia/programa/${res[0].programa._id}`);
