@@ -88,7 +88,6 @@
       @close-dialog="dialogoRapCreado = $event"
       />
 
-      <pre>{{ $data }}</pre>
 
       <!-- <mensaje
       :mensaje="mensaje"

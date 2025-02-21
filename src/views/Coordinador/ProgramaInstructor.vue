@@ -228,7 +228,6 @@
       @close-dialog="dialogoProgramaRepetido = $event"
     />
 
-    <pre>{{ $data }}</pre>
   </v-container>
 </template>
 <script>

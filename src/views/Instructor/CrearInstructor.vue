@@ -247,10 +247,7 @@
       </template>
     </v-row>
     <mensaje :mensaje="mensaje" :color="color" :show="show"> </mensaje>
-    <pre>
-          {{ $data }}
-        </pre
-    >
+   
   </v-container>
 </template>
 

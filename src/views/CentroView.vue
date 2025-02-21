@@ -160,8 +160,6 @@
       text="Centro eliminado"
       @close-dialog="dialogo2EliminarCentro = $event"
     />
-
-    <pre>{{ $data }}</pre>
   </v-container>
 </template>
 

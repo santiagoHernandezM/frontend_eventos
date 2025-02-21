@@ -75,7 +75,6 @@
           </v-data-table>
         </v-card-text>
       </v-card>
-      <pre>{{ $data }}</pre>
     </v-col>
     <v-row justify="center">
       <v-dialog v-model="dialog" persistent max-width="600px">

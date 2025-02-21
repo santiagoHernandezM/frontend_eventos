@@ -151,8 +151,6 @@
       text="Ambiente eliminado"
       @close-dialog="dialogo2EliminarAmbiente = $event"
     />
-
-    <pre>{{ $data }}</pre>
   </v-container>
 </template>
 

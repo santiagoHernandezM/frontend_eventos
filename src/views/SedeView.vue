@@ -161,8 +161,6 @@
       text="Sede eliminada"
       @close-dialog="dialogo2EliminarSede = $event"
     />
-
-    <pre>{{ $data }}</pre>
   </v-container>
 </template>
 <script>

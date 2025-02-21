@@ -91,10 +91,6 @@
         </v-card-actions>
       </v-card>
     </v-row>
-    <pre>
-        {{ $data }}
-      </pre
-    >
     <mensaje :mensaje="mensaje" :color="color" :show="show"> </mensaje>
   </v-container>
 </template>

@@ -134,7 +134,6 @@
       @close-dialog="dialogo2EliminarBloque = $event"
     />
 
-    <!-- <pre>{{ $data }}</pre> -->
   </v-container>
 </template>
 

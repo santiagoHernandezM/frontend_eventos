@@ -178,7 +178,6 @@
       @close-dialog="dialogo2EliminarPrograma = $event"
     />
 
-    <!-- <pre>{{ $data }}</pre> -->
     <!-- <mensaje :mensaje="mensaje" :color="color" :show="show"> </mensaje> -->
   </v-container>
 </template>

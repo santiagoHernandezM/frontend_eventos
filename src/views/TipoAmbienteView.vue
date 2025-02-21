@@ -120,7 +120,6 @@
       @close-dialog="dialogo2EliminarTipoAmbiente = $event"
     />
 
-    <!-- <pre>{{ $data }}</pre> -->
   </v-container>
 </template>
 

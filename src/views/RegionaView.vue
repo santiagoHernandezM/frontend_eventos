@@ -152,7 +152,6 @@
       @close-dialog="dialogo2EliminarRegional = $event"
     />
 
-    <pre>{{ $data }}</pre>
   </v-container>
 </template>
 

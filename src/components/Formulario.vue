@@ -30,7 +30,6 @@
         </v-row>
       </v-container>
     </v-form>
-    <pre>{{ $data }}</pre>
   </v-card-text>
 </template>
 
