@@ -11,33 +11,27 @@
 		</v-toolbar>
 
 		<v-list flat subheader three-line>
-			<v-list-item-group v-model="lprogramas" multiple>
-				<v-list-item
-					v-for="data in programas"
-					:key="data.codigo"
-					:value="data._id"
-				>
-					<template v-slot:default>
-						<v-list-item-action>
-							<v-checkbox
-								:input-value="data._id"
-								color="rgb(52,188,52)"
-								v-model="lprogramas"
-							/>
-						</v-list-item-action>
+			<v-list-item-group multiple active-class="">
+				<v-list-item v-for="data in programas" :key="data._id">
+					<v-list-item-action>
+						<v-checkbox
+							:value="data._id"
+							v-model="lprogramas"
+							@click="enviarprogramas"
+							color="rgb(52,188,52)"
+						></v-checkbox>
+					</v-list-item-action>
 
-						<v-list-item-content>
-							<v-list-item-subtitle class="titulo">{{
-								data.nombre
-							}}</v-list-item-subtitle>
+					<v-list-item-content>
+						<v-list-item-subtitle class="titulo">{{
+							data.nombre
+						}}</v-list-item-subtitle>
 
-							<v-list-item-subtitle
-								>Version : {{ data.version }} - Intensidad
-								Horaria :
-								{{ data.intensidad_horaria }}
-							</v-list-item-subtitle>
-						</v-list-item-content>
-					</template>
+						<v-list-item-subtitle
+							>Version : {{ data.version }} - Intensidad Horaria :
+							{{ data.intensidad_horaria }}
+						</v-list-item-subtitle>
+					</v-list-item-content>
 				</v-list-item>
 			</v-list-item-group>
 		</v-list>
