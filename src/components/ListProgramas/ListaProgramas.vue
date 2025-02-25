@@ -23,9 +23,8 @@
 					</v-list-item-action>
 
 					<v-list-item-content>
-						<v-list-item-subtitle class="titulo">{{
-							data.nombre
-						}}</v-list-item-subtitle>
+						<v-list-item-subtitle class="titulo"> {{data.nombre}}
+						</v-list-item-subtitle>
 
 						<v-list-item-subtitle
 							>Version : {{ data.version }} - Intensidad Horaria :

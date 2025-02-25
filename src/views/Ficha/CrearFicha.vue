@@ -108,7 +108,26 @@
 
 							<v-row>
 								<v-col cols="12">
-									<v-select
+
+									<v-autocomplete
+									:items="programas"
+										:item-text="(programa)=>`${programa.nombre} v${programa.version}`"
+										item-value="_id"
+										label="Programa de formación"
+										v-model="paquete.programa"
+										append-icon="mdi mdi-school"
+										@change="
+											instructoresPrograma(
+												paquete.programa
+											)
+										"
+										:rules="camposRules"
+										outlined
+										color="rgb(52,188,52)"
+									>
+									</v-autocomplete>
+
+									<!-- <v-select
 										:items="programas"
 										item-text="nombre"
 										item-value="_id"
@@ -124,7 +143,7 @@
 										outlined
 										color="rgb(52,188,52)"
 									>
-									</v-select>
+									</v-select> -->
 								</v-col>
 							</v-row>
 
