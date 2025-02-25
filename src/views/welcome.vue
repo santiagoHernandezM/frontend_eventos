@@ -113,8 +113,6 @@ export default {
       }
       this.$refs.calendar.checkChange();
     }
-
-    console.log(this.$vuetify);
   },
   methods: {
     viewDay({ date }) {
