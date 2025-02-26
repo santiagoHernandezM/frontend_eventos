@@ -753,7 +753,7 @@ export default {
 						};
 						this.paquete.resultado = [];
 					} else {
-						const { descripcion, orden, duracionResultado } =
+						const { descripcion, orden, duracion } =
 							this.paquete.resultado[0];
 						const resultadosGuardados = this.evento.eventos.filter(
 							(e) =>
@@ -767,11 +767,10 @@ export default {
 								(suma, evento) => suma + evento.horas,
 								0
 							);
-						if (
+						const totalHoras =
 							totalDuracionResultados +
-								parseInt(this.paquete.horas) >
-							duracionResultado
-						) {
+							parseInt(this.paquete.horas);
+						if (totalHoras > duracion) {
 							this.text =
 								"Las horas a agregar superan la duración del resultado";
 							this.snackbar = true;
