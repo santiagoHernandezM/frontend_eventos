@@ -684,6 +684,8 @@ export default {
           resultado de aprendizaje`);
 					return false;
 				} else {
+					console.log("resul", this.paquete.resultado);
+
 					if (this.paquete.resultado.length > 1) {
 						let acumulado = this.paquete.horas;
 						let diast = this.paquete.diastrabajados;
@@ -742,20 +744,52 @@ export default {
 
 							presul += 1;
 						}
-						this.paquete = JSON.parse(
-							JSON.stringify(this.limpieza)
-						);
+						this.paquete.dia = null;
+						this.paquete.diastrabajados = [];
+						this.paquete.horas = 0;
+						this.paquete.competencia = {
+							competencia: null,
+							codigo: null,
+						};
+						this.paquete.resultado = [];
 					} else {
-						const { descripcion, orden } =
+						const { descripcion, orden, duracionResultado } =
 							this.paquete.resultado[0];
+						const resultadosGuardados = this.evento.eventos.filter(
+							(e) =>
+								e.competencia.codigo ==
+									this.paquete.competencia.codigo &&
+								e.resultado.orden == orden
+						);
+
+						const totalDuracionResultados =
+							resultadosGuardados.reduce(
+								(suma, evento) => suma + evento.horas,
+								0
+							);
+						if (
+							totalDuracionResultados +
+								parseInt(this.paquete.horas) >
+							duracionResultado
+						) {
+							this.text =
+								"Las horas a agregar superan la duración del resultado";
+							this.snackbar = true;
+							return false;
+						}
 						var obje = new Object();
 						obje.resultado = descripcion;
 						obje.orden = orden;
 						this.paquete.resultado = obje;
 						this.guardar(this.paquete);
-						this.paquete = JSON.parse(
-							JSON.stringify(this.limpieza)
-						);
+						this.paquete.dia = null;
+						this.paquete.diastrabajados = [];
+						this.paquete.horas = 0;
+						this.paquete.competencia = {
+							competencia: null,
+							codigo: null,
+						};
+						this.paquete.resultado = [];
 					}
 				}
 			}
@@ -787,8 +821,10 @@ export default {
 						e.horario == p.horario &&
 						comun.length > 0
 				);
-				if (r.length > 0) alert("Ya tiene el mismo evento registrado");
-				else {
+				if (r.length > 0) {
+					this.text = "Ya tiene el mismo evento registrado";
+					this.snackbar = true;
+				} else {
 					this.evento.eventos.push({
 						...p,
 						year: this.fechactual.year,
