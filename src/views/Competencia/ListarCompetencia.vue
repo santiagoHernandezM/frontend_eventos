@@ -15,7 +15,18 @@
             <v-container>
             <v-row>
                 <v-col cols="8">
-                  <v-select
+
+                  <v-autocomplete
+                    :items="programas"
+                    :item-text="(programas)=>`${programas.nombre} v${programas.version}`"
+                    item-value="_id"
+                    label="Seleccione el programa"
+                    v-model="programa"
+                    append-icon="book"
+                    :rules="camposRules"
+                    @change="competenciasprograma()"
+                  ></v-autocomplete>
+                  <!-- <v-select
                     :items="programas"
                     item-text="nombre"
                     item-value="_id"
@@ -25,7 +36,7 @@
                     :rules="camposRules"
                     @change="competenciasprograma()"
                   >
-                  </v-select>
+                  </v-select> -->
                 </v-col>
             </v-row>
             <v-row>
