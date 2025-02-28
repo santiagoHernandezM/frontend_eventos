@@ -572,7 +572,7 @@ export default {
     };
   },
 
-  methods: {
+    methods: {
 
     eliminarRegistro(item) {
       this.itemEliminar = item;

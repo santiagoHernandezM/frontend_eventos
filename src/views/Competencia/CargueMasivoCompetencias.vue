@@ -14,30 +14,19 @@
 						<v-container style="padding-bottom: 0">
 							<v-row>
 								<v-col>
-									<v-autocomplete
-										:items="programas"
-										item-text="nombre"
-										item-value="_id"
-										label="Programa de formación"
-										v-model="programa"
-										append-icon="mdi mdi-school"
-										@change="CompetenciaPrograma()"
-										:rules="camposRules"
-										outlined
-										color="rgb(52,188,52)"
-									>
+									<v-autocomplete :items="programas" item-text="nombre" item-value="_id"
+										label="Programa de formación" v-model="programa" append-icon="mdi mdi-school"
+										@change="CompetenciaPrograma()" :filter="customFilter" :rules="camposRules"
+										outlined color="rgb(52,188,52)">
 										<template v-slot:item="{ item }">
-											{{ item.nivel }} -
-											{{ item.nombre }} - Intensidad
+											{{ item.codigo }} -
+											{{ item.nombre }} - v{{ item.version }} - Intensidad
 											Horario :
 											{{ item.intensidad_horaria }}
 										</template>
 
-										<template
-											slot="selection"
-											slot-scope="data"
-										>
-											{{ data.item.nivel }} -
+										<template slot="selection" slot-scope="data">
+											{{ data.item.codigo }} -
 											{{ data.item.nombre }}
 										</template>
 									</v-autocomplete>
@@ -46,32 +35,19 @@
 
 							<v-row>
 								<v-col cols="12" style="padding-bottom: 0">
-									<v-file-input
-										:rules="camposRules"
+									<v-file-input :rules="camposRules"
 										accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-										v-model="file"
-										prepend-inner-icon="$file"
-										prepend-icon=""
-										append-icon="mdi mdi-file-excel"
-										label="Archivo de excel"
-										outlined
-										:disabled="estado"
-										color="rgb(52,188,52)"
-									/>
+										v-model="file" prepend-inner-icon="$file" prepend-icon=""
+										append-icon="mdi mdi-file-excel" label="Archivo de excel" outlined
+										:disabled="estado" color="rgb(52,188,52)" />
 								</v-col>
 							</v-row>
 						</v-container>
 					</v-form>
 				</v-card-text>
 
-				<v-card-actions
-					style="max-width: 95%; margin: auto; margin-bottom: 20px"
-				>
-					<v-btn
-						class="colorBtnCrear"
-						style="color: #fff"
-						@click="cargarCSV()"
-					>
+				<v-card-actions style="max-width: 95%; margin: auto; margin-bottom: 20px">
+					<v-btn class="colorBtnCrear" style="color: #fff" @click="cargarCSV()">
 						CARGAR ARCHIVO
 					</v-btn>
 				</v-card-actions>
@@ -149,6 +125,15 @@ export default {
 				this.loading = false;
 			}
 		},
+
+		customFilter(item, queryText) {
+			const nombre = item.nombre.toLowerCase()
+			const codigo = item.codigo;
+			const searchText = queryText.toLowerCase()
+
+			return nombre.indexOf(searchText) > -1 ||
+				codigo.indexOf(searchText) > -1
+		}
 	},
 };
 </script>
