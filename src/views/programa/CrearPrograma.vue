@@ -48,7 +48,7 @@
 
               <v-row>
                 <v-col cols="7">
-                  <v-select
+                  <v-autocomplete
                     :items="niveles"
                     item-text="paquete.nivel"
                     label="Nivel de formación"
@@ -57,7 +57,7 @@
                     :rules="camposRules"
                     outlined
                     color="rgb(52,188,52)"
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
 
                 <v-col cols="5">

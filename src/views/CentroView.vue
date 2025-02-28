@@ -41,7 +41,7 @@
 
               <v-row>
                 <v-col>
-                  <v-select
+                  <v-autocomplete
                     :items="regionales"
                     item-text="nombre"
                     item-value="_id"
@@ -52,7 +52,7 @@
                     outlined
                     @change="cargarDpto()"
                     color="rgb(52,188,52)"
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
               </v-row>
 

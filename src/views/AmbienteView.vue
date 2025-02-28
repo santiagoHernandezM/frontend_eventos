@@ -27,7 +27,7 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="6">
-                  <v-select
+                  <v-autocomplete
                     :items="sedes"
                     item-value="_id"
                     label="Sede"
@@ -39,13 +39,13 @@
                     append-icon="mdi mdi-home-city"
                     outlined
                     color="rgb(52,188,52)"
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
               </v-row>
 
               <v-row>
                 <v-col>
-                  <v-select
+                  <v-autocomplete
                     :items="bloques"
                     label="Bloque"
                     v-model="paquete.bloque"
@@ -56,10 +56,10 @@
                     append-icon="mdi mdi-home-outline"
                     outlined
                     color="rgb(52,188,52)"
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
                 <v-col>
-                  <v-select
+                  <v-autocomplete
                     :items="tiposDeAmbiente"
                     label="Tipo de ambiente"
                     v-model="paquete.tipo"
@@ -70,7 +70,7 @@
                     append-icon="mdi mdi-format-list-bulleted"
                     outlined
                     color="rgb(52,188,52)"
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
               </v-row>
             </v-container>
