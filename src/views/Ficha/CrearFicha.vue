@@ -62,7 +62,7 @@
 
 							<v-row>
 								<v-col cols="6">
-									<v-select
+									<v-autocomplete
 										:items="sedes"
 										item-text="nombre"
 										item-value="_id"
@@ -73,13 +73,13 @@
 										:rules="camposRules"
 										outlined
 										color="rgb(52,188,52)"
-									></v-select>
+									></v-autocomplete>
 								</v-col>
 
 								<v-col cols="6">
-									<v-select
+									<v-autocomplete
 										:items="ambientes"
-										item-text="codigo"
+										:item-text="(ambientes)=>`${ambientes.bloque.nomenclatura} - ${ambientes.codigo}`"
 										item-value="_id"
 										label="Ambiente"
 										v-model="paquete.ambiente"
@@ -88,21 +88,21 @@
 										outlined
 										color="rgb(52,188,52)"
 									>
-										<template v-slot:item="{ item }">
+										<!-- <template v-slot:item="{ item }">
 											{{ item.bloque.nomenclatura }}-{{
 												item.codigo
 											}}
-										</template>
+										</template> -->
 
-										<template
+										<!-- <template
 											slot="selection"
 											slot-scope="data"
 										>
 											{{ data.item.bloque.nomenclatura }}
 											-
 											{{ data.item.codigo }}
-										</template>
-									</v-select>
+										</template> -->
+									</v-autocomplete>
 								</v-col>
 							</v-row>
 
@@ -673,7 +673,8 @@ export default {
 
 		async cargarAmbientes(sede) {
 			// obtener los ambientes por sede
-			this.loading = true;
+			if(sede != null) {
+				this.loading = true;
 
 			const ambientesResponse = await axios.get(
 				`${this.api}/ambiente/sede/${sede}`
@@ -686,6 +687,7 @@ export default {
 			}
 			this.ambientes = ambientesResponse.data;
 			this.loading = false;
+			}
 		},
 
 		async instructoresPrograma(programa) {

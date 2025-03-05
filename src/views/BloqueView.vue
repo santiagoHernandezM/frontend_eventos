@@ -41,7 +41,7 @@
               </v-row>
               <v-row>
                 <v-col cols="12">
-                  <v-select
+                  <v-autocomplete
                     :items="sedes"
                     label="Sede"
                     item-text="nombre"
@@ -52,7 +52,7 @@
                     append-icon="mdi mdi-home-city"
                     outlined
                     color="rgb(52,188,52)"
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
               </v-row>
             </v-container>

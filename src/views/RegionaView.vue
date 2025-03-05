@@ -46,7 +46,7 @@
               </v-row>
               <v-row>
                 <v-col cols="6">
-                  <v-select
+                  <v-autocomplete
                     v-model="paquete.departamento"
                     :items="departamentos"
                     item-text="departamento"
@@ -56,10 +56,10 @@
                     :rules="camposRules"
                     outlined
                     color="rgb(52,188,52)"
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
                 <v-col cols="6">
-                  <v-select
+                  <v-autocomplete
                     v-model="paquete.municipio"
                     :items="ciudades"
                     label="Ciudad"
@@ -67,7 +67,7 @@
                     :rules="camposRules"
                     outlined
                     color="rgb(52,188,52)"
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
               </v-row>
             </v-container>

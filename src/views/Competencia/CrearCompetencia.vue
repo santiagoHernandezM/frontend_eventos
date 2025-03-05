@@ -16,14 +16,14 @@
             <v-container>
               <v-row>
                 <v-col cols="6">
-                  <v-select
+                  <v-autocomplete
                     :items="codigos"
                     item-text="paquete.nivel"
                     label="Seleccione Codigo del Programa"
                     prepend-icon="map"
                     v-model="paquete.codigo_programa"
                     :rules="camposRules"
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
                 
               </v-row>

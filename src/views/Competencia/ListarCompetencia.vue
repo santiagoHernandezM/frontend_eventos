@@ -18,7 +18,7 @@
 
                   <v-autocomplete
                     :items="programas"
-                    :item-text="(programas)=>`${programas.nombre} v${programas.version}`"
+                    :item-text="(programas)=>`${programas.codigo} - ${programas.nombre} v${programas.version}`"
                     item-value="_id"
                     label="Seleccione el programa"
                     v-model="programa"
@@ -130,7 +130,8 @@ export default {
                     
      async competenciasprograma(){
         const CompetenciaResponse = await axios.get(`${this.api}/competencia/programa/${this.programa}`);
-         this.competencias = CompetenciaResponse.data[0].competencias;
+        
+         this.competencias = CompetenciaResponse.data.length == 0 ? [] : CompetenciaResponse.data[0].competencias;
          console.log(this.competencias)
 
      }
