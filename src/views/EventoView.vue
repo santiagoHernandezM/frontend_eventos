@@ -8,17 +8,17 @@
 						REPORTAR EVENTO
 					</v-toolbar-title>
 
-					<v-spacer></v-spacer>
+					<v-spacer />
 				</v-app-bar>
 
 				<v-card-text>
-					<v-form>
+					<v-form ref="formEvento">
 						<v-container>
 							<v-row align="end">
-								<v-col cols="6">
+								<v-col sm="6" cols="12">
 									<v-row
 										justify="start"
-										style="gap: 30px"
+										style="row-gap: 0; column-gap: 19px"
 										align="center"
 										no-gutters
 									>
@@ -68,8 +68,8 @@
 									/>
 								</v-col>
 							</v-row>
-							<v-row class="mb-n10">
-								<v-col cols="12">
+							<v-row no-gutters>
+								<v-col cols="12" class="pb-0">
 									<v-select
 										class="pt-0 mt-0"
 										label="Programa"
@@ -86,8 +86,8 @@
 								</v-col>
 							</v-row>
 
-							<v-row class="mb-n10">
-								<v-col cols="3">
+							<v-row>
+								<v-col sm="6" md="3" cols="12" class="py-0">
 									<v-select
 										label="Ficha"
 										:items="fichas"
@@ -102,7 +102,7 @@
 									</v-select>
 								</v-col>
 
-								<v-col cols="3">
+								<v-col sm="6" md="3" cols="12" class="py-0">
 									<v-text-field
 										v-model="paquete.nivel"
 										label="Nivel"
@@ -112,7 +112,7 @@
 									></v-text-field>
 								</v-col>
 
-								<v-col cols="3">
+								<v-col sm="6" md="3" cols="12" class="py-0">
 									<v-text-field
 										v-model="paquete.municipio"
 										label="Municipio"
@@ -121,7 +121,7 @@
 										outlined
 									></v-text-field>
 								</v-col>
-								<v-col cols="3">
+								<v-col sm="6" md="3" cols="12" class="py-0">
 									<v-select
 										:items="ambientes"
 										item-text="codigo"
@@ -151,8 +151,8 @@
 								</v-col>
 							</v-row>
 
-							<v-row class="mb-n10">
-								<v-col cols="4">
+							<v-row>
+								<v-col sm="6" md="4" cols="12" class="py-sm-0">
 									<v-select
 										v-model="paquete.dia"
 										item-text="dia"
@@ -160,19 +160,31 @@
 										:items="diasemana"
 										@change="horario()"
 										append-icon="mdi-calendar"
+										:rules="camposRules"
 										label="Día"
 										outlined
 									>
 									</v-select>
 								</v-col>
-								<v-col cols="4">
+								<v-col sm="6" md="4" cols="12" class="py-sm-0">
 									<v-text-field
 										v-model="paquete.horario"
 										label="Horario"
 										append-icon="mdi-calendar"
+										:rules="camposRules"
 										readonly
 										outlined
+										v-if="mostrarHorarioDia"
 									></v-text-field>
+									<v-select
+										label="Horario"
+										append-icon="mdi-calendar"
+										outlined
+										:rules="camposRules"
+										v-model="paquete.horario"
+										:items="rangoHorarioDia"
+										v-else
+									/>
 								</v-col>
 
 								<semanas
@@ -183,7 +195,7 @@
 								></semanas>
 							</v-row>
 
-							<v-row class="mb-n10">
+							<v-row no-gutters class="pt-6">
 								<v-col cols="12">
 									<v-select
 										v-model="
@@ -195,6 +207,7 @@
 										@change="cargaresultados()"
 										label="Competencia"
 										outlined
+										:rules="camposRules"
 									>
 										<template v-slot:item="slotProps">
 											{{ slotProps.item.duracion }}/{{
@@ -206,13 +219,14 @@
 								</v-col>
 							</v-row>
 
-							<v-row class="mb-n15">
+							<v-row no-gutters>
 								<v-col cols="12">
 									<v-select
 										v-model="paquete.resultado"
 										:items="resultados"
 										label="Resultado aprendizaje"
 										multiple
+										:rules="camposRules"
 										:item-value="(item) => item"
 										:item-text="
 											(item) => {
@@ -241,7 +255,7 @@
 					</v-form>
 				</v-card-text>
 
-				<v-card-actions class="" style="max-width: 95%; margin: auto">
+				<v-card-actions style="max-width: 95%; margin: auto">
 					<v-btn
 						class="colorBtnCrear"
 						style="color: #fff"
@@ -456,6 +470,8 @@ export default {
 			error: null,
 			departamentos: colombia,
 			camposRules: [(v) => !!v || "Campo es requerido"],
+			mostrarHorarioDia: true,
+			rangoHorarioDia: [],
 		};
 	},
 
@@ -545,6 +561,7 @@ export default {
 				.post(`${this.api}/evento/crear`, this.evento)
 				.then(function () {
 					wd.evento.eventos = [];
+					wd.$store.commit("setBorradorEventos", []);
 					wd.bdeventos();
 				})
 				.catch(function (error) {
@@ -589,16 +606,39 @@ export default {
 			const j = res[0].jornadas.filter((e) => e.dia == this.paquete.dia);
 
 			if (j.length > 0) {
-				this.paquete.horario = `${j[0].horaInicio}-${j[0].horaFin}`;
-				this.horajornada = 8;
-				const inicio_fin = `${parseInt(j[0].horaInicio)}-${parseInt(
-					j[0].horaFin
-				)}`;
-				let horas = parseInt(j[0].horaFin) - parseInt(j[0].horaInicio);
-				if (inicio_fin == "6-12" || inicio_fin == "12-18") {
-					horas += 2;
+				const intensidadJornada =
+					parseInt(j[0].horaFin) - parseInt(j[0].horaInicio);
+				const programa = this.programas.find(
+					(p) => p._id == this.paquete.programa.id
+				);
+				const intensidadPrograma =
+					programa != undefined ? programa.intensidad_horaria : 0;
+				if (intensidadJornada <= intensidadPrograma) {
+					this.paquete.horario = `${j[0].horaInicio}-${j[0].horaFin}`;
+					this.horajornada = 8;
+					const inicio_fin = `${parseInt(j[0].horaInicio)}-${parseInt(
+						j[0].horaFin
+					)}`;
+					let horas =
+						parseInt(j[0].horaFin) - parseInt(j[0].horaInicio);
+					if (inicio_fin == "6-12" || inicio_fin == "12-18") {
+						horas += 2;
+					}
+					this.horajornada = horas;
+				} else {
+					this.horajornada = intensidadPrograma;
+					this.mostrarHorarioDia = false;
+					this.rangoHorarioDia = [];
+					for (
+						let hora = 6;
+						hora <= 22 - intensidadPrograma;
+						hora++
+					) {
+						this.rangoHorarioDia.push(
+							`${hora}-${hora + intensidadPrograma}`
+						);
+					}
 				}
-				this.horajornada = horas;
 				let r = this.diasemana.filter((e) => e.dia == this.paquete.dia);
 				this.diase = r[0].ndia;
 				this.paqdiasmes.diastrabajados = [];
@@ -664,131 +704,139 @@ export default {
 		},
 
 		validador() {
-			let total = this.paquete.resultado.reduce(
-				(accumulator, resultado) =>
-					accumulator + (resultado.duracion - resultado.acumulado),
-				0
-			);
-			if (
-				this.paquete.diastrabajados.length <
-				this.paquete.resultado.length
-			) {
-				(this.snackbar = true),
-					(this.text = `El numero de dias trabajados no es suficiente para el numero de
-                        resultados de aprendizajes a reportar`);
-				return false;
-			} else {
-				if (total < this.paquete.horas) {
+			if (this.$refs.formEvento.validate()) {
+				let total = this.paquete.resultado.reduce(
+					(accumulator, resultado) =>
+						accumulator +
+						(resultado.duracion - resultado.acumulado),
+					0
+				);
+				if (
+					this.paquete.diastrabajados.length <
+					this.paquete.resultado.length
+				) {
 					(this.snackbar = true),
-						(this.text = `El numero de horas trabajadas supera al numero de horas del
-          resultado de aprendizaje`);
+						(this.text = `El numero de dias trabajados no es suficiente para el numero de
+                        resultados de aprendizajes a reportar`);
 					return false;
 				} else {
-					console.log("resul", this.paquete.resultado);
-
-					if (this.paquete.resultado.length > 1) {
-						let acumulado = this.paquete.horas;
-						let diast = this.paquete.diastrabajados;
-						let newpaquete = JSON.parse(
-							JSON.stringify(this.paquete)
-						);
-						let ele = 0;
-						let presul = 0;
-
-						for (let eresultado of this.paquete.resultado) {
-							let diastomar = 1;
-
-							if (acumulado > 0) {
-								let horasf =
-									eresultado.duracion - eresultado.acumulado;
-								if (
-									horasf >= this.horajornada &&
-									acumulado > this.horajornada
-								) {
-									diastomar = Math.trunc(
-										horasf / this.horajornada
-									);
-									newpaquete.horas =
-										this.horajornada * diastomar;
-									acumulado -= this.horajornada * diastomar;
-								} else {
-									if (horasf > acumulado) {
-										newpaquete.horas = acumulado;
-										acumulado -= acumulado;
-									} else {
-										newpaquete.horas = horasf;
-										acumulado -= horasf;
-									}
-								}
-
-								newpaquete.diastrabajados = [];
-								for (let x = 1; x <= diastomar; x++) {
-									newpaquete.diastrabajados.push(diast[ele]);
-									ele += 1;
-								}
-								console.log(this.paquete.resultado[presul]);
-
-								const { descripcion, orden } =
-									this.paquete.resultado[presul];
-								var obj = new Object();
-								obj.resultado = descripcion;
-								obj.orden = orden;
-								console.log(obj);
-
-								//    newpaquete.resultado = this.paquete.resultado[presul]
-								newpaquete.resultado = obj;
-								// a is constant
-
-								this.guardar(newpaquete);
-							}
-
-							presul += 1;
-						}
-						this.paquete.dia = null;
-						this.paquete.diastrabajados = [];
-						this.paquete.horas = 0;
-						this.paquete.competencia = {
-							competencia: null,
-							codigo: null,
-						};
-						this.paquete.resultado = [];
+					if (total < this.paquete.horas) {
+						this.snackbar = true;
+						this.text =
+							"El numero de horas trabajadas supera al numero de horas del resultado de aprendizaje";
+						return false;
 					} else {
-						const { descripcion, orden, duracion } =
-							this.paquete.resultado[0];
-						const resultadosGuardados = this.evento.eventos.filter(
-							(e) =>
-								e.competencia.codigo ==
-									this.paquete.competencia.codigo &&
-								e.resultado.orden == orden
-						);
+						console.log("resul", this.paquete.resultado);
 
-						const totalDuracionResultados =
-							resultadosGuardados.reduce(
-								(suma, evento) => suma + evento.horas,
-								0
+						if (this.paquete.resultado.length > 1) {
+							let acumulado = this.paquete.horas;
+							let diast = this.paquete.diastrabajados;
+							let newpaquete = JSON.parse(
+								JSON.stringify(this.paquete)
 							);
-						const totalHoras =
-							totalDuracionResultados +
-							parseInt(this.paquete.horas);
-						if (totalHoras > duracion) {
-							this.text =
-								"Las horas a agregar superan la duración del resultado";
-							this.snackbar = true;
-							return false;
+							let ele = 0;
+							let presul = 0;
+
+							for (let eresultado of this.paquete.resultado) {
+								let diastomar = 1;
+
+								if (acumulado > 0) {
+									let horasf =
+										eresultado.duracion -
+										eresultado.acumulado;
+									if (
+										horasf >= this.horajornada &&
+										acumulado > this.horajornada
+									) {
+										diastomar = Math.trunc(
+											horasf / this.horajornada
+										);
+										newpaquete.horas =
+											this.horajornada * diastomar;
+										acumulado -=
+											this.horajornada * diastomar;
+									} else {
+										if (horasf > acumulado) {
+											newpaquete.horas = acumulado;
+											acumulado -= acumulado;
+										} else {
+											newpaquete.horas = horasf;
+											acumulado -= horasf;
+										}
+									}
+
+									newpaquete.diastrabajados = [];
+									for (let x = 1; x <= diastomar; x++) {
+										newpaquete.diastrabajados.push(
+											diast[ele]
+										);
+										ele += 1;
+									}
+									console.log(this.paquete.resultado[presul]);
+
+									const { descripcion, orden } =
+										this.paquete.resultado[presul];
+									var obj = new Object();
+									obj.resultado = descripcion;
+									obj.orden = orden;
+									console.log(obj);
+
+									//    newpaquete.resultado = this.paquete.resultado[presul]
+									newpaquete.resultado = obj;
+									// a is constant
+
+									this.guardar(newpaquete);
+								}
+
+								presul += 1;
+							}
+							this.paquete.dia = null;
+							this.paquete.diastrabajados = [];
+							this.paquete.horas = 0;
+							this.paquete.competencia = {
+								competencia: null,
+								codigo: null,
+							};
+							this.paquete.resultado = [];
+						} else {
+							const { descripcion, orden, duracion } =
+								this.paquete.resultado[0];
+							const resultadosGuardados =
+								this.evento.eventos.filter(
+									(e) =>
+										e.competencia.codigo ==
+											this.paquete.competencia.codigo &&
+										e.resultado.orden == orden
+								);
+
+							const totalDuracionResultados =
+								resultadosGuardados.reduce(
+									(suma, evento) => suma + evento.horas,
+									0
+								);
+							const totalHoras =
+								totalDuracionResultados +
+								parseInt(this.paquete.horas);
+							if (totalHoras > duracion) {
+								this.text =
+									"Las horas a agregar superan la duración del resultado";
+								this.snackbar = true;
+								return false;
+							}
+							var obje = new Object();
+							obje.resultado = descripcion;
+							obje.orden = orden;
+							this.paquete.resultado = obje;
+							this.guardar(this.paquete);
+							this.paquete.dia = null;
+							this.paquete.diastrabajados = [];
+							this.paquete.horas = 0;
+							this.paquete.competencia = {
+								competencia: null,
+								codigo: null,
+							};
+							this.paquete.resultado = [];
 						}
-						var obje = new Object();
-						obje.resultado = descripcion;
-						obje.orden = orden;
-						this.paquete.resultado = obje;
-						this.guardar(this.paquete);
-						this.paquete.dia = null;
-						this.paquete.diastrabajados = [];
-						this.paquete.horas = 0;
-						this.paquete.competencia = {
-							competencia: null,
-							codigo: null,
-						};
-						this.paquete.resultado = [];
 					}
 				}
 			}
@@ -828,6 +876,10 @@ export default {
 						...p,
 						year: this.fechactual.year,
 					});
+					this.$store.commit(
+						"setBorradorEventos",
+						this.evento.eventos
+					);
 					//  this.paquete = JSON.parse(JSON.stringify(this.limpieza))
 					this.paqdiasmes.diastrabajados = [];
 				}
@@ -878,6 +930,7 @@ export default {
 		// this.instructor = inst.data
 
 		this.programas = this.$store.getters.usuario.programas;
+		this.evento.eventos = this.$store.getters.borradorEventos;
 	},
 	watch: {
 		saveeventos() {

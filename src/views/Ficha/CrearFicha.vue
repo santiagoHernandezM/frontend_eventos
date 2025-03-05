@@ -417,81 +417,6 @@
 			@close-dialog="dialogoJornadasVacias = $event"
 		/>
 
-		<v-dialog v-model="modalEditarFicha" persistent max-width="650">
-			<v-card>
-				<v-card-title class="headline"
-					>Subir fichas por excel</v-card-title
-				>
-				<v-card-text>
-					<v-row class="flex-column" no-gutters>
-						<v-alert
-							class="w-100"
-							border="top"
-							colored-border
-							type="info"
-							elevation="2"
-						>
-							<v-row class="flex-column gap-1" no-gutters>
-								No olvide que su archivo excel debe cumplir con
-								un formato específico para que todo funcione
-								correctamente.
-								<v-btn
-									style="width: max-content"
-									color="info"
-									@click="descargarFormatoFichas"
-								>
-									Descargar formato
-									<v-icon right dark>mdi-download</v-icon>
-								</v-btn>
-							</v-row>
-						</v-alert>
-						<v-form class="w-100" ref="formMasivoFichas">
-							<v-row>
-								<v-col cols="12">
-									<v-file-input
-										hint="El archivo debe ser .xls o .xlsx"
-										persistent-hint
-										accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-										label="Archivo excel"
-										filled
-										:rules="excelRules"
-										v-model="fichasMasivo.fichas"
-										prepend-icon=""
-										append-icon="mdi mdi-microsoft-excel"
-									></v-file-input>
-								</v-col>
-							</v-row>
-						</v-form>
-					</v-row>
-				</v-card-text>
-				<v-card-actions class="justify-end gap-1">
-					<v-btn
-						color="error darken-1"
-						text
-						@click="modalFichasMasivo = false"
-					>
-						Cerrar
-					</v-btn>
-					<v-btn
-						color="green darken-1"
-						@click="subirMasivoFichas"
-						style="color: #ffffff"
-						:disabled="btnSubirFichas"
-						:loading="btnSubirFichas"
-					>
-						Subir
-						<template v-slot:loader>
-							<span class="custom-loader">
-								<v-icon light class="icon-animado">
-									mdi-cloud-upload
-								</v-icon>
-							</span>
-						</template>
-					</v-btn>
-				</v-card-actions>
-			</v-card>
-		</v-dialog>
-
 		<v-dialog v-model="modalFichasMasivo" persistent max-width="650">
 			<v-card>
 				<v-card-title class="headline"
@@ -738,10 +663,12 @@ export default {
 			});
 		},
 		async cargarFichasProgramas(programa) {
+			this.$emit('showOverlay');
 			const fichasResponse = await axios.get(
 				`${this.api}/ficha/programas/${programa}`
 			);
 			this.fichas = fichasResponse.data;
+			this.$emit('hideOverlay');
 		},
 
 		async cargarAmbientes(sede) {
