@@ -22,7 +22,7 @@
                 <v-form ref="form">
                   <v-select
                     :items="programas"
-                    item-text="nombre"
+                    :item-text="(programas) => `${programas.codigo} - ${programas.nombre} v${programas.version}`"
                     item-value="_id"
                     label="Programa de formación"
                     v-model="paquete.programa"
