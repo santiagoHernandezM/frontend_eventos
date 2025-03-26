@@ -111,7 +111,7 @@
 
 									<v-autocomplete
 									:items="programas"
-										:item-text="(programa)=>`${programa.nombre} v${programa.version}`"
+										:item-text="(programa)=>`${programa.codigo} - ${programa.nombre} v${programa.version}`"
 										item-value="_id"
 										label="Programa de formación"
 										v-model="paquete.programa"
@@ -298,9 +298,9 @@
 					>
 						<!-- Buscador -->
 						<template v-slot:top>
-							<v-select
+							<v-autocomplete
 								:items="programas"
-								item-text="nombre"
+								:item-text= "(programas) => `${programas.codigo} - ${programas.nombre} v${programas.version}`" 
 								item-value="_id"
 								label="Buscar ficha por programa"
 								v-model="paquete.programa"
