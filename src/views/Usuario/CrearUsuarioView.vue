@@ -201,6 +201,7 @@
 
                   <ListaPrograma
                     :programas="programas"
+                    :programasSeleccionados="paquete.programas"
                     v-if="mostrarprogramas"
                     @envioprogramas="cargarprograma"
                   ></ListaPrograma>
